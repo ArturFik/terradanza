@@ -845,7 +845,7 @@ const submitTest = async () => {
   }
 
   &__inner {
-    background-color: #fffcf6;
+    background-color: #fff;
     border-radius: 16px;
     padding: 35px 40px;
   }

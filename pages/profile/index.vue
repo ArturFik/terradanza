@@ -4,12 +4,28 @@
     <div v-if="currentUser" class="account">
       <h1>ПРОФИЛЬ</h1>
       <div class="account__logo">
-        <img :src="avatarUrl" alt="logo" class="logo" />
+        <div class="avatar-wrapper" @click="triggerFileUpload">
+          <img :src="avatarUrl" alt="logo" class="logo" />
+          <div class="avatar-overlay">
+            <span>Изменить</span>
+          </div>
+        </div>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          style="display: none"
+          @change="handleAvatarUpload"
+        />
         <div class="logo__view">
           <p class="logo__view--1">{{ fullName }}</p>
           <p class="logo__view--2">{{ rankLabel }}</p>
-          <p class="logo__view--3" @click="handleLogout">Выйти</p>
+          <p class="logo__view--3" @click="goToPage('profile/edit')">Редактировать профиль</p>
+          <p class="logo__view--4" @click="handleLogout">Выйти</p>
         </div>
+      </div>
+      <div v-if="avatarMessage" class="avatar-message" :class="avatarMessageType">
+        {{ avatarMessage }}
       </div>
 
       <div class="account-tab">
@@ -163,14 +179,14 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import Header from "@/component/header/header.vue"
 import Footer from "@/component/footer/footer.vue"
 import frameImg from "@/assets/img/Frame.png"
 import frame2Img from "@/assets/img/Frame2.png"
 import frame3Img from "@/assets/img/Frame3.png"
 import defaultAvatar from "@/assets/img/logo.png"
-
+import { useRouter } from 'vue-router'
 
 import notShyLocked from "/assets/img/not_shy_locked.png"
 import totalTheoristLocked from "/assets/img/total_theorist_locked.png"
@@ -240,43 +256,6 @@ const ALL_ACHIEVEMENTS = {
   },
 }
 
-type UserCoursesResponse = {
-  success: boolean
-  data: {
-    courses: string[]
-  }
-}
-
-type AchievementResponse = {
-  success: boolean
-  data: {
-    achievements: Array<{
-      id: string
-      achievement_id: string
-      code: string
-      name: string
-      description: string
-      icon_key?: string | null
-      earned_at: string
-      progress_metadata: Record<string, any>
-    }>
-  }
-}
-
-type CourseListResponse = {
-  success: boolean
-  data: {
-    items: Array<{
-      id: string
-      slug: string
-      name: string
-      description?: string | null
-      region_name?: string | null
-      main_image_key?: string | null
-    }>
-  }
-}
-
 const { currentUser, fetchMe, isAuthenticated, logout } = useAuth()
 const { apiFetch } = useApi()
 const { mediaUrl } = useMedia()
@@ -289,16 +268,21 @@ if (!currentUser.value) {
   await fetchMe()
 }
 
+// Avatar state
+const fileInput = ref(null)
+const avatarMessage = ref("")
+const avatarMessageType = ref("success")
+
 const activeTab = ref(0)
 const tabs = ref([{ img: frameImg }, { img: frame2Img }, { img: frame3Img }])
-const expandedCourseIds = ref(new Set<string>())
+const expandedCourseIds = ref(new Set())
 
-const { data } = await useAsyncData("profile-data", async () => {
+const { data, refresh } = await useAsyncData("profile-data", async () => {
   const [allCourses, favorites, enrolled, achievements] = await Promise.all([
-    apiFetch<CourseListResponse>("/courses"),
-    apiFetch<UserCoursesResponse>("/users/me/favorites"),
-    apiFetch<UserCoursesResponse>("/users/me/courses"),
-    apiFetch<AchievementResponse>("/users/me/achievements"),
+    apiFetch("/courses"),
+    apiFetch("/users/me/favorites"),
+    apiFetch("/users/me/courses"),
+    apiFetch("/users/me/achievements"),
   ])
 
   const courseMap = new Map(
@@ -313,10 +297,6 @@ const { data } = await useAsyncData("profile-data", async () => {
         backgroundImage: mediaUrl(course.main_image_key) || defaultAvatar,
       },
     ]),
-  )
-
-  const earnedAchievementCodes = new Set(
-    achievements.data.achievements.map(a => a.code)
   )
 
   const allAchievementsList = Object.values(ALL_ACHIEVEMENTS).map(achievement => {
@@ -335,7 +315,6 @@ const { data } = await useAsyncData("profile-data", async () => {
         code: achievement.code
       }
     } else {
-      // Если достижение не получено - показываем заблокированную версию
       return {
         id: `locked_${achievement.code}`,
         name: achievement.name,
@@ -356,7 +335,7 @@ const { data } = await useAsyncData("profile-data", async () => {
       .map((slug) => courseMap.get(slug))
       .filter(Boolean)
       .map((course) => ({
-        ...course!,
+        ...course,
         progress: 0,
       })),
   }
@@ -366,7 +345,6 @@ const achievements = computed(() => data.value?.achievements || [])
 const favoriteCourses = computed(() => data.value?.favoriteCourses || [])
 const enrolledCourses = computed(() => data.value?.enrolledCourses || [])
 
-// Делим достижения на строки по 4 элемента
 const achievementRows = computed(() => {
   const rows = []
   for (let index = 0; index < achievements.value.length; index += 4) {
@@ -381,7 +359,7 @@ const fullName = computed(() => {
   return parts.join(" ") || currentUser.value?.email || "Пользователь"
 })
 const rankLabel = computed(() => {
-  const rankMap: Record<string, string> = {
+  const rankMap = {
     novice: "Новичок",
     amateur: "Любитель",
     pro: "Профи",
@@ -389,7 +367,7 @@ const rankLabel = computed(() => {
   return rankMap[currentUser.value?.cached_rank || "novice"] || "Новичок"
 })
 
-const toggleDescription = (courseId: string) => {
+const toggleDescription = (courseId) => {
   const next = new Set(expandedCourseIds.value)
   if (next.has(courseId)) {
     next.delete(courseId)
@@ -399,7 +377,7 @@ const toggleDescription = (courseId: string) => {
   expandedCourseIds.value = next
 }
 
-const toggleFavorite = async (courseId: string) => {
+const toggleFavorite = async (courseId) => {
   try {
     await apiFetch(`/users/me/favorites/${courseId}`, { method: "DELETE" })
     const next = favoriteCourses.value.filter((course) => course.id !== courseId)
@@ -416,6 +394,76 @@ const toggleFavorite = async (courseId: string) => {
 const handleLogout = async () => {
   await logout()
   await navigateTo("/auth")
+}
+
+const router = useRouter()
+
+const goToPage = (page) => {
+  router.push(`/${page}`)
+}
+
+// Avatar functions
+const triggerFileUpload = () => {
+  fileInput.value?.click()
+}
+
+const handleAvatarUpload = async (event) => {
+  const target = event.target
+  const file = target.files?.[0]
+
+  if (!file) return
+
+  if (!file.type.startsWith("image/")) {
+    avatarMessage.value = "Пожалуйста, выберите изображение"
+    avatarMessageType.value = "error"
+    setTimeout(() => {
+      avatarMessage.value = ""
+    }, 3000)
+    return
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    avatarMessage.value = "Размер файла не должен превышать 5MB"
+    avatarMessageType.value = "error"
+    setTimeout(() => {
+      avatarMessage.value = ""
+    }, 3000)
+    return
+  }
+
+  const formData = new FormData()
+  formData.append("file", file)
+
+  avatarMessage.value = "Загрузка..."
+  avatarMessageType.value = "success"
+
+  try {
+    const response = await apiFetch("/users/me/avatar", {
+      method: "PUT",
+      body: formData,
+    })
+
+    if (response.success) {
+      avatarMessage.value = "Аватар успешно обновлен"
+      avatarMessageType.value = "success"
+      await fetchMe()
+      setTimeout(() => {
+        avatarMessage.value = ""
+      }, 3000)
+    } else {
+      throw new Error(response.message || "Ошибка загрузки")
+    }
+  } catch (error) {
+    avatarMessage.value = error?.data?.detail || "Ошибка при загрузке аватара"
+    avatarMessageType.value = "error"
+    setTimeout(() => {
+      avatarMessage.value = ""
+    }, 3000)
+  } finally {
+    if (fileInput.value) {
+      fileInput.value.value = ""
+    }
+  }
 }
 </script>
 
@@ -450,47 +498,102 @@ const handleLogout = async () => {
     gap: 20px;
   }
 
+  .avatar-wrapper {
+    position: relative;
+    cursor: pointer;
+    
+    &:hover .avatar-overlay {
+      opacity: 1;
+    }
+  }
+
   .logo {
     width: 125px;
     height: 125px;
     border-radius: 9999px;
     object-fit: cover;
+  }
 
-    &__view {
-      display: flex;
-      flex-direction: column;
-      align-items: left;
-      margin-right: auto;
-      justify-content: space-between;
+  .avatar-overlay {
+    height: 125px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 9999px;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    span {
+      color: white;
+      font-size: 12px;
+      font-family: "Inter", sans-serif;
+      text-align: center;
+    }
+  }
 
-      &--1 {
-        font-size: 18px;
-        font-weight: 600;
-        color: #11243f;
-        text-align: left;
-        font-family: "Inter", sans-serif;
-        margin: 20px 0 0 0;
-      }
+  .avatar-message {
+    margin-top: 10px;
+    margin-left: 0;
+    font-size: 12px;
+    font-family: "Inter", sans-serif;
+    
+    &.success {
+      color: #4caf50;
+    }
+    
+    &.error {
+      color: #c65d3b;
+    }
+  }
 
-      &--2 {
-        font-size: 18px;
-        font-weight: 400;
-        color: #11243f;
-        text-align: left;
-        font-family: "Inter", sans-serif;
-        margin: 5px 0;
-      }
+  .logo__view {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    margin-right: auto;
+    justify-content: space-between;
 
-      &--3 {
-        font-size: 16px;
-        font-weight: 400;
-        text-decoration: underline;
-        color: #c65d3b;
-        text-align: left;
-        font-family: "Inter", sans-serif;
-        margin: 10px 0;
-        cursor: pointer;
-      }
+    &--1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #11243f;
+      text-align: left;
+      font-family: "Inter", sans-serif;
+      margin: 20px 0 0 0;
+    }
+
+    &--2 {
+      font-size: 18px;
+      font-weight: 400;
+      color: #11243f;
+      text-align: left;
+      font-family: "Inter", sans-serif;
+      margin: 5px 0;
+    }
+
+    &--3 {
+      font-size: 16px;
+      font-weight: 400;
+      color: #c65d3b;
+      text-align: left;
+      font-family: "Inter", sans-serif;
+      margin: 2px 0;
+      cursor: pointer;
+    }
+    &--4 {
+      font-size: 16px;
+      font-weight: 400;
+      text-decoration: underline;
+      color: #c65d3b;
+      text-align: left;
+      font-family: "Inter", sans-serif;
+      margin: 10px 0;
+      cursor: pointer;
     }
   }
 
@@ -558,8 +661,7 @@ const handleLogout = async () => {
       opacity: 0.5;
       filter: grayscale(0.5);
     }
-}
-
+  }
 }
 
 .achievement-image-wrapper {
@@ -623,22 +725,6 @@ const handleLogout = async () => {
   text-align: center;
   font-family: "Inter", sans-serif;
   margin: 8px 0 0 0;
-}
-
-.achievement-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background-color: #c65d3b;
-  color: white;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: bold;
 }
 
 .progress-bar-container {

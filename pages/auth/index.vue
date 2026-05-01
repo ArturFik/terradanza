@@ -67,19 +67,71 @@
             <button class="auth__submit-btn" :disabled="loading">Войти</button>
           </form>
 
+          <!-- Шаг 1: Ввод почты для сброса пароля -->
           <form
-            v-if="activeTab === 'forgot-password'"
+            v-if="activeTab === 'forgot-password' && resetStep === 1"
             @submit.prevent="submitForgotPassword"
           >
             <input
               v-model="forgotPasswordEmail"
               type="email"
               placeholder="Почта"
+              :disabled="loading"
             />
-            <button class="auth__submit-btn" :disabled="loading">Отправить</button>
+            <div v-if="resetEmailError" class="error-message">{{ resetEmailError }}</div>
+            <button class="auth__submit-btn" :disabled="loading">
+              {{ loading ? "Отправка..." : "Отправить код" }}
+            </button>
           </form>
 
-          <p v-if="message" class="auth-message">{{ message }}</p>
+          <!-- Шаг 2: Ввод 4-значного кода для сброса пароля -->
+          <form
+            v-if="activeTab === 'forgot-password' && resetStep === 2"
+            @submit.prevent="submitResetCode"
+          >
+            <div class="code-inputs">
+              <input
+                v-for="(_, index) in 4"
+                :key="index"
+                ref="codeInputs"
+                v-model="resetCodeForm[index]"
+                type="text"
+                maxlength="1"
+                class="code-digit"
+                :class="{ 'error-border': resetCodeError }"
+                @input="handleCodeInput(index, $event)"
+                @keydown="handleCodeKeydown(index, $event)"
+                @paste="handleCodePaste"
+              />
+            </div>
+            <div v-if="resetCodeError" class="error-message">{{ resetCodeError }}</div>
+            <button class="auth__submit-btn" :disabled="loading || !isResetCodeComplete">
+              {{ loading ? "Проверка..." : "Подтвердить код" }}
+            </button>
+          </form>
+
+          <!-- Шаг 3: Ввод нового пароля для сброса -->
+          <form
+            v-if="activeTab === 'forgot-password' && resetStep === 3"
+            @submit.prevent="submitResetPassword"
+          >
+            <input
+              v-model="resetPasswordForm.password"
+              type="password"
+              placeholder="Новый пароль"
+              :disabled="loading"
+            />
+            <input
+              v-model="resetPasswordForm.confirmPassword"
+              type="password"
+              placeholder="Повторите пароль"
+              :disabled="loading"
+            />
+            <div v-if="resetPasswordError" class="error-message">{{ resetPasswordError }}</div>
+            <button class="auth__submit-btn" :disabled="loading || !isResetPasswordValid">
+              {{ loading ? "Сохранение..." : "Сохранить пароль" }}
+            </button>
+          </form>
           <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
         </div>
       </div>
@@ -88,7 +140,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import Header from "@/component/header/header.vue"
 import Footer from "@/component/footer/footer.vue"
 
@@ -100,10 +152,12 @@ if (isAuthenticated.value) {
   await navigateTo("/profile")
 }
 
-const activeTab = ref<"register" | "login" | "forgot-password">("register")
+const activeTab = ref("register")
+const resetStep = ref(1)
 const loading = ref(false)
 const message = ref("")
 const errorMessage = ref("")
+const resetToken = ref("")
 
 const registerForm = ref({
   name: "",
@@ -117,9 +171,29 @@ const loginForm = ref({
   password: "",
 })
 
+// Формы для сброса пароля
 const forgotPasswordEmail = ref("")
+const resetEmailError = ref("")
+const resetCodeError = ref("")
+const resetPasswordError = ref("")
+const resetCodeForm = ref(["", "", "", ""])
+const resetPasswordForm = ref({
+  password: "",
+  confirmPassword: "",
+})
+const codeInputs = ref([])
 
-const getErrorMessage = (error: any) =>
+const isResetCodeComplete = computed(() => {
+  return resetCodeForm.value.every(digit => digit.length === 1)
+})
+
+const isResetPasswordValid = computed(() => {
+  return resetPasswordForm.value.password.length >= 6 && 
+         resetPasswordForm.value.confirmPassword.length >= 6 &&
+         resetPasswordForm.value.password === resetPasswordForm.value.confirmPassword
+})
+
+const getErrorMessage = (error) =>
   error?.data?.detail || error?.message || "Произошла ошибка"
 
 const submitRegister = async () => {
@@ -150,7 +224,7 @@ const submitLogin = async () => {
 
   try {
     await login(loginForm.value)
-    await navigateTo((route.query.redirect as string) || "/profile")
+    await navigateTo(route.query.redirect || "/profile")
   } catch (error) {
     errorMessage.value = getErrorMessage(error)
   } finally {
@@ -158,21 +232,183 @@ const submitLogin = async () => {
   }
 }
 
-const submitForgotPassword = async () => {
-  loading.value = true
-  message.value = ""
-  errorMessage.value = ""
+// Обработчики для кода
+const handleCodeInput = (index, event) => {
+  const input = event.target
+  const value = input.value
+  
+  if (value && !/^\d$/.test(value)) {
+    input.value = ""
+    resetCodeForm.value[index] = ""
+    return
+  }
+  
+  if (value.length === 1 && index < 3) {
+    codeInputs.value[index + 1]?.focus()
+  }
+}
 
+const handleCodeKeydown = (index, event) => {
+  if (event.key === "Backspace" && !resetCodeForm.value[index] && index > 0) {
+    codeInputs.value[index - 1]?.focus()
+  }
+}
+
+const handleCodePaste = (event) => {
+  event.preventDefault()
+  const pastedData = event.clipboardData?.getData("text") || ""
+  const digits = pastedData.replace(/\D/g, "").slice(0, 4).split("")
+  
+  digits.forEach((digit, idx) => {
+    if (idx < 4) {
+      resetCodeForm.value[idx] = digit
+      if (codeInputs.value[idx]) {
+        codeInputs.value[idx].value = digit
+      }
+    }
+  })
+  
+  const lastFilledIndex = digits.length - 1
+  if (lastFilledIndex < 3) {
+    codeInputs.value[lastFilledIndex + 1]?.focus()
+  }
+}
+
+const getResetCode = () => {
+  return resetCodeForm.value.join("")
+}
+
+const clearResetErrors = () => {
+  resetEmailError.value = ""
+  resetCodeError.value = ""
+  resetPasswordError.value = ""
+}
+
+// Шаг 1 сброса: отправка email
+const submitForgotPassword = async () => {
+  if (!forgotPasswordEmail.value) {
+    resetEmailError.value = "Введите email"
+    return
+  }
+  
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotPasswordEmail.value)) {
+    resetEmailError.value = "Введите корректный email"
+    return
+  }
+  
+  loading.value = true
+  clearResetErrors()
+  message.value = ""
+  
   try {
-    const response = await apiFetch<{ message: string }>("/auth/forgot-password", {
+    const response = await apiFetch("/auth/forgot-password", {
       method: "POST",
       body: { email: forgotPasswordEmail.value },
       skipAuthRetry: true,
     })
-    message.value = response.message
-    activeTab.value = "login"
+    
+    if (response.success) {
+      message.value = response.message || "Код подтверждения отправлен на вашу почту"
+      resetStep.value = 2
+      setTimeout(() => {
+        codeInputs.value[0]?.focus()
+      }, 100)
+    } else {
+      resetEmailError.value = response.message || "Ошибка при отправке кода"
+    }
   } catch (error) {
-    errorMessage.value = getErrorMessage(error)
+    if (error?.status === 404) {
+      resetEmailError.value = "Пользователь с таким email не найден"
+    } else {
+      resetEmailError.value = error?.data?.detail || "Ошибка при отправке кода"
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+// Шаг 2 сброса: проверка кода
+const submitResetCode = async () => {
+  const code = getResetCode()
+  
+  if (code.length !== 4) {
+    resetCodeError.value = "Введите 4-значный код"
+    return
+  }
+  
+  loading.value = true
+  clearResetErrors()
+  
+  try {
+    const response = await apiFetch("/auth/verify-reset-code", {
+      method: "POST",
+      body: { 
+        email: forgotPasswordEmail.value,
+        code: code 
+      },
+      skipAuthRetry: true,
+    }).catch(() => {
+      return apiFetch("/auth/verify-email", {
+        method: "POST",
+        body: { token: code },
+        skipAuthRetry: true,
+      })
+    })
+    
+    if (response.success) {
+      resetToken.value = response.token || code
+      resetStep.value = 3
+      resetPasswordForm.value.password = ""
+      resetPasswordForm.value.confirmPassword = ""
+    } else {
+      resetCodeError.value = response.message || "Неверный код подтверждения"
+    }
+  } catch (error) {
+    resetCodeError.value = error?.data?.detail || "Неверный код подтверждения"
+  } finally {
+    loading.value = false
+  }
+}
+
+// Шаг 3 сброса: установка нового пароля
+const submitResetPassword = async () => {
+  if (resetPasswordForm.value.password.length < 6) {
+    resetPasswordError.value = "Пароль должен содержать не менее 6 символов"
+    return
+  }
+  
+  if (resetPasswordForm.value.password !== resetPasswordForm.value.confirmPassword) {
+    resetPasswordError.value = "Пароли не совпадают"
+    return
+  }
+  
+  loading.value = true
+  clearResetErrors()
+  
+  try {
+    const response = await apiFetch("/auth/reset-password", {
+      method: "POST",
+      body: {
+        token: resetToken.value,
+        new_password: resetPasswordForm.value.password,
+      },
+      skipAuthRetry: true,
+    })
+    
+    if (response.success) {
+      message.value = response.message || "Пароль успешно изменен"
+      setTimeout(() => {
+        activeTab.value = "login"
+        resetStep.value = 1
+        forgotPasswordEmail.value = ""
+        resetCodeForm.value = ["", "", "", ""]
+        resetPasswordForm.value = { password: "", confirmPassword: "" }
+      }, 2000)
+    } else {
+      resetPasswordError.value = response.message || "Ошибка при смене пароля"
+    }
+  } catch (error) {
+    resetPasswordError.value = error?.data?.detail || "Ошибка при смене пароля"
   } finally {
     loading.value = false
   }
@@ -269,7 +505,28 @@ const submitForgotPassword = async () => {
     }
   }
 
-  input {
+  &__back-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: transparent;
+    color: #777;
+    border: 1px solid #ddd;
+    border-radius: 9999px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #f8f5ee;
+      border-color: #11243f;
+      color: #11243f;
+    }
+  }
+
+  input:not(.code-digit) {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
@@ -282,6 +539,46 @@ const submitForgotPassword = async () => {
       outline: none;
       border-color: #11243f;
     }
+  }
+
+  .code-inputs {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    .code-digit {
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      font-family: "Inter", sans-serif;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background-color: #fff;
+      padding: 0;
+      margin: 0;
+
+      &:focus {
+        outline: none;
+        border-color: #11243f;
+        box-shadow: 0 0 0 2px rgba(17, 36, 63, 0.1);
+      }
+
+      &.error-border {
+        border-color: #c65d3b;
+      }
+    }
+  }
+
+  .error-message {
+    font-size: 12px;
+    font-family: "Inter", sans-serif;
+    color: #c65d3b;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: left;
   }
 }
 
@@ -309,6 +606,10 @@ const submitForgotPassword = async () => {
   margin-top: 20px;
   text-align: center;
   font-family: "Inter", sans-serif;
+}
+
+.auth-message {
+  color: #4caf50;
 }
 
 .auth-error {

@@ -2,16 +2,52 @@
   <div class="encyclopedia-container">
     <Header />
     <div class="encyclopedia">
+      <div class="encyclopedia__input">
+        <input
+          type="text"
+          class="encyclopedia__input--input"
+          v-model="searchQuery"
+          @input="onSearchInput"
+          @focus="showDropdown = true"
+          placeholder="Найти вид танца"
+        />
+        <img
+          src="@/assets/img/search.png"
+          alt="search"
+          class="encyclopedia__input--button"
+          @click="performSearch"
+        />
+
+        <div
+          v-if="showDropdown && searchResults.length > 0"
+          class="search-dropdown"
+        >
+          <div
+            v-for="result in searchResults"
+            :key="result.danceSlug"
+            class="search-dropdown-item"
+            @click="navigateToDance(result.danceSlug)"
+          >
+            <div class="search-dropdown-item__name">{{ result.danceName }}</div>
+            <div class="search-dropdown-item__region">
+              {{ result.regionName }}
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="showDropdown && searchQuery && searchResults.length === 0"
+          class="search-dropdown no-results"
+        >
+          <div class="search-dropdown-item">Ничего не найдено</div>
+        </div>
+      </div>
+
       <div
         v-for="(region, index) in regions"
         :key="region.id"
         class="encyclopedia-block1"
       >
-        <img
-          v-if="index % 2 === 0"
-          :src="region.image"
-          :alt="region.name"
-        />
+        <img v-if="index % 2 === 0" :src="region.image" :alt="region.name" />
         <div class="encyclopedia-block1__text">
           <h1>{{ region.name }}</h1>
           <div class="encyclopedia-block1__block">
@@ -19,12 +55,13 @@
               v-for="dance in region.dances"
               :key="dance.slug"
               class="dance-item"
+              @click="navigateToDance(dance.slug)"
             >
               {{ dance.name }}
             </p>
           </div>
           <NuxtLink
-            class="button"
+            class="ency__button"
             :to="{ path: '/about_country', query: { slug: region.slug } }"
           >
             <h4>больше танцев</h4>
@@ -42,11 +79,7 @@
             </svg>
           </NuxtLink>
         </div>
-        <img
-          v-if="index % 2 === 1"
-          :src="region.image"
-          :alt="region.name"
-        />
+        <img v-if="index % 2 === 1" :src="region.image" :alt="region.name" />
       </div>
     </div>
     <Footer />
@@ -54,28 +87,29 @@
 </template>
 
 <script setup lang="ts">
-import Header from "@/component/header/header.vue"
-import Footer from "@/component/footer/footer.vue"
-import africaImage from "@/assets/img/Union8.png"
-import europeImage from "@/assets/img/Union9.png"
-import asiaImage from "@/assets/img/Union6.png"
-import americaImage from "@/assets/img/Union5.png"
-import australiaImage from "@/assets/img/Union4.png"
-import caucasusImage from "@/assets/img/Union.png"
-import volgaImage from "@/assets/img/Union3.png"
-import siberiaImage from "@/assets/img/Union1.png"
-import centralRussiaImage from "@/assets/img/Union2.png"
+import { ref, computed } from "vue";
+import Header from "@/component/header/header.vue";
+import Footer from "@/component/footer/footer.vue";
+import africaImage from "@/assets/img/Union8.png";
+import europeImage from "@/assets/img/Union9.png";
+import asiaImage from "@/assets/img/Union6.png";
+import americaImage from "@/assets/img/Union5.png";
+import australiaImage from "@/assets/img/Union4.png";
+import caucasusImage from "@/assets/img/Union.png";
+import volgaImage from "@/assets/img/Union3.png";
+import siberiaImage from "@/assets/img/Union1.png";
+import centralRussiaImage from "@/assets/img/Union2.png";
 
 type RegionListItem = {
-  id: string
-  name: string
-  slug: string
-  images: Array<{ image_key: string }>
-}
+  id: string;
+  name: string;
+  slug: string;
+  images: Array<{ image_key: string }>;
+};
 
 type RegionDetail = RegionListItem & {
-  dances: Array<{ id: string; name: string; slug: string }>
-}
+  dances: Array<{ id: string; name: string; slug: string }>;
+};
 
 const regionFallbackImages = [
   africaImage,
@@ -87,16 +121,18 @@ const regionFallbackImages = [
   volgaImage,
   siberiaImage,
   centralRussiaImage,
-]
+];
 
-const { apiFetch } = useApi()
-const { mediaUrl } = useMedia()
+const { apiFetch } = useApi();
+const { mediaUrl } = useMedia();
 
 const { data } = await useAsyncData("encyclopedia-regions", async () => {
-  const regionList = await apiFetch<RegionListItem[]>("/regions")
+  const regionList = await apiFetch<RegionListItem[]>("/regions");
   const detailedRegions = await Promise.all(
-    regionList.map((region) => apiFetch<RegionDetail>(`/regions/${region.slug}`)),
-  )
+    regionList.map((region) =>
+      apiFetch<RegionDetail>(`/regions/${region.slug}`)
+    )
+  );
 
   return detailedRegions.map((region, index) => ({
     ...region,
@@ -104,15 +140,86 @@ const { data } = await useAsyncData("encyclopedia-regions", async () => {
       mediaUrl(region.images[0]?.image_key) ||
       regionFallbackImages[index % regionFallbackImages.length],
     dances: region.dances.slice(0, 10),
-  }))
-})
+  }));
+});
 
-const regions = computed(() => data.value || [])
+const regions = computed(() => data.value || []);
+
+// Поиск
+const searchQuery = ref("");
+const showDropdown = ref(false);
+const searchResults = ref<
+  Array<{ danceName: string; danceSlug: string; regionName: string }>
+>([]);
+
+// Функция поиска танцев
+const searchDances = (query: string) => {
+  if (!query.trim()) {
+    searchResults.value = [];
+    return;
+  }
+
+  const results: Array<{
+    danceName: string;
+    danceSlug: string;
+    regionName: string;
+  }> = [];
+  const lowerQuery = query.toLowerCase();
+
+  regions.value.forEach((region) => {
+    region.dances.forEach((dance) => {
+      if (dance.name.toLowerCase().includes(lowerQuery)) {
+        results.push({
+          danceName: dance.name,
+          danceSlug: dance.slug,
+          regionName: region.name,
+        });
+      }
+    });
+  });
+
+  searchResults.value = results.slice(0, 10); // Ограничиваем 10 результатами
+};
+
+const onSearchInput = () => {
+  searchDances(searchQuery.value);
+  showDropdown.value = true;
+};
+
+const performSearch = () => {
+  searchDances(searchQuery.value);
+  showDropdown.value = true;
+};
+
+// Навигация на страницу танца
+const navigateToDance = (slug: string) => {
+  if (slug) {
+    navigateTo({ path: "/about_dance", query: { slug: slug } });
+    showDropdown.value = false;
+    searchQuery.value = "";
+  }
+};
+
+// Закрываем выпадающий список при клике вне области
+const handleClickOutside = (event: MouseEvent) => {
+  const inputContainer = document.querySelector(".encyclopedia__input");
+  if (inputContainer && !inputContainer.contains(event.target as Node)) {
+    showDropdown.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
 
 <style lang="scss">
 .encyclopedia-container {
-  background-color: #fffcf6;
+  background-color: #fff;
 }
 
 .encyclopedia {
@@ -120,6 +227,106 @@ const regions = computed(() => data.value || [])
   margin-left: auto;
   margin-right: auto;
   max-width: 1234px;
+  position: relative;
+
+  &__input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 18px;
+    border: 2px solid #11243f;
+    flex: 1;
+    width: 30%;
+    min-width: 0;
+    overflow: visible;
+    margin-left: auto;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    position: relative;
+
+    &--input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      padding: 12px 16px;
+      background: transparent;
+    }
+
+    &--button {
+      width: 70px;
+      flex-shrink: 0;
+      cursor: pointer;
+      padding: 0;
+      background: transparent;
+      border: none;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #11243f;
+  border-radius: 15px;
+  margin-top: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Inter", sans-serif;
+  &-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #eee;
+
+    &:hover {
+      background-color: #11243f;
+      color: white;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &__name {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    &__region {
+      font-size: 12px;
+      color: #666;
+
+      .search-dropdown-item:hover & {
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+  }
+
+  &.no-results {
+    .search-dropdown-item {
+      cursor: default;
+      text-align: center;
+      color: #999;
+
+      &:hover {
+        background-color: transparent;
+        color: #999;
+      }
+    }
+  }
 }
 
 .encyclopedia-block1 {
@@ -167,6 +374,13 @@ const regions = computed(() => data.value || [])
       font-size: 26px;
       white-space: nowrap;
       display: inline-block;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #11243f;
+        color: #fff;
+      }
     }
   }
 
@@ -180,7 +394,7 @@ const regions = computed(() => data.value || [])
   }
 }
 
-.button {
+.ency__button {
   border-radius: 999px;
   padding: 10px 15px;
   color: #fffcf6;
@@ -193,6 +407,7 @@ const regions = computed(() => data.value || [])
   flex-direction: row;
   align-items: center;
   text-decoration: none;
+  transition: all 0.2s ease;
 
   h4 {
     margin: 0;

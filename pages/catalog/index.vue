@@ -460,7 +460,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .catalog-container {
-  background-color: #fffcf6;
+  background-color: #fff;
   font-family: "Inter", sans-serif;
 }
 
@@ -504,7 +504,7 @@ onBeforeUnmount(() => {
     }
 
     &--blocktwo {
-      background-color: #fffcf6;
+      background-color: #fff;
       padding: 12px 24px;
       border-radius: 8px;
       font-size: 16px;
@@ -671,7 +671,7 @@ onBeforeUnmount(() => {
 }
 
 .filter-item {
-  background-color: #fffcf6;
+  background-color: #fff;
   padding: 12px 20px;
   border-radius: 8px;
   cursor: pointer;
@@ -704,11 +704,11 @@ onBeforeUnmount(() => {
 
     > p,
     > span {
-      color: #fffcf6;
+      color: #fff;
     }
 
     svg path {
-      stroke: #fffcf6;
+      stroke: #fff;
     }
   }
 
@@ -765,7 +765,7 @@ onBeforeUnmount(() => {
   top: 130%;
   left: 0;
   right: 0;
-  background-color: #fffcf6;
+  background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 100;
@@ -777,7 +777,7 @@ onBeforeUnmount(() => {
     padding: 10px 20px;
     font-size: 12px;
     margin: 0;
-    background-color: #fffcf6;
+    background-color: #fff;
     pointer-events: none;
   }
 }

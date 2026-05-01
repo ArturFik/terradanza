@@ -113,7 +113,7 @@ const galleryImages = computed(() => {
 
 <style lang="scss">
 .about_country-container {
-  background-color: #fffcf6;
+  background-color: #fff;
 }
 
 .about_country {

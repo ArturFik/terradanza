@@ -238,7 +238,7 @@ const relatedDances = computed(() =>
 
 <style lang="scss">
 .about_dance-container {
-  background-color: #fffcf6;
+  background-color: #fff;
 }
 
 .about_dance {
