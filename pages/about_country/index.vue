@@ -54,66 +54,82 @@
 </template>
 
 <script setup lang="ts">
-import Header from "@/component/header/header.vue"
-import Footer from "@/component/footer/footer.vue"
-import africaImage from "@/assets/img/Rectangle5.png"
-import europeImage from "@/assets/img/Rectangle6.png"
-import asiaImage from "@/assets/img/Rectangle7.png"
-import americaImage from "@/assets/img/Rectangle8.png"
+import Header from "@/component/header/header.vue";
+import Footer from "@/component/footer/footer.vue";
+import africaImage from "@/assets/img/Rectangle5.png";
+import europeImage from "@/assets/img/Rectangle6.png";
+import asiaImage from "@/assets/img/Rectangle7.png";
+import americaImage from "@/assets/img/Rectangle8.png";
 
 type RegionDetail = {
-  id: string
-  name: string
-  slug: string
-  short_description: string
-  full_description?: string | null
-  images: Array<{ image_key: string }>
-  dances: Array<{ id: string; name: string; slug: string }>
-}
+  id: string;
+  name: string;
+  slug: string;
+  short_description: string;
+  full_description?: string | null;
+  images: Array<{ image_key?: string | null; image?: string | null }>;
+  dances: Array<{ id: string; name: string; slug: string }>;
+};
 
-const route = useRoute()
-const { apiFetch } = useApi()
-const { mediaUrl } = useMedia()
+const route = useRoute();
+const { apiFetch } = useApi();
+const { mediaUrl } = useMedia();
 
-const fallbackGallery = [africaImage, europeImage, asiaImage, americaImage]
-const isExpanded = ref(false)
+const fallbackGallery = [africaImage, europeImage, asiaImage, americaImage];
+const isExpanded = ref(false);
 
 const toggleText = () => {
-  isExpanded.value = !isExpanded.value
-}
+  isExpanded.value = !isExpanded.value;
+};
 
 const selectedSlug = computed(() => {
-  const slug = route.query.slug
-  return typeof slug === "string" && slug.length ? slug : null
-})
+  const slug = route.query.slug;
+  return typeof slug === "string" && slug.length ? slug : null;
+});
 
 const { data } = await useAsyncData(
   () => `region-${selectedSlug.value || "default"}`,
   async () => {
     if (selectedSlug.value) {
-      return await apiFetch<RegionDetail>(`/regions/${selectedSlug.value}`)
+      return await apiFetch<RegionDetail>(`/regions/${selectedSlug.value}`);
     }
 
-    const regions = await apiFetch<Array<{ slug: string }>>("/regions")
-    const firstRegion = regions[0]
+    const regions = await apiFetch<Array<{ slug: string }>>("/regions");
+    const firstRegion = regions[0];
     if (!firstRegion) {
-      return null
+      return null;
     }
-    return await apiFetch<RegionDetail>(`/regions/${firstRegion.slug}`)
-  },
-)
+    return await apiFetch<RegionDetail>(`/regions/${firstRegion.slug}`);
+  }
+);
 
-const region = computed(() => data.value)
+const region = computed(() => data.value);
 
-const galleryImages = computed(() => {
-  const keys = region.value?.images?.map((image) => mediaUrl(image.image_key)).filter(Boolean) || []
-  return keys.length ? keys : fallbackGallery
-})
+const galleryImages = computed<string[]>(() => {
+  if (!region.value?.images || region.value.images.length === 0) {
+    return fallbackGallery;
+  }
+
+  const urls = region.value.images
+    .map((image) => {
+      const imageKey = image.image_key || image.image;
+      if (!imageKey) return null;
+      const url = mediaUrl(imageKey);
+      // Преобразуем null в undefined, но лучше вернуть пустую строку
+      return url || "";
+    })
+    .filter((url): url is string => typeof url === "string" && url.length > 0);
+
+  return urls.length ? urls : fallbackGallery;
+});
 </script>
 
 <style lang="scss">
 .about_country-container {
-  background-color: #fff;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("@/assets/img/back.png");
 }
 
 .about_country {
@@ -185,10 +201,6 @@ const galleryImages = computed(() => {
   }
 
   &__continue {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-image: url("@/assets/img/back.png");
     position: relative;
 
     .dance-item {
@@ -202,6 +214,12 @@ const galleryImages = computed(() => {
       white-space: nowrap;
       display: inline-block;
       text-decoration: none;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #11243f;
+        color: white;
+      }
     }
   }
 
@@ -234,17 +252,15 @@ const galleryImages = computed(() => {
   }
 
   &__tab {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
     max-width: 1234px;
     margin-top: 50px;
     margin-bottom: 50px;
-    gap: 10px;
     padding: 0 75px;
 
     .tab-item {
@@ -252,15 +268,40 @@ const galleryImages = computed(() => {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex: 1;
+      aspect-ratio: 6 / 8;
 
       img {
-        max-width: 250px;
         width: 100%;
         height: 100%;
         display: block;
         border-radius: 20px;
         object-fit: cover;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      padding: 0 40px;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      padding: 0 30px;
+
+      .tab-item {
+        aspect-ratio: 4 / 5;
+      }
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      padding: 0 20px;
+
+      .tab-item {
+        aspect-ratio: 16 / 9;
       }
     }
   }

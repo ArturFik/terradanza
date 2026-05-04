@@ -1,464 +1,532 @@
 <template>
-    <div class="reset-container">
-      <Header />
-      <div class="reset">
-        <div class="reset__bg">
-          <div class="reset__bg--white">
-            <h1>Сброс пароля</h1>
-  
-            <!-- Шаг 1: Ввод почты -->
-            <form v-if="step === 1" @submit.prevent="submitEmail">
+  <div class="reset-container">
+    <Header />
+    <div class="reset">
+      <div class="reset__bg">
+        <div class="reset__bg--white">
+          <button
+            v-if="step > 1"
+            class="reset__back-btn-top"
+            @click="goToPreviousStep"
+            aria-label="Назад"
+          >
+            ← Назад
+          </button>
+
+          <h1>Сброс пароля</h1>
+
+          <!-- Шаг 1: Ввод почты -->
+          <form v-if="step === 1" @submit.prevent="submitEmail">
+            <input
+              v-model="emailForm.email"
+              type="email"
+              placeholder="Почта"
+              :disabled="loading"
+            />
+            <div v-if="emailError" class="error-message">{{ emailError }}</div>
+            <button class="reset__submit-btn" :disabled="loading">
+              {{ loading ? "Отправка..." : "Отправить код" }}
+            </button>
+          </form>
+
+          <!-- Шаг 2: Ввод 4-значного кода -->
+          <form v-if="step === 2" @submit.prevent="submitCode">
+            <div class="code-inputs">
               <input
-                v-model="emailForm.email"
-                type="email"
-                placeholder="Почта"
-                :disabled="loading"
+                v-for="(_, index) in 4"
+                :key="index"
+                :ref="(el) => setCodeInputRef(el, index)"
+                v-model="codeForm[index]"
+                type="text"
+                maxlength="1"
+                class="code-digit"
+                :class="{ 'error-border': codeError }"
+                @input="handleCodeInput(index, $event)"
+                @keydown="handleCodeKeydown(index, $event)"
+                @paste="handleCodePaste"
               />
-              <div v-if="emailError" class="error-message">{{ emailError }}</div>
-              <button class="reset__submit-btn" :disabled="loading">
-                {{ loading ? "Отправка..." : "Отправить код" }}
-              </button>
-            </form>
-  
-            <!-- Шаг 2: Ввод 4-значного кода -->
-            <form v-if="step === 2" @submit.prevent="submitCode">
-              <div class="code-inputs">
-                <input
-                  v-for="(_, index) in 4"
-                  :key="index"
-                  ref="codeInputs"
-                  v-model="codeForm[index]"
-                  type="text"
-                  maxlength="1"
-                  class="code-digit"
-                  :class="{ 'error-border': codeError }"
-                  @input="handleCodeInput(index, $event)"
-                  @keydown="handleCodeKeydown(index, $event)"
-                  @paste="handleCodePaste"
-                />
-              </div>
-              <div v-if="codeError" class="error-message">{{ codeError }}</div>
-              <button class="reset__submit-btn" :disabled="loading || !isCodeComplete">
-                {{ loading ? "Проверка..." : "Подтвердить код" }}
-              </button>
-            </form>
-  
-            <!-- Шаг 3: Ввод нового пароля -->
-            <form v-if="step === 3" @submit.prevent="submitNewPassword">
-              <input
-                v-model="passwordForm.password"
-                type="password"
-                placeholder="Новый пароль"
-                :disabled="loading"
-              />
-              <input
-                v-model="passwordForm.confirmPassword"
-                type="password"
-                placeholder="Повторите пароль"
-                :disabled="loading"
-              />
-              <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
-              <button class="reset__submit-btn" :disabled="loading || !isPasswordValid">
-                {{ loading ? "Сохранение..." : "Сохранить пароль" }}
-              </button>
-            </form>
-  
-            <p v-if="message" class="reset-message">{{ message }}</p>
+            </div>
+            <div v-if="codeError" class="error-message">{{ codeError }}</div>
+            <button
+              class="reset__submit-btn"
+              :disabled="loading || !isCodeComplete"
+            >
+              {{ loading ? "Проверка..." : "Подтвердить код" }}
+            </button>
+          </form>
+
+          <!-- Шаг 3: Ввод нового пароля -->
+          <form v-if="step === 3" @submit.prevent="submitNewPassword">
+            <input
+              v-model="passwordForm.password"
+              type="password"
+              placeholder="Новый пароль"
+              :disabled="loading"
+            />
+            <input
+              v-model="passwordForm.confirmPassword"
+              type="password"
+              placeholder="Повторите пароль"
+              :disabled="loading"
+            />
+            <div v-if="passwordError" class="error-message">
+              {{ passwordError }}
+            </div>
+            <button
+              class="reset__submit-btn"
+              :disabled="loading || !isPasswordValid"
+            >
+              {{ loading ? "Сохранение..." : "Сохранить пароль" }}
+            </button>
+          </form>
+
+          <!-- Сообщения об успехе/ошибке -->
+          <div v-if="successMessage" class="success-message">
+            {{ successMessage }}
+          </div>
+          <div v-if="errorMessage" class="error-message global-error">
+            {{ errorMessage }}
           </div>
         </div>
       </div>
-      <Footer />
     </div>
-  </template>
-  
-  <script setup>
-  import Header from "@/component/header/header.vue"
-  import Footer from "@/component/footer/footer.vue"
-  
-  const { apiFetch } = useApi()
-  const { isAuthenticated } = useAuth()
-  
-  if (isAuthenticated.value) {
-    await navigateTo("/profile")
+    <Footer />
+  </div>
+</template>
+
+<script setup>
+import Header from "@/component/header/header.vue";
+import Footer from "@/component/footer/footer.vue";
+
+const { apiFetch } = useApi();
+const { isAuthenticated } = useAuth();
+
+if (!isAuthenticated.value) {
+  await navigateTo("/auth");
+}
+
+const step = ref(1);
+const loading = ref(false);
+const successMessage = ref("");
+const errorMessage = ref("");
+const savedCode = ref(""); // Сохраняем код между шагами
+
+const emailForm = ref({
+  email: "",
+});
+
+const codeForm = ref(["", "", "", ""]);
+
+const passwordForm = ref({
+  password: "",
+  confirmPassword: "",
+});
+
+const emailError = ref("");
+const codeError = ref("");
+const passwordError = ref("");
+
+const codeInputs = ref([]);
+
+// Функция для установки ref-ов на инпуты кода
+const setCodeInputRef = (el, index) => {
+  if (el) {
+    codeInputs.value[index] = el;
   }
-  
-  const step = ref(1)
-  const loading = ref(false)
-  const message = ref("")
-  const resetToken = ref("")
-  
-  const emailForm = ref({
-    email: "",
-  })
-  
-  const codeForm = ref(["", "", "", ""])
-  
-  const passwordForm = ref({
-    password: "",
-    confirmPassword: "",
-  })
-  
-  const emailError = ref("")
-  const codeError = ref("")
-  const passwordError = ref("")
-  
-  const codeInputs = ref([])
-  
-  const isCodeComplete = computed(() => {
-    return codeForm.value.every(digit => digit.length === 1)
-  })
-  
-  const isPasswordValid = computed(() => {
-    return passwordForm.value.password.length >= 6 && 
-           passwordForm.value.confirmPassword.length >= 6 &&
-           passwordForm.value.password === passwordForm.value.confirmPassword
-  })
-  
-  const handleCodeInput = (index, event) => {
-    const input = event.target
-    const value = input.value
-    
-    if (value && !/^\d$/.test(value)) {
-      input.value = ""
-      codeForm.value[index] = ""
-      return
-    }
-    
-    if (value.length === 1 && index < 3) {
-      codeInputs.value[index + 1]?.focus()
-    }
+};
+
+const isCodeComplete = computed(() => {
+  return codeForm.value.every((digit) => digit && digit.length === 1);
+});
+
+const isPasswordValid = computed(() => {
+  return (
+    passwordForm.value.password.length >= 6 &&
+    passwordForm.value.confirmPassword.length >= 6 &&
+    passwordForm.value.password === passwordForm.value.confirmPassword
+  );
+});
+
+const handleCodeInput = (index, event) => {
+  const input = event.target;
+  const value = input.value;
+
+  if (value && !/^\d$/.test(value)) {
+    input.value = "";
+    codeForm.value[index] = "";
+    return;
   }
-  
-  const handleCodeKeydown = (index, event) => {
-    if (event.key === "Backspace" && !codeForm.value[index] && index > 0) {
-      codeInputs.value[index - 1]?.focus()
-    }
+
+  if (value.length === 1 && index < 3) {
+    codeInputs.value[index + 1]?.focus();
   }
-  
-  const handleCodePaste = (event) => {
-    event.preventDefault()
-    const pastedData = event.clipboardData?.getData("text") || ""
-    const digits = pastedData.replace(/\D/g, "").slice(0, 4).split("")
-    
-    digits.forEach((digit, idx) => {
-      if (idx < 4) {
-        codeForm.value[idx] = digit
-        if (codeInputs.value[idx]) {
-          codeInputs.value[idx].value = digit
+};
+
+const handleCodeKeydown = (index, event) => {
+  if (event.key === "Backspace" && !codeForm.value[index] && index > 0) {
+    codeInputs.value[index - 1]?.focus();
+  }
+};
+
+const handleCodePaste = (event) => {
+  event.preventDefault();
+  const pastedData = event.clipboardData?.getData("text") || "";
+  const digits = pastedData.replace(/\D/g, "").slice(0, 4).split("");
+
+  digits.forEach((digit, idx) => {
+    if (idx < 4) {
+      codeForm.value[idx] = digit;
+      if (codeInputs.value[idx]) {
+        codeInputs.value[idx].value = digit;
+      }
+    }
+  });
+
+  const lastFilledIndex = digits.length - 1;
+  if (lastFilledIndex < 3 && codeInputs.value[lastFilledIndex + 1]) {
+    codeInputs.value[lastFilledIndex + 1]?.focus();
+  }
+};
+
+const getCode = () => {
+  return codeForm.value.join("");
+};
+
+const clearErrors = () => {
+  emailError.value = "";
+  codeError.value = "";
+  passwordError.value = "";
+  errorMessage.value = "";
+};
+
+const clearSuccess = () => {
+  successMessage.value = "";
+};
+
+// Шаг 1: Отправка email
+const submitEmail = async () => {
+  if (!emailForm.value.email) {
+    emailError.value = "Введите email";
+    return;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailForm.value.email)) {
+    emailError.value = "Введите корректный email";
+    return;
+  }
+
+  loading.value = true;
+  clearErrors();
+  clearSuccess();
+
+  try {
+    const response = await apiFetch("/auth/forgot-password", {
+      method: "POST",
+      body: { email: emailForm.value.email },
+      skipAuthRetry: true,
+    });
+
+    if (response.success) {
+      successMessage.value = "Код подтверждения отправлен на вашу почту";
+      step.value = 2;
+      setTimeout(() => {
+        if (codeInputs.value[0]) {
+          codeInputs.value[0].focus();
         }
-      }
-    })
-    
-    const lastFilledIndex = digits.length - 1
-    if (lastFilledIndex < 3) {
-      codeInputs.value[lastFilledIndex + 1]?.focus()
+      }, 100);
+    } else {
+      emailError.value = response.message || "Ошибка при отправке кода";
     }
-  }
-  
-  const getCode = () => {
-    return codeForm.value.join("")
-  }
-  
-  const clearErrors = () => {
-    emailError.value = ""
-    codeError.value = ""
-    passwordError.value = ""
-    message.value = ""
-  }
-  
-  const submitEmail = async () => {
-    if (!emailForm.value.email) {
-      emailError.value = "Введите email"
-      return
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    if (error?.status === 404) {
+      emailError.value = "Пользователь с таким email не найден";
+    } else {
+      emailError.value = error?.data?.detail || "Ошибка при отправке кода";
     }
-    
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailForm.value.email)) {
-      emailError.value = "Введите корректный email"
-      return
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Шаг 2: Сохраняем код и переходим к шагу 3
+const submitCode = async () => {
+  const code = getCode();
+
+  if (code.length !== 4) {
+    codeError.value = "Введите 4-значный код";
+    return;
+  }
+
+  loading.value = true;
+  clearErrors();
+
+  try {
+    // Сохраняем код для использования на шаге 3
+    savedCode.value = code;
+
+    // Переходим к шагу 3
+    step.value = 3;
+    successMessage.value = "Код подтвержден, введите новый пароль";
+
+    // Очищаем поля пароля
+    passwordForm.value.password = "";
+    passwordForm.value.confirmPassword = "";
+  } catch (error) {
+    console.error("Error:", error);
+    codeError.value = "Произошла ошибка";
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Шаг 3: Отправка нового пароля вместе с кодом и email
+const submitNewPassword = async () => {
+  if (passwordForm.value.password.length < 6) {
+    passwordError.value = "Пароль должен содержать не менее 6 символов";
+    return;
+  }
+
+  if (passwordForm.value.password !== passwordForm.value.confirmPassword) {
+    passwordError.value = "Пароли не совпадают";
+    return;
+  }
+
+  loading.value = true;
+  clearErrors();
+
+  try {
+    // Отправляем все данные на /auth/reset-password
+    const response = await apiFetch("/auth/reset-password", {
+      method: "POST",
+      body: {
+        token: savedCode.value,
+        email: emailForm.value.email,
+        code: savedCode.value,
+        new_password: passwordForm.value.password,
+      },
+      skipAuthRetry: true,
+    });
+
+    if (response.success) {
+      successMessage.value =
+        response.message || "Пароль успешно изменен! Перенаправление...";
+      setTimeout(() => {
+        navigateTo("/auth?reset=success");
+      }, 2000);
+    } else {
+      passwordError.value = response.message || "Неверный код подтверждения";
     }
-    
-    loading.value = true
-    clearErrors()
-    
-    try {
-      const response = await apiFetch("/auth/forgot-password", {
-        method: "POST",
-        body: { email: emailForm.value.email },
-        skipAuthRetry: true,
-      })
-      
-      if (response.success) {
-        message.value = response.message || "Код подтверждения отправлен на вашу почту"
-        step.value = 2
+  } catch (error) {
+    console.error("Reset password error:", error);
+    if (error?.data?.detail === "Invalid code" || error?.status === 400) {
+      passwordError.value =
+        "Неверный код подтверждения. Пожалуйста, запросите новый код";
+      // Возвращаем на шаг 2 при неверном коде
+      setTimeout(() => {
+        step.value = 2;
+        savedCode.value = "";
+        codeForm.value = ["", "", "", ""];
         setTimeout(() => {
-          codeInputs.value[0]?.focus()
-        }, 100)
-      } else {
-        emailError.value = response.message || "Ошибка при отправке кода"
-      }
-    } catch (error) {
-      if (error?.status === 404) {
-        emailError.value = "Пользователь с таким email не найден"
-      } else {
-        emailError.value = error?.data?.detail || "Ошибка при отправке кода"
-      }
-    } finally {
-      loading.value = false
+          if (codeInputs.value[0]) {
+            codeInputs.value[0].focus();
+          }
+        }, 100);
+      }, 2000);
+    } else {
+      passwordError.value = error?.data?.detail || "Ошибка при смене пароля";
     }
+  } finally {
+    loading.value = false;
   }
-  
-  const submitCode = async () => {
-    const code = getCode()
-    
-    if (code.length !== 4) {
-      codeError.value = "Введите 4-значный код"
-      return
-    }
-    
-    loading.value = true
-    clearErrors()
-    
-    try {
-      const response = await apiFetch("/auth/verify-reset-code", {
-        method: "POST",
-        body: { 
-          email: emailForm.value.email,
-          code: code 
-        },
-        skipAuthRetry: true,
-      }).catch(() => {
-        return apiFetch("/auth/verify-email", {
-          method: "POST",
-          body: { token: code },
-          skipAuthRetry: true,
-        })
-      })
-      
-      if (response.success) {
-        resetToken.value = response.token || code
-        step.value = 3
-        passwordForm.value.password = ""
-        passwordForm.value.confirmPassword = ""
-      } else {
-        codeError.value = response.message || "Неверный код подтверждения"
-      }
-    } catch (error) {
-      codeError.value = error?.data?.detail || "Неверный код подтверждения"
-    } finally {
-      loading.value = false
-    }
-  }
-  
-  const submitNewPassword = async () => {
-    if (passwordForm.value.password.length < 6) {
-      passwordError.value = "Пароль должен содержать не менее 6 символов"
-      return
-    }
-    
-    if (passwordForm.value.password !== passwordForm.value.confirmPassword) {
-      passwordError.value = "Пароли не совпадают"
-      return
-    }
-    
-    loading.value = true
-    clearErrors()
-    
-    try {
-      const response = await apiFetch("/auth/reset-password", {
-        method: "POST",
-        body: {
-          token: resetToken.value,
-          new_password: passwordForm.value.password,
-        },
-        skipAuthRetry: true,
-      })
-      
-      if (response.success) {
-        message.value = response.message || "Пароль успешно изменен"
-        setTimeout(() => {
-          navigateTo("/auth?reset=success")
-        }, 2000)
-      } else {
-        passwordError.value = response.message || "Ошибка при смене пароля"
-      }
-    } catch (error) {
-      passwordError.value = error?.data?.detail || "Ошибка при смене пароля"
-    } finally {
-      loading.value = false
-    }
-  }
-  
-  const goBackToEmail = () => {
-    step.value = 1
-    clearErrors()
-    emailError.value = ""
-  }
-  
-  const goBackToCode = () => {
-    step.value = 2
-    clearErrors()
-    codeError.value = ""
-    codeForm.value = ["", "", "", ""]
+};
+
+// Навигация между шагами
+const goToPreviousStep = () => {
+  if (step.value === 2) {
+    step.value = 1;
+    clearErrors();
+    clearSuccess();
+    codeForm.value = ["", "", "", ""];
+  } else if (step.value === 3) {
+    step.value = 2;
+    clearErrors();
+    clearSuccess();
+    passwordForm.value = { password: "", confirmPassword: "" };
     setTimeout(() => {
-      codeInputs.value[0]?.focus()
-    }, 100)
+      if (codeInputs.value[0]) {
+        codeInputs.value[0].focus();
+      }
+    }, 100);
   }
-  </script>
-  
-  <style lang="scss" scoped>
-  .reset-container {
-    background-color: #fffcf6;
-    min-height: 100vh;
+};
+</script>
+
+<style lang="scss" scoped>
+.reset-container {
+  background-color: #fffcf6;
+  min-height: 100vh;
+}
+
+.reset {
+  padding: 0 75px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1234px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+
+  h1 {
+    font-size: 36px;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    color: #11243f;
+    text-align: center;
+    margin: 0;
+    margin-bottom: 30px;
   }
-  
-  .reset {
-    padding: 0 75px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 1234px;
-    margin-top: 50px;
-    margin-bottom: 50px;
-  
-    h1 {
-      font-size: 36px;
-      font-family: "Inter", sans-serif;
-      font-weight: 600;
-      color: #11243f;
-      text-align: center;
-      margin: 0;
-      margin-bottom: 30px;
-    }
-  
-    &__bg {
+
+  &__bg {
+    border-radius: 25px;
+    background-color: #11243f;
+    background-image: url("@/assets/img/bgauth.png");
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    padding: 40px 0;
+    position: relative;
+
+    &--white {
+      width: 50%;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #fff;
       border-radius: 25px;
-      background-color: #11243f;
-      background-image: url("@/assets/img/bgauth.png");
-      background-size: 100% auto;
-      background-repeat: no-repeat;
-      padding: 40px 0;
-  
-      &--white {
-        width: 50%;
-        margin-left: auto;
-        margin-right: auto;
-        background-color: #fff;
-        border-radius: 25px;
-        padding: 60px 40px;
-      }
+      padding: 60px 40px;
+      position: relative;
     }
-  
-    &__submit-btn {
-      display: block;
-      width: 100%;
-      padding: 12px 20px;
-      background-color: #c65d3b;
-      color: white;
-      border: none;
-      border-radius: 9999px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: background-color 0.3s ease;
-  
-      &:hover:not(:disabled) {
-        background-color: #1a3650;
-      }
-  
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
+  }
+
+  &__back-btn-top {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #11243f;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-family: "Inter", sans-serif;
+
+    &:hover {
+      background-color: #f8f5ee;
+      transform: translateX(-2px);
     }
-  
-    &__back-btn {
-      display: block;
-      width: 100%;
-      padding: 12px 20px;
+  }
+
+  &__submit-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: #c65d3b;
+    color: white;
+    border: none;
+    border-radius: 9999px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #1a3650;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  input:not(.code-digit) {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+    background-color: transparent;
+
+    &:focus {
+      outline: none;
+      border-color: #11243f;
+    }
+
+    &:disabled {
       background-color: transparent;
-      color: #777;
-      border: 1px solid #ddd;
-      border-radius: 9999px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: all 0.3s ease;
-  
-      &:hover {
-        background-color: #f8f5ee;
-        border-color: #11243f;
-        color: #11243f;
-      }
+      cursor: not-allowed;
     }
-  
-    input:not(.code-digit) {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 0;
-      border-bottom: 1px solid #ddd;
-      font-size: 14px;
-      box-sizing: border-box;
+  }
+
+  .code-inputs {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    .code-digit {
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
       font-family: "Inter", sans-serif;
-      background-color: transparent;
-  
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      background-color: #fff;
+      padding: 0;
+      margin: 0;
+
       &:focus {
         outline: none;
         border-color: #11243f;
+        box-shadow: 0 0 0 2px rgba(17, 36, 63, 0.1);
       }
-  
-      &:disabled {
-        background-color: transparent;
-        cursor: not-allowed;
+
+      &.error-border {
+        border-color: #c65d3b;
       }
-    }
-  
-    .code-inputs {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      margin-bottom: 20px;
-  
-      .code-digit {
-        width: 60px;
-        height: 60px;
-        text-align: center;
-        font-size: 24px;
-        font-weight: 600;
-        font-family: "Inter", sans-serif;
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        background-color: #fff;
-        padding: 0;
-        margin: 0;
-  
-        &:focus {
-          outline: none;
-          border-color: #11243f;
-          box-shadow: 0 0 0 2px rgba(17, 36, 63, 0.1);
-        }
-  
-        &.error-border {
-          border-color: #c65d3b;
-        }
-      }
-    }
-  
-    .error-message {
-      font-size: 12px;
-      font-family: "Inter", sans-serif;
-      color: #c65d3b;
-      margin-top: -10px;
-      margin-bottom: 10px;
-      text-align: left;
     }
   }
-  
-  .reset-message {
-    margin-top: 20px;
-    text-align: center;
+
+  .error-message {
+    font-size: 12px;
+    font-family: "Inter", sans-serif;
+    color: #c65d3b;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: left;
+
+    &.global-error {
+      margin-top: 20px;
+      text-align: center;
+    }
+  }
+
+  .success-message {
+    font-size: 14px;
     font-family: "Inter", sans-serif;
     color: #4caf50;
+    margin-top: 20px;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(76, 175, 80, 0.1);
+    border-radius: 8px;
   }
-  </style>
+}
+</style>

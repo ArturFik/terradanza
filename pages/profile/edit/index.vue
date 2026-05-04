@@ -44,8 +44,11 @@
               />
             </div>
 
-            <!-- Кнопка смены пароля -->
-            <button type="button" class="profile-edit__submit-btn" @click="goToChangePassword">
+            <button
+              type="button"
+              class="profile-edit__submit-btn"
+              @click="goToChangePassword"
+            >
               Смена пароля
             </button>
           </form>
@@ -60,19 +63,19 @@
 </template>
 
 <script setup>
-import Header from "@/component/header/header.vue"
-import Footer from "@/component/footer/footer.vue"
+import Header from "@/component/header/header.vue";
+import Footer from "@/component/footer/footer.vue";
 
-const { currentUser, fetchMe, isAuthenticated } = useAuth()
-const { apiFetch } = useApi()
+const { currentUser, fetchMe, isAuthenticated } = useAuth();
+const { apiFetch } = useApi();
 
 // Проверка авторизации
 if (!isAuthenticated.value) {
-  await navigateTo({ path: "/auth", redirect: "/profile/edit" })
+  await navigateTo({ path: "/auth", redirect: "/profile/edit" });
 }
 
 if (!currentUser.value) {
-  await fetchMe()
+  await fetchMe();
 }
 
 // Форма для редактирования
@@ -81,54 +84,54 @@ const editForm = ref({
   originalName: "",
   surname: "",
   name: "",
-})
+});
 
 // Состояния для автосохранения имени
-let saveTimeout = null
-const nameSavedMessage = ref("")
-const nameErrorMessage = ref("")
-const loading = ref(false)
-const message = ref("")
-const errorMessage = ref("")
+let saveTimeout = null;
+const nameSavedMessage = ref("");
+const nameErrorMessage = ref("");
+const loading = ref(false);
+const message = ref("");
+const errorMessage = ref("");
 
 // Инициализация формы
 const initForm = () => {
   if (currentUser.value) {
-    editForm.value.name = currentUser.value.name || ""
-    editForm.value.surname = currentUser.value.surname || ""
-    editForm.value.fullName = [editForm.value.surname, editForm.value.name]
-      .filter(Boolean)
-      .join(" ") || ""
-    editForm.value.originalName = editForm.value.fullName
+    editForm.value.name = currentUser.value.name || "";
+    editForm.value.surname = currentUser.value.surname || "";
+    editForm.value.fullName =
+      [editForm.value.surname, editForm.value.name].filter(Boolean).join(" ") ||
+      "";
+    editForm.value.originalName = editForm.value.fullName;
   }
-}
+};
 
-initForm()
+initForm();
 
 // Автосохранение имени и фамилии
 const handleNameChange = () => {
-  nameSavedMessage.value = ""
-  nameErrorMessage.value = ""
+  nameSavedMessage.value = "";
+  nameErrorMessage.value = "";
 
   if (saveTimeout) {
-    clearTimeout(saveTimeout)
+    clearTimeout(saveTimeout);
   }
 
   saveTimeout = setTimeout(async () => {
-    await saveNameAndSurname()
-  }, 1000)
-}
+    await saveNameAndSurname();
+  }, 1000);
+};
 
 const saveNameAndSurname = async () => {
-  const nameParts = editForm.value.fullName.trim().split(/\s+/)
-  const surname = nameParts[0] || ""
-  const name = nameParts.slice(1).join(" ") || ""
+  const nameParts = editForm.value.fullName.trim().split(/\s+/);
+  const surname = nameParts[0] || "";
+  const name = nameParts.slice(1).join(" ") || "";
 
   if (surname === editForm.value.surname && name === editForm.value.name) {
-    return
+    return;
   }
 
-  loading.value = true
+  loading.value = true;
 
   try {
     const response = await apiFetch("/users/me", {
@@ -137,40 +140,41 @@ const saveNameAndSurname = async () => {
         name: name || undefined,
         surname: surname || undefined,
       },
-    })
+    });
 
-    editForm.value.name = response.name || ""
-    editForm.value.surname = response.surname || ""
-    editForm.value.originalName = editForm.value.fullName
+    editForm.value.name = response.name || "";
+    editForm.value.surname = response.surname || "";
+    editForm.value.originalName = editForm.value.fullName;
 
     if (currentUser.value) {
-      currentUser.value.name = response.name || null
-      currentUser.value.surname = response.surname || null
+      currentUser.value.name = response.name || null;
+      currentUser.value.surname = response.surname || null;
     }
 
-    nameSavedMessage.value = "Имя сохранено"
+    nameSavedMessage.value = "Имя сохранено";
     setTimeout(() => {
-      nameSavedMessage.value = ""
-    }, 3000)
+      nameSavedMessage.value = "";
+    }, 3000);
   } catch (error) {
-    nameErrorMessage.value = error?.data?.detail || "Ошибка при сохранении имени"
-    editForm.value.fullName = editForm.value.originalName
+    nameErrorMessage.value =
+      error?.data?.detail || "Ошибка при сохранении имени";
+    editForm.value.fullName = editForm.value.originalName;
     setTimeout(() => {
-      nameErrorMessage.value = ""
-    }, 3000)
+      nameErrorMessage.value = "";
+    }, 3000);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // Переход на страницу смены пароля
 const goToChangePassword = () => {
-  navigateTo("/change-password")
-}
+  navigateTo("/change-password");
+};
 
 const handleSubmit = () => {
   // Форма не отправляется, все сохраняется автоматически
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -279,11 +283,11 @@ const handleSubmit = () => {
     font-size: 12px;
     font-family: "Inter", sans-serif;
     margin-top: 5px;
-    
+
     &.success {
       color: #4caf50;
     }
-    
+
     &.error {
       color: #c65d3b;
     }

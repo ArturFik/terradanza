@@ -6,7 +6,9 @@
         <h1>{{ dance.name }}</h1>
         <h1 class="about" v-if="regionName">({{ regionName }})</h1>
         <p class="intro-text">
-          {{ dance.description || "Описание для этого танца пока не добавлено." }}
+          {{
+            dance.description || "Описание для этого танца пока не добавлено."
+          }}
         </p>
         <NuxtLink
           v-if="linkedCourseSlug"
@@ -57,35 +59,43 @@
       </div>
     </div>
 
+    <!-- Блок Костюмы - исправлен -->
     <div v-if="costumeImages.length" class="about_dance-block4">
       <h1>Костюмы</h1>
-      <div class="about_dance-tab">
-        <img
+      <div class="media-grid">
+        <div
           v-for="(image, index) in costumeImages"
-          :key="`${image}-${index}`"
-          :src="image"
-          alt="costume"
-        />
+          :key="`costume-${index}`"
+          class="tab-item"
+        >
+          <img :src="image" alt="costume" />
+        </div>
       </div>
     </div>
 
-    <div v-if="photoMedia.length || videoMedia.length" class="about_dance-block4">
+    <!-- Блок Фото и видео - исправлен -->
+    <div
+      v-if="photoMedia.length || videoMedia.length"
+      class="about_dance-block4"
+    >
       <h1>Фото и видео</h1>
-      <div v-if="photoMedia.length" class="about_dance-tab">
-        <img
+      <div class="media-grid">
+        <!-- Фото -->
+        <div
           v-for="(image, index) in photoMedia"
-          :key="`${image}-${index}`"
-          :src="image"
-          alt="media"
-        />
-      </div>
-      <div v-if="videoMedia.length" class="about_dance-tab">
-        <video
+          :key="`photo-${index}`"
+          class="tab-item"
+        >
+          <img :src="image" alt="media" />
+        </div>
+        <!-- Видео -->
+        <div
           v-for="(video, index) in videoMedia"
-          :key="`${video}-${index}`"
-          :src="video"
-          controls
-        />
+          :key="`video-${index}`"
+          class="tab-item"
+        >
+          <video :src="video" controls />
+        </div>
       </div>
     </div>
 
@@ -107,79 +117,85 @@
 </template>
 
 <script setup lang="ts">
-import Header from "@/component/header/header.vue"
-import Footer from "@/component/footer/footer.vue"
-import fallbackHero from "@/assets/img/imgtest.png"
-import fallbackGallery from "@/assets/img/testtestest.png"
+import Header from "@/component/header/header.vue";
+import Footer from "@/component/footer/footer.vue";
+import fallbackHero from "@/assets/img/imgtest.png";
+import fallbackGallery from "@/assets/img/testtestest.png";
 
 type DanceResponse = {
-  id: string
-  region_id: string
-  name: string
-  slug: string
-  description?: string | null
-  costume_images: Array<{ id: string; image_key: string }>
+  id: string;
+  region_id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  costume_images: Array<{ id: string; image_key: string }>;
   media: Array<{
-    id: string
-    media_type: string
-    media_key: string
-    thumbnail_key?: string | null
-  }>
-  history_blocks: Array<{ id: string; image_key: string; text_content: string }>
-}
+    id: string;
+    media_type: string;
+    media_key: string;
+    thumbnail_key?: string | null;
+  }>;
+  history_blocks: Array<{
+    id: string;
+    image_key: string;
+    text_content: string;
+  }>;
+};
 
 type RegionItem = {
-  id: string
-  name: string
-  slug: string
-}
+  id: string;
+  name: string;
+  slug: string;
+};
 
 type RegionDetail = RegionItem & {
-  dances: Array<{ id: string; name: string; slug: string }>
-}
+  dances: Array<{ id: string; name: string; slug: string }>;
+};
 
-const route = useRoute()
-const { apiFetch } = useApi()
-const { mediaUrl } = useMedia()
+const route = useRoute();
+const { apiFetch } = useApi();
+const { mediaUrl } = useMedia();
 
 const selectedSlug = computed(() => {
-  const slug = route.query.slug
-  return typeof slug === "string" && slug.length ? slug : null
-})
+  const slug = route.query.slug;
+  return typeof slug === "string" && slug.length ? slug : null;
+});
 
 const { data } = await useAsyncData(
   () => `dance-${selectedSlug.value || "default"}`,
   async () => {
-    const regions = await apiFetch<RegionItem[]>("/regions")
+    const regions = await apiFetch<RegionItem[]>("/regions");
 
-    let danceSlug = selectedSlug.value
+    let danceSlug = selectedSlug.value;
     if (!danceSlug) {
-      const firstRegion = regions[0]
+      const firstRegion = regions[0];
       if (!firstRegion) {
-        return null
+        return null;
       }
-      const regionDetail = await apiFetch<RegionDetail>(`/regions/${firstRegion.slug}`)
-      danceSlug = regionDetail.dances[0]?.slug || null
+      const regionDetail = await apiFetch<RegionDetail>(
+        `/regions/${firstRegion.slug}`
+      );
+      danceSlug = regionDetail.dances[0]?.slug || null;
       if (!danceSlug) {
-        return null
+        return null;
       }
     }
 
-    const dance = await apiFetch<DanceResponse>(`/dances/${danceSlug}`)
-    const region = regions.find((item) => item.id === dance.region_id) || null
+    const dance = await apiFetch<DanceResponse>(`/dances/${danceSlug}`);
+    const region = regions.find((item) => item.id === dance.region_id) || null;
     const regionDetail = region
       ? await apiFetch<RegionDetail>(`/regions/${region.slug}`)
-      : null
+      : null;
 
-    let linkedCourseSlug: string | null = null
+    let linkedCourseSlug: string | null = null;
     try {
       const courseResponse = await apiFetch<{
-        success: boolean
-        data: { course: { slug: string } }
-      }>(`/dances/${danceSlug}/course`)
-      linkedCourseSlug = courseResponse.data.course.slug
+        success: boolean;
+        data: { course: { slug: string } };
+      }>(`/dances/${danceSlug}/course`);
+      linkedCourseSlug = courseResponse.data.course.slug;
     } catch {
-      linkedCourseSlug = null
+      linkedCourseSlug = null;
     }
 
     return {
@@ -187,53 +203,57 @@ const { data } = await useAsyncData(
       region,
       regionDetail,
       linkedCourseSlug,
-    }
-  },
-)
+    };
+  }
+);
 
-const dance = computed(() => data.value?.dance || null)
-const regionName = computed(() => data.value?.region?.name || "")
-const linkedCourseSlug = computed(() => data.value?.linkedCourseSlug || null)
+const dance = computed(() => data.value?.dance || null);
+const regionName = computed(() => data.value?.region?.name || "");
+const linkedCourseSlug = computed(() => data.value?.linkedCourseSlug || null);
 
 const heroImage = computed(() => {
-  const historyImage = dance.value?.history_blocks[0]?.image_key
-  const costumeImage = dance.value?.costume_images[0]?.image_key
+  const historyImage = dance.value?.history_blocks[0]?.image_key;
+  const costumeImage = dance.value?.costume_images[0]?.image_key;
   const mediaImage =
     dance.value?.media.find((item) => item.thumbnail_key)?.thumbnail_key ||
-    dance.value?.media.find((item) => item.media_type === "image")?.media_key
+    dance.value?.media.find((item) => item.media_type === "image")?.media_key;
 
-  return mediaUrl(historyImage || costumeImage || mediaImage) || fallbackHero
-})
+  return mediaUrl(historyImage || costumeImage || mediaImage) || fallbackHero;
+});
 
 const historyBlocks = computed(() =>
   (dance.value?.history_blocks || []).map((block) => ({
     id: block.id,
     text: block.text_content,
     image: mediaUrl(block.image_key) || fallbackGallery,
-  })),
-)
+  }))
+);
 
 const costumeImages = computed(() =>
-  (dance.value?.costume_images || []).map((item) => mediaUrl(item.image_key)).filter(Boolean),
-)
+  (dance.value?.costume_images || [])
+    .map((item) => mediaUrl(item.image_key))
+    .filter(Boolean)
+);
 
 const photoMedia = computed(() =>
   (dance.value?.media || [])
     .filter((item) => item.media_type === "image")
     .map((item) => mediaUrl(item.media_key))
-    .filter(Boolean),
-)
+    .filter(Boolean)
+);
 
 const videoMedia = computed(() =>
   (dance.value?.media || [])
     .filter((item) => item.media_type === "video")
     .map((item) => mediaUrl(item.media_key))
-    .filter(Boolean),
-)
+    .filter(Boolean)
+);
 
 const relatedDances = computed(() =>
-  (data.value?.regionDetail?.dances || []).filter((item) => item.slug !== dance.value?.slug),
-)
+  (data.value?.regionDetail?.dances || []).filter(
+    (item) => item.slug !== dance.value?.slug
+  )
+);
 </script>
 
 <style lang="scss">
@@ -407,23 +427,62 @@ const relatedDances = computed(() =>
     margin-bottom: 10px;
   }
 
-  .about_dance-tab {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: space-between;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
+    margin-top: 50px;
+  }
 
-    > img,
-    > video {
-      width: 20%;
-      object-fit: cover;
+  .tab-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 6 / 8;
+
+    img,
+    video {
+      width: 100%;
+      height: 100%;
+      display: block;
       border-radius: 20px;
+      object-fit: cover;
       background: #11243f;
+    }
+
+    video {
+      object-fit: cover;
+    }
+  }
+
+  // Адаптивность
+  @media (max-width: 1024px) {
+    .media-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .media-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .tab-item {
+      aspect-ratio: 4 / 5;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .media-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .tab-item {
+      aspect-ratio: 16 / 9;
     }
   }
 }
@@ -442,5 +501,11 @@ const relatedDances = computed(() =>
   color: #11243f;
   text-decoration: none;
   font-family: "Inter", sans-serif;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #11243f;
+    color: white;
+  }
 }
 </style>

@@ -167,7 +167,9 @@
                         :key="question.id"
                         class="text-question"
                       >
-                        <p class="text-question__label">{{ question.question }}</p>
+                        <p class="text-question__label">
+                          {{ question.question }}
+                        </p>
                         <input
                           v-model="writeAnswers[question.id]"
                           type="text"
@@ -227,6 +229,13 @@
           <p v-if="testResultMessage" class="test-result-message">
             {{ testResultMessage }}
           </p>
+          <p
+            @click="goToPage('catalog')"
+            v-if="testResultMessage"
+            class="test-result-message-next"
+          >
+            Перейти на страницу курсов
+          </p>
         </div>
       </template>
     </div>
@@ -238,7 +247,13 @@
 import Header from "@/component/header/header.vue";
 import Footer from "@/component/footer/footer.vue";
 import bookIcon from "@/assets/img/book.png";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
+
+const goToPage = (page: any) => {
+  router.push(`/${page}`);
+};
 type CourseResponse = {
   id: string;
   name: string;
@@ -990,6 +1005,18 @@ const submitTest = async () => {
   font-size: 18px;
   color: #11243f;
   margin-top: 20px;
+}
+
+.test-result-message-next {
+  text-align: center;
+  font-size: 18px;
+  color: #11243f;
+  margin-top: 20px;
+  transition: all 0.2s ease;
+  text-decoration: underline;
+  &:hover {
+    transform: scale(1.05);
+  }
 }
 
 @keyframes slideDown {

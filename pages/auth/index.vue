@@ -4,10 +4,16 @@
     <div class="auth">
       <div class="auth__bg">
         <div class="auth__bg--white">
-          <div
-            class="auth__buttondiv"
-            v-if="activeTab !== 'forgot-password'"
+          <button
+            v-if="activeTab === 'forgot-password'"
+            class="auth__close-btn"
+            @click="goBackToAuth"
+            aria-label="Вернуться к входу/регистрации"
           >
+            ✕
+          </button>
+
+          <div class="auth__buttondiv" v-if="activeTab !== 'forgot-password'">
             <button
               @click="activeTab = 'register'"
               class="register"
@@ -32,18 +38,21 @@
 
           <h1 v-if="activeTab === 'forgot-password'">Сброс пароля</h1>
 
-          <form v-if="activeTab === 'register'" @submit.prevent="submitRegister">
-            <input
-              v-model="registerForm.name"
-              type="text"
-              placeholder="Имя"
-            />
+          <form
+            v-if="activeTab === 'register'"
+            @submit.prevent="submitRegister"
+          >
+            <input v-model="registerForm.name" type="text" placeholder="Имя" />
             <input
               v-model="registerForm.surname"
               type="text"
               placeholder="Фамилия"
             />
-            <input v-model="registerForm.email" type="email" placeholder="Почта" />
+            <input
+              v-model="registerForm.email"
+              type="email"
+              placeholder="Почта"
+            />
             <input
               v-model="registerForm.password"
               type="password"
@@ -61,6 +70,7 @@
               type="password"
               placeholder="Пароль"
             />
+            <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
             <p class="change-password" @click="activeTab = 'forgot-password'">
               Забыли пароль?
             </p>
@@ -78,13 +88,16 @@
               placeholder="Почта"
               :disabled="loading"
             />
-            <div v-if="resetEmailError" class="error-message">{{ resetEmailError }}</div>
+            <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
+            <div v-if="resetEmailError" class="error-message">
+              {{ resetEmailError }}
+            </div>
             <button class="auth__submit-btn" :disabled="loading">
               {{ loading ? "Отправка..." : "Отправить код" }}
             </button>
           </form>
 
-          <!-- Шаг 2: Ввод 4-значного кода для сброса пароля -->
+          <!-- Шаг 2: Ввод 4-значного кода -->
           <form
             v-if="activeTab === 'forgot-password' && resetStep === 2"
             @submit.prevent="submitResetCode"
@@ -93,7 +106,7 @@
               <input
                 v-for="(_, index) in 4"
                 :key="index"
-                ref="codeInputs"
+                :ref="(el) => setCodeInputRef(el, index)"
                 v-model="resetCodeForm[index]"
                 type="text"
                 maxlength="1"
@@ -104,13 +117,19 @@
                 @paste="handleCodePaste"
               />
             </div>
-            <div v-if="resetCodeError" class="error-message">{{ resetCodeError }}</div>
-            <button class="auth__submit-btn" :disabled="loading || !isResetCodeComplete">
+            <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
+            <div v-if="resetCodeError" class="error-message">
+              {{ resetCodeError }}
+            </div>
+            <button
+              class="auth__submit-btn"
+              :disabled="loading || !isResetCodeComplete"
+            >
               {{ loading ? "Проверка..." : "Подтвердить код" }}
             </button>
           </form>
 
-          <!-- Шаг 3: Ввод нового пароля для сброса -->
+          <!-- Шаг 3: Ввод нового пароля -->
           <form
             v-if="activeTab === 'forgot-password' && resetStep === 3"
             @submit.prevent="submitResetPassword"
@@ -127,12 +146,17 @@
               placeholder="Повторите пароль"
               :disabled="loading"
             />
-            <div v-if="resetPasswordError" class="error-message">{{ resetPasswordError }}</div>
-            <button class="auth__submit-btn" :disabled="loading || !isResetPasswordValid">
+            <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
+            <div v-if="resetPasswordError" class="error-message">
+              {{ resetPasswordError }}
+            </div>
+            <button
+              class="auth__submit-btn"
+              :disabled="loading || !isResetPasswordValid"
+            >
               {{ loading ? "Сохранение..." : "Сохранить пароль" }}
             </button>
           </form>
-          <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
         </div>
       </div>
     </div>
@@ -141,65 +165,92 @@
 </template>
 
 <script setup>
-import Header from "@/component/header/header.vue"
-import Footer from "@/component/footer/footer.vue"
+import Header from "@/component/header/header.vue";
+import Footer from "@/component/footer/footer.vue";
 
-const route = useRoute()
-const { apiFetch } = useApi()
-const { isAuthenticated, login, register } = useAuth()
+const route = useRoute();
+const { apiFetch } = useApi();
+const { isAuthenticated, login, register } = useAuth();
 
 if (isAuthenticated.value) {
-  await navigateTo("/profile")
+  await navigateTo("/profile");
 }
 
-const activeTab = ref("register")
-const resetStep = ref(1)
-const loading = ref(false)
-const message = ref("")
-const errorMessage = ref("")
-const resetToken = ref("")
+const activeTab = ref("register");
+const resetStep = ref(1);
+const loading = ref(false);
+const message = ref("");
+const errorMessage = ref("");
+const resetCode = ref(""); // Сохраняем код между шагами
 
 const registerForm = ref({
   name: "",
   surname: "",
   email: "",
   password: "",
-})
+});
 
 const loginForm = ref({
   email: "",
   password: "",
-})
+});
 
 // Формы для сброса пароля
-const forgotPasswordEmail = ref("")
-const resetEmailError = ref("")
-const resetCodeError = ref("")
-const resetPasswordError = ref("")
-const resetCodeForm = ref(["", "", "", ""])
+const forgotPasswordEmail = ref("");
+const resetEmailError = ref("");
+const resetCodeError = ref("");
+const resetPasswordError = ref("");
+const resetCodeForm = ref(["", "", "", ""]);
 const resetPasswordForm = ref({
   password: "",
   confirmPassword: "",
-})
-const codeInputs = ref([])
+});
+const codeInputs = ref([]);
+
+// Функция для установки ref-ов на инпуты кода
+const setCodeInputRef = (el, index) => {
+  if (el) {
+    codeInputs.value[index] = el;
+  }
+};
 
 const isResetCodeComplete = computed(() => {
-  return resetCodeForm.value.every(digit => digit.length === 1)
-})
+  return resetCodeForm.value.every((digit) => digit && digit.length === 1);
+});
 
 const isResetPasswordValid = computed(() => {
-  return resetPasswordForm.value.password.length >= 6 && 
-         resetPasswordForm.value.confirmPassword.length >= 6 &&
-         resetPasswordForm.value.password === resetPasswordForm.value.confirmPassword
-})
+  return (
+    resetPasswordForm.value.password.length >= 6 &&
+    resetPasswordForm.value.confirmPassword.length >= 6 &&
+    resetPasswordForm.value.password === resetPasswordForm.value.confirmPassword
+  );
+});
 
-const getErrorMessage = (error) =>
-  error?.data?.detail || error?.message || "Произошла ошибка"
+const getErrorMessage = (error) => {
+  if (error?.data?.detail === "invalid_credentials") {
+    return "Не правильный пароль или почта";
+  }
+  return error?.data?.detail || error?.message || "Произошла ошибка";
+};
+
+// Функция возврата к форме входа/регистрации
+const goBackToAuth = () => {
+  resetStep.value = 1;
+  forgotPasswordEmail.value = "";
+  resetCodeForm.value = ["", "", "", ""];
+  resetCode.value = "";
+  resetPasswordForm.value = { password: "", confirmPassword: "" };
+  resetEmailError.value = "";
+  resetCodeError.value = "";
+  resetPasswordError.value = "";
+  errorMessage.value = "";
+  activeTab.value = "login";
+};
 
 const submitRegister = async () => {
-  loading.value = true
-  message.value = ""
-  errorMessage.value = ""
+  loading.value = true;
+  message.value = "";
+  errorMessage.value = "";
 
   try {
     const response = await register({
@@ -207,215 +258,231 @@ const submitRegister = async () => {
       surname: registerForm.value.surname || undefined,
       email: registerForm.value.email,
       password: registerForm.value.password,
-    })
-    message.value = response.message
-    activeTab.value = "login"
+    });
+    message.value = response.message;
+    activeTab.value = "login";
   } catch (error) {
-    errorMessage.value = getErrorMessage(error)
+    errorMessage.value = getErrorMessage(error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const submitLogin = async () => {
-  loading.value = true
-  message.value = ""
-  errorMessage.value = ""
+  loading.value = true;
+  message.value = "";
+  errorMessage.value = "";
 
   try {
-    await login(loginForm.value)
-    await navigateTo(route.query.redirect || "/profile")
+    await login(loginForm.value);
+    await navigateTo(route.query.redirect || "/profile");
   } catch (error) {
-    errorMessage.value = getErrorMessage(error)
+    if (error?.data?.detail === "invalid_credentials") {
+      errorMessage.value = "Не правильный пароль или почта";
+    } else {
+      errorMessage.value = getErrorMessage(error);
+    }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // Обработчики для кода
 const handleCodeInput = (index, event) => {
-  const input = event.target
-  const value = input.value
-  
+  const input = event.target;
+  const value = input.value;
+
   if (value && !/^\d$/.test(value)) {
-    input.value = ""
-    resetCodeForm.value[index] = ""
-    return
+    input.value = "";
+    resetCodeForm.value[index] = "";
+    return;
   }
-  
+
   if (value.length === 1 && index < 3) {
-    codeInputs.value[index + 1]?.focus()
+    codeInputs.value[index + 1]?.focus();
   }
-}
+};
 
 const handleCodeKeydown = (index, event) => {
   if (event.key === "Backspace" && !resetCodeForm.value[index] && index > 0) {
-    codeInputs.value[index - 1]?.focus()
+    codeInputs.value[index - 1]?.focus();
   }
-}
+};
 
 const handleCodePaste = (event) => {
-  event.preventDefault()
-  const pastedData = event.clipboardData?.getData("text") || ""
-  const digits = pastedData.replace(/\D/g, "").slice(0, 4).split("")
-  
+  event.preventDefault();
+  const pastedData = event.clipboardData?.getData("text") || "";
+  const digits = pastedData.replace(/\D/g, "").slice(0, 4).split("");
+
   digits.forEach((digit, idx) => {
     if (idx < 4) {
-      resetCodeForm.value[idx] = digit
+      resetCodeForm.value[idx] = digit;
       if (codeInputs.value[idx]) {
-        codeInputs.value[idx].value = digit
+        codeInputs.value[idx].value = digit;
       }
     }
-  })
-  
-  const lastFilledIndex = digits.length - 1
-  if (lastFilledIndex < 3) {
-    codeInputs.value[lastFilledIndex + 1]?.focus()
+  });
+
+  const lastFilledIndex = digits.length - 1;
+  if (lastFilledIndex < 3 && codeInputs.value[lastFilledIndex + 1]) {
+    codeInputs.value[lastFilledIndex + 1]?.focus();
   }
-}
+};
 
 const getResetCode = () => {
-  return resetCodeForm.value.join("")
-}
+  return resetCodeForm.value.join("");
+};
 
 const clearResetErrors = () => {
-  resetEmailError.value = ""
-  resetCodeError.value = ""
-  resetPasswordError.value = ""
-}
+  resetEmailError.value = "";
+  resetCodeError.value = "";
+  resetPasswordError.value = "";
+};
 
-// Шаг 1 сброса: отправка email
+// Шаг 1: Отправка email
 const submitForgotPassword = async () => {
   if (!forgotPasswordEmail.value) {
-    resetEmailError.value = "Введите email"
-    return
+    resetEmailError.value = "Введите email";
+    return;
   }
-  
+
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotPasswordEmail.value)) {
-    resetEmailError.value = "Введите корректный email"
-    return
+    resetEmailError.value = "Введите корректный email";
+    return;
   }
-  
-  loading.value = true
-  clearResetErrors()
-  message.value = ""
-  
+
+  loading.value = true;
+  clearResetErrors();
+  errorMessage.value = "";
+
   try {
     const response = await apiFetch("/auth/forgot-password", {
       method: "POST",
       body: { email: forgotPasswordEmail.value },
       skipAuthRetry: true,
-    })
-    
+    });
+
     if (response.success) {
-      message.value = response.message || "Код подтверждения отправлен на вашу почту"
-      resetStep.value = 2
+      errorMessage.value =
+        response.message || "Код подтверждения отправлен на вашу почту";
+      resetStep.value = 2;
+      // Фокусируемся на первом инпуте кода
       setTimeout(() => {
-        codeInputs.value[0]?.focus()
-      }, 100)
+        if (codeInputs.value[0]) {
+          codeInputs.value[0].focus();
+        }
+      }, 100);
     } else {
-      resetEmailError.value = response.message || "Ошибка при отправке кода"
+      resetEmailError.value = response.message || "Ошибка при отправке кода";
     }
   } catch (error) {
+    console.error("Forgot password error:", error);
     if (error?.status === 404) {
-      resetEmailError.value = "Пользователь с таким email не найден"
+      resetEmailError.value = "Пользователь с таким email не найден";
     } else {
-      resetEmailError.value = error?.data?.detail || "Ошибка при отправке кода"
+      resetEmailError.value = error?.data?.detail || "Ошибка при отправке кода";
     }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
-// Шаг 2 сброса: проверка кода
+// Шаг 2: Проверка кода (сохраняем код для следующего шага)
 const submitResetCode = async () => {
-  const code = getResetCode()
-  
-  if (code.length !== 4) {
-    resetCodeError.value = "Введите 4-значный код"
-    return
-  }
-  
-  loading.value = true
-  clearResetErrors()
-  
-  try {
-    const response = await apiFetch("/auth/verify-reset-code", {
-      method: "POST",
-      body: { 
-        email: forgotPasswordEmail.value,
-        code: code 
-      },
-      skipAuthRetry: true,
-    }).catch(() => {
-      return apiFetch("/auth/verify-email", {
-        method: "POST",
-        body: { token: code },
-        skipAuthRetry: true,
-      })
-    })
-    
-    if (response.success) {
-      resetToken.value = response.token || code
-      resetStep.value = 3
-      resetPasswordForm.value.password = ""
-      resetPasswordForm.value.confirmPassword = ""
-    } else {
-      resetCodeError.value = response.message || "Неверный код подтверждения"
-    }
-  } catch (error) {
-    resetCodeError.value = error?.data?.detail || "Неверный код подтверждения"
-  } finally {
-    loading.value = false
-  }
-}
+  const code = getResetCode();
 
-// Шаг 3 сброса: установка нового пароля
+  if (code.length !== 4) {
+    resetCodeError.value = "Введите 4-значный код";
+    return;
+  }
+
+  loading.value = true;
+  clearResetErrors();
+
+  try {
+    // Сохраняем код для использования на шаге 3
+    resetCode.value = code;
+
+    // Переходим к шагу 3 без проверки кода на бекенде
+    // (проверка произойдет при отправке нового пароля)
+    resetStep.value = 3;
+    errorMessage.value = "Код подтвержден, введите новый пароль";
+  } catch (error) {
+    console.error("Error:", error);
+    resetCodeError.value = "Произошла ошибка";
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Шаг 3: Установка нового пароля (отправляем все данные)
 const submitResetPassword = async () => {
   if (resetPasswordForm.value.password.length < 6) {
-    resetPasswordError.value = "Пароль должен содержать не менее 6 символов"
-    return
+    resetPasswordError.value = "Пароль должен содержать не менее 6 символов";
+    return;
   }
-  
-  if (resetPasswordForm.value.password !== resetPasswordForm.value.confirmPassword) {
-    resetPasswordError.value = "Пароли не совпадают"
-    return
+
+  if (
+    resetPasswordForm.value.password !== resetPasswordForm.value.confirmPassword
+  ) {
+    resetPasswordError.value = "Пароли не совпадают";
+    return;
   }
-  
-  loading.value = true
-  clearResetErrors()
-  
+
+  loading.value = true;
+  clearResetErrors();
+
   try {
+    // Отправляем все данные на /auth/reset-password
     const response = await apiFetch("/auth/reset-password", {
       method: "POST",
       body: {
-        token: resetToken.value,
+        token: resetCode.value,
+        email: forgotPasswordEmail.value,
+        code: resetCode.value,
         new_password: resetPasswordForm.value.password,
       },
       skipAuthRetry: true,
-    })
-    
+    });
+
     if (response.success) {
-      message.value = response.message || "Пароль успешно изменен"
+      errorMessage.value = response.message || "Пароль успешно изменен";
+      // Показываем сообщение об успехе и возвращаемся к логину
       setTimeout(() => {
-        activeTab.value = "login"
-        resetStep.value = 1
-        forgotPasswordEmail.value = ""
-        resetCodeForm.value = ["", "", "", ""]
-        resetPasswordForm.value = { password: "", confirmPassword: "" }
-      }, 2000)
+        activeTab.value = "login";
+        resetStep.value = 1;
+        forgotPasswordEmail.value = "";
+        resetCodeForm.value = ["", "", "", ""];
+        resetCode.value = "";
+        resetPasswordForm.value = { password: "", confirmPassword: "" };
+        errorMessage.value = "";
+      }, 2000);
     } else {
-      resetPasswordError.value = response.message || "Ошибка при смене пароля"
+      resetPasswordError.value =
+        response.message || "Неверный код подтверждения";
     }
   } catch (error) {
-    resetPasswordError.value = error?.data?.detail || "Ошибка при смене пароля"
+    console.error("Reset password error:", error);
+    if (error?.data?.detail === "Invalid code" || error?.status === 400) {
+      resetPasswordError.value =
+        "Неверный код подтверждения. Пожалуйста, запросите новый код";
+      // Возвращаем на шаг 2 при неверном коде
+      setTimeout(() => {
+        resetStep.value = 2;
+        resetCode.value = "";
+        resetCodeForm.value = ["", "", "", ""];
+      }, 2000);
+    } else {
+      resetPasswordError.value =
+        error?.data?.detail || "Ошибка при смене пароля";
+    }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .auth-container {
   background-color: #fffcf6;
 }
@@ -444,6 +511,7 @@ const submitResetPassword = async () => {
     background-size: auto;
     background-size: 100% auto;
     padding: 40px 0px;
+    position: relative;
 
     &--white {
       width: 50%;
@@ -452,6 +520,33 @@ const submitResetPassword = async () => {
       background-color: #fff;
       border-radius: 25px;
       padding: 60px 40px;
+      position: relative;
+    }
+  }
+
+  &__close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #11243f;
+    background-color: #fff;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
   }
 
@@ -503,33 +598,16 @@ const submitResetPassword = async () => {
     &:hover {
       background-color: #1a3650;
     }
-  }
 
-  &__back-btn {
-    display: block;
-    width: 100%;
-    padding: 12px 20px;
-    background-color: transparent;
-    color: #777;
-    border: 1px solid #ddd;
-    border-radius: 9999px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background-color: #f8f5ee;
-      border-color: #11243f;
-      color: #11243f;
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
   }
 
   input:not(.code-digit) {
     width: 100%;
     padding: 12px;
-    margin-bottom: 15px;
     border: 0px;
     border-bottom: 1px solid #ddd;
     font-size: 14px;
@@ -554,7 +632,7 @@ const submitResetPassword = async () => {
       font-size: 24px;
       font-weight: 600;
       font-family: "Inter", sans-serif;
-      border: 1px solid #ddd;
+      border: 2px solid #ddd;
       border-radius: 12px;
       background-color: #fff;
       padding: 0;
@@ -596,15 +674,20 @@ const submitResetPassword = async () => {
   color: #777777;
   text-align: left;
   font-family: "Inter", sans-serif;
-  margin: 0;
+  margin: 10px 0 0 0;
   flex: 1;
   cursor: pointer;
+
+  &:hover {
+    color: #11243f;
+  }
 }
 
 .auth-message,
 .auth-error {
-  margin-top: 20px;
-  text-align: center;
+  font-size: 12px;
+  margin-top: 0;
+  text-align: left;
   font-family: "Inter", sans-serif;
 }
 

@@ -43,11 +43,11 @@
       </div>
 
       <div
-        v-for="(region, index) in regions"
+        v-for="(region, index) in sortedRegions"
         :key="region.id"
         class="encyclopedia-block1"
       >
-        <img v-if="index % 2 === 0" :src="region.image" :alt="region.name" />
+        <img v-if="index % 2 === 0" :src="getRegionImage(index)" :alt="region.name" />
         <div class="encyclopedia-block1__text">
           <h1>{{ region.name }}</h1>
           <div class="encyclopedia-block1__block">
@@ -79,7 +79,7 @@
             </svg>
           </NuxtLink>
         </div>
-        <img v-if="index % 2 === 1" :src="region.image" :alt="region.name" />
+        <img v-if="index % 2 === 1" :src="getRegionImage(index)" :alt="region.name" />
       </div>
     </div>
     <Footer />
@@ -104,14 +104,27 @@ type RegionListItem = {
   id: string;
   name: string;
   slug: string;
-  images: Array<{ image_key: string }>;
 };
 
 type RegionDetail = RegionListItem & {
   dances: Array<{ id: string; name: string; slug: string }>;
 };
 
-const regionFallbackImages = [
+// Правильный порядок регионов (используем slug'и из ответа API)
+const regionOrder = [
+  "afrika",           // Африка
+  "evropa",           // Европа
+  "aziia",            // Азия
+  "amerika",          // Америка
+  "avstraliia",       // Австралия
+  "severnyi-kavkaz",  // Северный Кавказ
+  "povolzhe-i-priurale", // Поволжье и Приуралье
+  "sibir-i-dalnii-vostok", // Сибирь и Дальний Восток
+  "severo-zapad-i-tsentralnaia-rossiia" // Северо-Запад и Центральная Россия
+];
+
+// Локальные изображения в том же порядке
+const localImages = [
   africaImage,
   europeImage,
   asiaImage,
@@ -123,8 +136,11 @@ const regionFallbackImages = [
   centralRussiaImage,
 ];
 
+const getRegionImage = (index: number) => {
+  return localImages[index % localImages.length];
+};
+
 const { apiFetch } = useApi();
-const { mediaUrl } = useMedia();
 
 const { data } = await useAsyncData("encyclopedia-regions", async () => {
   const regionList = await apiFetch<RegionListItem[]>("/regions");
@@ -134,16 +150,28 @@ const { data } = await useAsyncData("encyclopedia-regions", async () => {
     )
   );
 
-  return detailedRegions.map((region, index) => ({
+  // Возвращаем только данные без изображений с бэка
+  return detailedRegions.map((region) => ({
     ...region,
-    image:
-      mediaUrl(region.images[0]?.image_key) ||
-      regionFallbackImages[index % regionFallbackImages.length],
     dances: region.dances.slice(0, 10),
   }));
 });
 
-const regions = computed(() => data.value || []);
+// Сортируем регионы в нужном порядке
+const sortedRegions = computed(() => {
+  if (!data.value) return [];
+  
+  return [...data.value].sort((a, b) => {
+    const indexA = regionOrder.indexOf(a.slug);
+    const indexB = regionOrder.indexOf(b.slug);
+    
+    // Если регион не найден в порядке, помещаем его в конец
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    
+    return indexA - indexB;
+  });
+});
 
 // Поиск
 const searchQuery = ref("");
@@ -152,7 +180,7 @@ const searchResults = ref<
   Array<{ danceName: string; danceSlug: string; regionName: string }>
 >([]);
 
-// Функция поиска танцев
+// Функция поиска танцев (используем отсортированные регионы)
 const searchDances = (query: string) => {
   if (!query.trim()) {
     searchResults.value = [];
@@ -166,7 +194,7 @@ const searchDances = (query: string) => {
   }> = [];
   const lowerQuery = query.toLowerCase();
 
-  regions.value.forEach((region) => {
+  sortedRegions.value.forEach((region) => {
     region.dances.forEach((dance) => {
       if (dance.name.toLowerCase().includes(lowerQuery)) {
         results.push({
@@ -178,7 +206,7 @@ const searchDances = (query: string) => {
     });
   });
 
-  searchResults.value = results.slice(0, 10); // Ограничиваем 10 результатами
+  searchResults.value = results.slice(0, 10);
 };
 
 const onSearchInput = () => {

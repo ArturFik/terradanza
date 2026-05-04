@@ -17,56 +17,109 @@
       <div class="home-block2">
         <h1>Карта</h1>
         <div class="home-map">
-          <div class="map-item privol" @click.stop="openContinent('privol')">
+          <div class="map-item privol">
             <img
               src="@/assets/img/privol.png"
               alt="privol"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/privolwhite.png"
+              alt="privol"
+              class="hover-img"
             />
           </div>
-          <div class="map-item america" @click.stop="openContinent('america')">
+          <div class="map-item america">
             <img
               src="@/assets/img/america.png"
               alt="America"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/americawhite.png"
+              alt="America"
+              class="hover-img"
             />
           </div>
-          <div class="map-item africa" @click.stop="openContinent('africa')">
+          <div class="map-item africa">
             <img
               src="@/assets/img/africa.png"
               alt="Africa"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/africawhite.png"
+              alt="Africa"
+              class="hover-img"
             />
           </div>
-          <div class="map-item europa" @click.stop="openContinent('europa')">
+          <div class="map-item europa">
             <img
               src="@/assets/img/europa.png"
               alt="Europa"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/europawhite.png"
+              alt="Europa"
+              class="hover-img"
             />
           </div>
-          <div class="map-item asia" @click.stop="openContinent('asia')">
-            <img src="@/assets/img/asia.png" alt="Asia" />
+          <div class="map-item asia">
+            <img src="@/assets/img/asia.png" alt="Asia" class="default-img" />
+            <img
+              src="@/assets/img/asiawhite.png"
+              alt="Asia"
+              class="hover-img"
+            />
           </div>
-          <div class="map-item kavkaz" @click.stop="openContinent('kavkaz')">
+          <div class="map-item kavkaz">
             <img
               src="@/assets/img/kavkaz.png"
               alt="Kavkaz"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/kavkazwhite.png"
+              alt="Kavkaz"
+              class="hover-img"
             />
           </div>
           
-          <div class="map-item west" @click.stop="openContinent('west')">
+          <div class="map-item west">
             <img
               src="@/assets/img/west.png"
               alt="west"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/westwhite.png"
+              alt="west"
+              class="hover-img"
             />
           </div>
-          <div class="map-item center" @click.stop="openContinent('center')">
+          <div class="map-item center">
             <img
               src="@/assets/img/center.png"
               alt="center"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/centerwhite.png"
+              alt="center"
+              class="hover-img"
             />
           </div>
-          <div class="map-item australia" @click.stop="openContinent('australia')">
+          <div class="map-item australia">
             <img
               src="@/assets/img/avstralia.png"
               alt="Australia"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/avstraliawhite.png"
+              alt="Australia"
+              class="hover-img"
             />
           </div>
         </div>
@@ -197,87 +250,17 @@
       </div>
     </div>
     <Footer />
-
-    <!-- Модальное окно с континентом -->
-    <div v-if="activeContinent" class="continent-overlay" @click="closeContinent">
-      <div class="continent-modal" @click.stop>
-        <img :src="getContinentImage(activeContinent)" :alt="activeContinent" />
-        <div class="continent-info">
-          <template v-if="activeContinent === 'america'">
-            <div class="continent-text north-america">
-              <p>Кол-во танцев: 24</p>
-              <span @click="goToPage('encyclopedia')">Узнать больше →</span>
-            </div>
-            <div class="continent-text south-america">
-              <p>Кол-во танцев: 18</p>
-              <span @click="goToPage('encyclopedia')">Узнать больше →</span>
-            </div>
-          </template>
-          <template v-else>
-            <div class="continent-text">
-              <p>Кол-во танцев: {{ getDancesCount(activeContinent) }}</p>
-              <span @click="goToPage('encyclopedia')">Узнать больше →</span>
-            </div>
-          </template>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import Header from "../component/header/header.vue";
 import Footer from "../component/footer/footer.vue";
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const activeContinent = ref(null)
-
-const continentImages = {
-  america: new URL('@/assets/img/americawhite.png', import.meta.url).href,
-  africa: new URL('@/assets/img/africawhite.png', import.meta.url).href,
-  europa: new URL('@/assets/img/europawhite.png', import.meta.url).href,
-  asia: new URL('@/assets/img/asiawhite.png', import.meta.url).href,
-  kavkaz: new URL('@/assets/img/kavkazwhite.png', import.meta.url).href,
-  privol: new URL('@/assets/img/privolwhite.png', import.meta.url).href,
-  west: new URL('@/assets/img/westwhite.png', import.meta.url).href,
-  center: new URL('@/assets/img/centerwhite.png', import.meta.url).href,
-  australia: new URL('@/assets/img/avstraliawhite.png', import.meta.url).href,
-}
-
-const dancesCount = {
-  america: 42,
-  africa: 35,
-  europa: 28,
-  asia: 31,
-  kavkaz: 15,
-  privol: 12,
-  west: 20,
-  center: 18,
-  australia: 10,
-}
-
-const openContinent = (continent) => {
-  activeContinent.value = continent
-  document.body.style.overflow = 'hidden'
-}
-
-const closeContinent = () => {
-  activeContinent.value = null
-  document.body.style.overflow = ''
-}
-
-const getContinentImage = (continent) => {
-  return continentImages[continent] || ''
-}
-
-const getDancesCount = (continent) => {
-  return dancesCount[continent] || 0
-}
 
 const goToPage = (page) => {
-  closeContinent()
   router.push(`/${page}`)
 }
 </script>
@@ -361,17 +344,35 @@ const goToPage = (page) => {
   .map-item {
     position: absolute;
     cursor: pointer;
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: scale(1.05);
-      filter: brightness(1.1);
-    }
 
     img {
       width: 100%;
       height: auto;
       display: block;
+      transition: opacity 0.3s ease;
+    }
+
+    .default-img {
+      opacity: 1;
+    }
+
+    .hover-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+      opacity: 0;
+    }
+
+    &:hover {
+      .default-img {
+        opacity: 0;
+      }
+
+      .hover-img {
+        opacity: 1;
+      }
     }
   }
 
@@ -432,110 +433,6 @@ const goToPage = (page) => {
   }
 }
 
-// Модальное окно
-.continent-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(255, 252, 246, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  cursor: pointer;
-}
-
-.continent-modal {
-  position: relative;
-  max-width: 600px;
-  width: 90%;
-  cursor: default;
-  animation: fadeInScale 0.3s ease;
-
-  img {
-    width: 75%;
-    height: auto;
-    display: block;
-    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
-  }
-}
-
-.continent-info {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-
-  .continent-text {
-    position: absolute;
-    pointer-events: all;
-    text-align: center;
-
-    p {
-      font-size: 18px;
-      font-weight: 600;
-      color: #fff;
-      margin: 0 0 8px 0;
-      font-family: "Inter", sans-serif;
-      text-shadow: 0 1px 3px rgba(255, 252, 246, 0.8);
-    }
-
-    span {
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      cursor: pointer;
-      font-family: "Inter", sans-serif;
-      transition: color 0.2s ease;
-
-      &:hover {
-        color: #b6b6b6;
-        text-decoration: underline;
-      }
-    }
-  }
-
-  // Северная Америка
-  .north-america {
-    top: 37%;
-    left: 35%;
-    transform: translateX(-50%);
-    z-index: 99999;
-  }
-
-  // Южная Америка
-  .south-america {
-    top: 66%;
-    left: 51%;
-    transform: translateX(-50%);
-    z-index: 99999;
-  }
-
-  // Для остальных континентов — текст по центру
-  .continent-text:not(.north-america):not(.south-america) {
-    top: 50%;
-    left: 45%;
-    transform: translate(-50%, -50%);
-  }
-}
-
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @media (max-width: 768px) {
   .home {
     padding: 0 20px;
@@ -590,30 +487,6 @@ const goToPage = (page) => {
       width: 16%;
       left: 65%;
       top: 62%;
-    }
-  }
-
-  .continent-modal {
-    max-width: 90%;
-  }
-
-  .continent-info {
-    .north-america {
-      top: 15%;
-      left: 12%;
-    }
-
-    .south-america {
-      top: 55%;
-      left: 28%;
-    }
-
-    .continent-text p {
-      font-size: 14px;
-    }
-
-    .continent-text span {
-      font-size: 12px;
     }
   }
 }
