@@ -3,11 +3,7 @@
     <Header />
     <div v-if="course" class="about__course">
       <div class="about__course--view">
-        <img
-          :src="courseImage"
-          :alt="course.name"
-          class="course-image"
-        />
+        <img :src="courseImage" :alt="course.name" class="course-image" />
         <div class="course-content">
           <h1>{{ course.name }}</h1>
           <p class="course-description">
@@ -36,7 +32,9 @@
         </div>
       </div>
 
-      <h2 class="courses-title" v-if="course.teachers.length">ПРЕПОДАВАТЕЛИ:</h2>
+      <h2 class="courses-title" v-if="course.teachers.length">
+        ПРЕПОДАВАТЕЛИ:
+      </h2>
 
       <div class="teachers-grid" v-if="course.teachers.length">
         <div
@@ -52,29 +50,27 @@
           <h3 class="teacher-name">преподаватель</h3>
           <p class="teacher-description">{{ teacher.name }}</p>
           <div class="teacher-socials" v-if="teacher.contactLink">
-            <a
-              :href="teacher.contactLink"
-              class="social-icon"
-              target="_blank"
-            >
+            <a :href="teacher.contactLink" class="social-icon" target="_blank">
               <img :src="phoneIcon" alt="contact" />
             </a>
           </div>
         </div>
       </div>
 
-      <!-- Исправленная проверка на отображение уроков -->
-      <div v-if="isAuthenticated && isEnrolled && lessonColumns.some((column) => column.length)" class="lessons-section">
+      <div
+        v-if="
+          isAuthenticated &&
+          isEnrolled &&
+          lessonColumns.some((column) => column.length)
+        "
+        class="lessons-section"
+      >
         <div
           class="lessons-column"
           v-for="(column, colIndex) in lessonColumns"
           :key="colIndex"
         >
-          <div
-            v-for="lesson in column"
-            :key="lesson.id"
-            class="lesson-card"
-          >
+          <div v-for="lesson in column" :key="lesson.id" class="lesson-card">
             <div class="lesson-left">
               <div class="blue-rectangle">
                 <div class="lesson-number">[ {{ lesson.number }} ]</div>
@@ -91,18 +87,22 @@
         </div>
       </div>
 
-      <!-- Сообщение для неавторизованных -->
       <p v-else-if="!isAuthenticated" class="lessons-lock-note">
         Пожалуйста, авторизуйтесь для просмотра уроков.
       </p>
-      
-      <!-- Сообщение для тех, кто не записан -->
+
       <p v-else-if="isAuthenticated && !isEnrolled" class="lessons-lock-note">
         Вы не записаны на этот курс. Запишитесь, чтобы получить доступ к урокам.
       </p>
-      
-      <!-- Сообщение, если уроков нет -->
-      <p v-else-if="isAuthenticated && isEnrolled && !lessonColumns.some((column) => column.length)" class="lessons-lock-note">
+
+      <p
+        v-else-if="
+          isAuthenticated &&
+          isEnrolled &&
+          !lessonColumns.some((column) => column.length)
+        "
+        class="lessons-lock-note"
+      >
         Уроки для этого курса пока не добавлены.
       </p>
 
@@ -130,117 +130,117 @@
 </template>
 
 <script setup lang="ts">
-import Header from "@/component/header/header.vue"
-import Footer from "@/component/footer/footer.vue"
-import fallbackCourseImage from "@/assets/img/imgtest.png"
-import bookIcon from "@/assets/img/book.png"
-import phoneIcon from "@/assets/img/phone.png"
+import Header from "@/component/header/header.vue";
+import Footer from "@/component/footer/footer.vue";
+import fallbackCourseImage from "@/assets/img/imgtest.png";
+import bookIcon from "@/assets/img/book.png";
+import phoneIcon from "@/assets/img/phone.png";
 
 type CourseResponse = {
-  id: string
-  name: string
-  slug: string
-  description?: string | null
-  hours?: number | null
-  main_image_key?: string | null
-  lessons_count: number
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  hours?: number | null;
+  main_image_key?: string | null;
+  lessons_count: number;
   teachers: Array<{
-    id: string
-    name: string
-    image_key?: string | null
-    contact_link?: string | null
-  }>
-}
+    id: string;
+    name: string;
+    image_key?: string | null;
+    contact_link?: string | null;
+  }>;
+};
 
 type CourseListResponse = {
-  success: boolean
+  success: boolean;
   data: {
-    items: Array<{ slug: string }>
-  }
-}
+    items: Array<{ slug: string }>;
+  };
+};
 
 type LessonListResponse = {
-  success: boolean
+  success: boolean;
   data: {
     lessons: Array<{
-      id: string
-      name: string
-      description?: string | null
-      thumbnail_key?: string | null
-    }>
-  }
-}
+      id: string;
+      name: string;
+      description?: string | null;
+      thumbnail_key?: string | null;
+    }>;
+  };
+};
 
 type EnrollmentResponse = {
-  success: boolean
+  success: boolean;
   data: {
-    id: string
-    course_id: string
-    user_id: string
-    status: string
-    enrolled_at: string
-  }
-}
+    id: string;
+    course_id: string;
+    user_id: string;
+    status: string;
+    enrolled_at: string;
+  };
+};
 
-const route = useRoute()
-const { apiFetch } = useApi()
-const { mediaUrl } = useMedia()
-const { isAuthenticated, fetchMe } = useAuth()
+const route = useRoute();
+const { apiFetch } = useApi();
+const { mediaUrl } = useMedia();
+const { isAuthenticated, fetchMe } = useAuth();
 
-// Добавляем состояние для проверки записи на курс
-const isEnrolled = ref(false)
+const isEnrolled = ref(false);
 
 const selectedSlug = computed(() => {
-  const slug = route.query.slug
-  return typeof slug === "string" && slug.length ? slug : null
-})
+  const slug = route.query.slug;
+  return typeof slug === "string" && slug.length ? slug : null;
+});
 
-// Загружаем данные пользователя при монтировании
 onMounted(async () => {
-  await fetchMe()
-})
+  await fetchMe();
+});
 
 const { data } = await useAsyncData(
   () => `course-preview-${selectedSlug.value || "default"}`,
   async () => {
-    let courseSlug = selectedSlug.value
+    let courseSlug = selectedSlug.value;
 
     if (!courseSlug) {
-      const listResponse = await apiFetch<CourseListResponse>("/courses")
-      courseSlug = listResponse.data.items[0]?.slug || null
+      const listResponse = await apiFetch<CourseListResponse>("/courses");
+      courseSlug = listResponse.data.items[0]?.slug || null;
       if (!courseSlug) {
-        return null
+        return null;
       }
     }
 
-    const course = await apiFetch<CourseResponse>(`/courses/${courseSlug}`)
+    const course = await apiFetch<CourseResponse>(`/courses/${courseSlug}`);
 
-    let lessons: LessonListResponse["data"]["lessons"] = []
-    let enrolled = false
-    
-    // Проверяем авторизацию и запись на курс
+    let lessons: LessonListResponse["data"]["lessons"] = [];
+    let enrolled = false;
+
     if (isAuthenticated.value) {
       try {
-        // Пытаемся получить уроки (если пользователь записан, API вернет уроки)
-        const lessonResponse = await apiFetch<LessonListResponse>(`/courses/${courseSlug}/lessons`)
-        lessons = lessonResponse.data.lessons
-        enrolled = true // Если дошли сюда без ошибки, значит пользователь записан
+        const lessonResponse = await apiFetch<LessonListResponse>(
+          `/courses/${courseSlug}/lessons`
+        );
+        lessons = lessonResponse.data.lessons;
+        enrolled = true;
       } catch (error: any) {
-        // Если ошибка 403 или 401, значит пользователь не записан
-        lessons = []
-        enrolled = false
-        
-        // Проверяем статус записи через отдельный эндпоинт (если есть)
+        lessons = [];
+        enrolled = false;
+
         try {
-          const enrollmentStatus = await apiFetch<EnrollmentResponse>(`/courses/${courseSlug}/enrollment-status`)
-          enrolled = enrollmentStatus.success && enrollmentStatus.data.status === 'active'
+          const enrollmentStatus = await apiFetch<EnrollmentResponse>(
+            `/courses/${courseSlug}/enrollment-status`
+          );
+          enrolled =
+            enrollmentStatus.success &&
+            enrollmentStatus.data.status === "active";
         } catch {
-          enrolled = false
+          enrolled = false;
         }
       }
     } else {
-      lessons = []
-      enrolled = false
+      lessons = [];
+      enrolled = false;
     }
 
     return {
@@ -259,36 +259,41 @@ const { data } = await useAsyncData(
         description: lesson.description || "Описание урока пока не добавлено.",
         image: mediaUrl(lesson.thumbnail_key) || bookIcon,
       })),
+    };
+  }
+);
+
+const course = computed(() => data.value);
+const courseImage = computed(
+  () => mediaUrl(course.value?.main_image_key) || fallbackCourseImage
+);
+
+watch(
+  course,
+  (newCourse) => {
+    if (newCourse) {
+      isEnrolled.value = newCourse.isEnrolled || false;
     }
   },
-)
-
-const course = computed(() => data.value)
-const courseImage = computed(() => mediaUrl(course.value?.main_image_key) || fallbackCourseImage)
-
-// Обновляем isEnrolled из данных курса
-watch(course, (newCourse) => {
-  if (newCourse) {
-    isEnrolled.value = newCourse.isEnrolled || false
-  }
-}, { immediate: true })
+  { immediate: true }
+);
 
 const paddedLessonsCount = computed(() =>
-  String(course.value?.lessons_count || 0).padStart(2, "0"),
-)
+  String(course.value?.lessons_count || 0).padStart(2, "0")
+);
 const paddedTeachersCount = computed(() =>
-  String(course.value?.teachers.length || 0).padStart(2, "0"),
-)
+  String(course.value?.teachers.length || 0).padStart(2, "0")
+);
 const paddedHours = computed(() => {
-  const hours = Math.round(course.value?.hours || 0)
-  return String(hours).padStart(2, "0")
-})
+  const hours = Math.round(course.value?.hours || 0);
+  return String(hours).padStart(2, "0");
+});
 
 const lessonColumns = computed(() => {
-  const allLessons = course.value?.lessons || []
-  const midPoint = Math.ceil(allLessons.length / 2)
-  return [allLessons.slice(0, midPoint), allLessons.slice(midPoint)]
-})
+  const allLessons = course.value?.lessons || [];
+  const midPoint = Math.ceil(allLessons.length / 2);
+  return [allLessons.slice(0, midPoint), allLessons.slice(midPoint)];
+});
 </script>
 
 <style lang="scss">

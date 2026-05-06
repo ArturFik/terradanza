@@ -7,7 +7,6 @@
           <h1>Редактирование профиля</h1>
 
           <form @submit.prevent="handleSubmit">
-            <!-- Поле: Имя и фамилия (редактируемое, автосохранение) -->
             <div class="input-group">
               <input
                 v-model="editForm.fullName"
@@ -23,7 +22,6 @@
               </div>
             </div>
 
-            <!-- Поле: Почта (только для просмотра, серый текст) -->
             <div class="input-group">
               <input
                 :value="currentUser?.email"
@@ -34,7 +32,6 @@
               />
             </div>
 
-            <!-- Поле: Пароль (заблокировано, показывает звездочки) -->
             <div class="input-group">
               <input
                 type="password"
@@ -69,7 +66,6 @@ import Footer from "@/component/footer/footer.vue";
 const { currentUser, fetchMe, isAuthenticated } = useAuth();
 const { apiFetch } = useApi();
 
-// Проверка авторизации
 if (!isAuthenticated.value) {
   await navigateTo({ path: "/auth", redirect: "/profile/edit" });
 }
@@ -78,7 +74,6 @@ if (!currentUser.value) {
   await fetchMe();
 }
 
-// Форма для редактирования
 const editForm = ref({
   fullName: "",
   originalName: "",
@@ -86,7 +81,6 @@ const editForm = ref({
   name: "",
 });
 
-// Состояния для автосохранения имени
 let saveTimeout = null;
 const nameSavedMessage = ref("");
 const nameErrorMessage = ref("");
@@ -94,7 +88,6 @@ const loading = ref(false);
 const message = ref("");
 const errorMessage = ref("");
 
-// Инициализация формы
 const initForm = () => {
   if (currentUser.value) {
     editForm.value.name = currentUser.value.name || "";
@@ -108,7 +101,6 @@ const initForm = () => {
 
 initForm();
 
-// Автосохранение имени и фамилии
 const handleNameChange = () => {
   nameSavedMessage.value = "";
   nameErrorMessage.value = "";
@@ -167,14 +159,11 @@ const saveNameAndSurname = async () => {
   }
 };
 
-// Переход на страницу смены пароля
 const goToChangePassword = () => {
   navigateTo("/change-password");
 };
 
-const handleSubmit = () => {
-  // Форма не отправляется, все сохраняется автоматически
-};
+const handleSubmit = () => {};
 </script>
 
 <style lang="scss" scoped>

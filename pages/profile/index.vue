@@ -20,11 +20,17 @@
         <div class="logo__view">
           <p class="logo__view--1">{{ fullName }}</p>
           <p class="logo__view--2">{{ rankLabel }}</p>
-          <p class="logo__view--3" @click="goToPage('profile/edit')">Редактировать профиль</p>
+          <p class="logo__view--3" @click="goToPage('profile/edit')">
+            Редактировать профиль
+          </p>
           <p class="logo__view--4" @click="handleLogout">Выйти</p>
         </div>
       </div>
-      <div v-if="avatarMessage" class="avatar-message" :class="avatarMessageType">
+      <div
+        v-if="avatarMessage"
+        class="avatar-message"
+        :class="avatarMessageType"
+      >
         {{ avatarMessage }}
       </div>
 
@@ -58,7 +64,9 @@
                   class="achievement-icon"
                 />
                 <div class="achievement-overlay">
-                  <p class="achievement-description">{{ achievement.description }}</p>
+                  <p class="achievement-description">
+                    {{ achievement.description }}
+                  </p>
                 </div>
               </div>
               <p class="achievement-name">{{ achievement.name }}</p>
@@ -90,13 +98,17 @@
                       :style="{ width: course.progress + '%' }"
                     ></div>
                   </div>
-                  <span class="progress-percentage">{{ course.progress }}%</span>
+                  <span class="progress-percentage"
+                    >{{ course.progress }}%</span
+                  >
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <p v-if="!enrolledCourses.length" class="empty-state">Вы пока не записаны ни на один курс.</p>
+        <p v-if="!enrolledCourses.length" class="empty-state">
+          Вы пока не записаны ни на один курс.
+        </p>
       </div>
 
       <div v-if="activeTab === 2" class="favorites-container">
@@ -117,7 +129,11 @@
                 <div class="account__view--actions">
                   <div
                     class="description-toggle"
-                    :class="{ 'description-toggle--open': expandedCourseIds.has(course.id) }"
+                    :class="{
+                      'description-toggle--open': expandedCourseIds.has(
+                        course.id
+                      ),
+                    }"
                     @click="toggleDescription(course.id)"
                   >
                     <p>Описание</p>
@@ -136,7 +152,10 @@
                       />
                     </svg>
                   </div>
-                  <div class="heart-icon active" @click="toggleFavorite(course.id)">
+                  <div
+                    class="heart-icon active"
+                    @click="toggleFavorite(course.id)"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -157,13 +176,17 @@
                 <div
                   class="account__view--description"
                   :class="{
-                    'account__view--description--expanded': expandedCourseIds.has(course.id),
+                    'account__view--description--expanded':
+                      expandedCourseIds.has(course.id),
                   }"
                 >
                   <p>{{ course.description }}</p>
                   <NuxtLink
                     class="button"
-                    :to="{ path: '/about_course', query: { slug: course.slug } }"
+                    :to="{
+                      path: '/about_course',
+                      query: { slug: course.slug },
+                    }"
                   >
                     Подробнее о курсе
                   </NuxtLink>
@@ -172,7 +195,9 @@
             </div>
           </div>
         </div>
-        <p v-if="!favoriteCourses.length" class="empty-state">Избранных курсов пока нет.</p>
+        <p v-if="!favoriteCourses.length" class="empty-state">
+          Избранных курсов пока нет.
+        </p>
       </div>
     </div>
     <Footer />
@@ -180,102 +205,105 @@
 </template>
 
 <script setup>
-import Header from "@/component/header/header.vue"
-import Footer from "@/component/footer/footer.vue"
-import frameImg from "@/assets/img/Frame.png"
-import frame2Img from "@/assets/img/Frame2.png"
-import frame3Img from "@/assets/img/Frame3.png"
-import defaultAvatar from "@/assets/img/logo.png"
-import { useRouter } from 'vue-router'
+import Header from "@/component/header/header.vue";
+import Footer from "@/component/footer/footer.vue";
+import frameImg from "@/assets/img/Frame.png";
+import frame2Img from "@/assets/img/Frame2.png";
+import frame3Img from "@/assets/img/Frame3.png";
+import defaultAvatar from "@/assets/img/logo.png";
+import { useRouter } from "vue-router";
 
-import notShyLocked from "/assets/img/not_shy_locked.png"
-import totalTheoristLocked from "/assets/img/total_theorist_locked.png"
-import firstPancakeLocked from "/assets/img/first_pancake_locked.png"
-import soulOfCompanyLocked from "/assets/img/soul_of_company_locked.png"
-import antiSpoilerLocked from "/assets/img/anti_spoiler_locked.png"
-import absoluteDancerLocked from "/assets/img/absolute_dancer_locked.png"
-import noSkipsLocked from "/assets/img/no_skips_locked.png"
-import likeMasterLocked from "/assets/img/like_master_locked.png"
+import notShyLocked from "/assets/img/not_shy_locked.png";
+import totalTheoristLocked from "/assets/img/total_theorist_locked.png";
+import firstPancakeLocked from "/assets/img/first_pancake_locked.png";
+import soulOfCompanyLocked from "/assets/img/soul_of_company_locked.png";
+import antiSpoilerLocked from "/assets/img/anti_spoiler_locked.png";
+import absoluteDancerLocked from "/assets/img/absolute_dancer_locked.png";
+import noSkipsLocked from "/assets/img/no_skips_locked.png";
+import likeMasterLocked from "/assets/img/like_master_locked.png";
 
 const ALL_ACHIEVEMENTS = {
   not_shy: {
     code: "not_shy",
     name: "Не постеснялся",
-    description: "Пересдал тест после первой неудачи и сдал его на 100% со второй попытки",
+    description:
+      "Пересдал тест после первой неудачи и сдал его на 100% со второй попытки",
     icon_key: "achievements/default/not_shy.png",
-    default_icon: notShyLocked
+    default_icon: notShyLocked,
   },
   total_theorist: {
     code: "total_theorist",
     name: "Тотальный теоретик",
     description: "Набрал 100% в тесте с первой попытки",
     icon_key: "achievements/default/total_theorist.png",
-    default_icon: totalTheoristLocked
+    default_icon: totalTheoristLocked,
   },
   first_pancake: {
     code: "first_pancake",
     name: "Первый блин не комом",
     description: "Досмотрел первый видео-урок первого курса до конца",
     icon_key: "achievements/default/first_pancake.png",
-    default_icon: firstPancakeLocked
+    default_icon: firstPancakeLocked,
   },
   soul_of_company: {
     code: "soul_of_company",
     name: "Душа компании",
-    description: "Просмотрел все уроки курса за 24 часа после начала первого урока",
+    description:
+      "Просмотрел все уроки курса за 24 часа после начала первого урока",
     icon_key: "achievements/default/soul_of_company.png",
-    default_icon: soulOfCompanyLocked
+    default_icon: soulOfCompanyLocked,
   },
   anti_spoiler: {
     code: "anti_spoiler",
     name: "Анти-спойлер",
-    description: "Сдал тест до того, как посмотрел последний урок (минимум 80%)",
+    description:
+      "Сдал тест до того, как посмотрел последний урок (минимум 80%)",
     icon_key: "achievements/default/anti_spoiler.png",
-    default_icon: antiSpoilerLocked
+    default_icon: antiSpoilerLocked,
   },
   absolute_dancer: {
     code: "absolute_dancer",
     name: "Абсолютный танцор",
     description: "Прошел 3 курса полностью и сдал финальный тест на >79%",
     icon_key: "achievements/default/absolute_dancer.png",
-    default_icon: absoluteDancerLocked
+    default_icon: absoluteDancerLocked,
   },
   no_skips: {
     code: "no_skips",
     name: "Ни одного пропуска",
-    description: "Заканчивал по одному уроку каждый день подряд до завершения курса",
+    description:
+      "Заканчивал по одному уроку каждый день подряд до завершения курса",
     icon_key: "achievements/default/no_skips.png",
-    default_icon: noSkipsLocked
+    default_icon: noSkipsLocked,
   },
   like_master: {
     code: "like_master",
     name: "Лайк-мастер",
     description: "Добавил в избранное хотя бы 3 курса",
     icon_key: "achievements/default/like_master.png",
-    default_icon: likeMasterLocked
+    default_icon: likeMasterLocked,
   },
-}
+};
 
-const { currentUser, fetchMe, isAuthenticated, logout } = useAuth()
-const { apiFetch } = useApi()
-const { mediaUrl } = useMedia()
+const { currentUser, fetchMe, isAuthenticated, logout } = useAuth();
+const { apiFetch } = useApi();
+const { mediaUrl } = useMedia();
 
 if (!isAuthenticated.value) {
-  await navigateTo({ path: "/auth", query: { redirect: "/profile" } })
+  await navigateTo({ path: "/auth", query: { redirect: "/profile" } });
 }
 
 if (!currentUser.value) {
-  await fetchMe()
+  await fetchMe();
 }
 
-// Avatar state
-const fileInput = ref(null)
-const avatarMessage = ref("")
-const avatarMessageType = ref("success")
+const fileInput = ref(null);
+const avatarMessage = ref("");
+const avatarMessageType = ref("success");
 
-const activeTab = ref(0)
-const tabs = ref([{ img: frameImg }, { img: frame2Img }, { img: frame3Img }])
-const expandedCourseIds = ref(new Set())
+const activeTab = ref(0);
+const tabs = ref([{ img: frameImg }, { img: frame2Img }, { img: frame3Img }]);
+const expandedCourseIds = ref(new Set());
 
 const { data, refresh } = await useAsyncData("profile-data", async () => {
   const [allCourses, favorites, enrolled, achievements] = await Promise.all([
@@ -283,7 +311,7 @@ const { data, refresh } = await useAsyncData("profile-data", async () => {
     apiFetch("/users/me/favorites"),
     apiFetch("/users/me/courses"),
     apiFetch("/users/me/achievements"),
-  ])
+  ]);
 
   const courseMap = new Map(
     allCourses.data.items.map((course) => [
@@ -296,35 +324,40 @@ const { data, refresh } = await useAsyncData("profile-data", async () => {
         description: course.description || "Описание курса пока не добавлено.",
         backgroundImage: mediaUrl(course.main_image_key) || defaultAvatar,
       },
-    ]),
-  )
+    ])
+  );
 
-  const allAchievementsList = Object.values(ALL_ACHIEVEMENTS).map(achievement => {
-    const earnedAchievement = achievements.data.achievements.find(
-      a => a.code === achievement.code
-    )
-    
-    if (earnedAchievement) {
-      return {
-        id: earnedAchievement.id,
-        name: achievement.name,
-        description: achievement.description,
-        icon: mediaUrl(earnedAchievement.icon_key) || mediaUrl(achievement.icon_key) || achievement.default_icon,
-        earned: true,
-        earned_at: earnedAchievement.earned_at,
-        code: achievement.code
-      }
-    } else {
-      return {
-        id: `locked_${achievement.code}`,
-        name: achievement.name,
-        description: achievement.description,
-        icon: achievement.default_icon,
-        earned: false,
-        code: achievement.code
+  const allAchievementsList = Object.values(ALL_ACHIEVEMENTS).map(
+    (achievement) => {
+      const earnedAchievement = achievements.data.achievements.find(
+        (a) => a.code === achievement.code
+      );
+
+      if (earnedAchievement) {
+        return {
+          id: earnedAchievement.id,
+          name: achievement.name,
+          description: achievement.description,
+          icon:
+            mediaUrl(earnedAchievement.icon_key) ||
+            mediaUrl(achievement.icon_key) ||
+            achievement.default_icon,
+          earned: true,
+          earned_at: earnedAchievement.earned_at,
+          code: achievement.code,
+        };
+      } else {
+        return {
+          id: `locked_${achievement.code}`,
+          name: achievement.name,
+          description: achievement.description,
+          icon: achievement.default_icon,
+          earned: false,
+          code: achievement.code,
+        };
       }
     }
-  })
+  );
 
   return {
     achievements: allAchievementsList,
@@ -338,133 +371,138 @@ const { data, refresh } = await useAsyncData("profile-data", async () => {
         ...course,
         progress: 0,
       })),
-  }
-})
+  };
+});
 
-const achievements = computed(() => data.value?.achievements || [])
-const favoriteCourses = computed(() => data.value?.favoriteCourses || [])
-const enrolledCourses = computed(() => data.value?.enrolledCourses || [])
+const achievements = computed(() => data.value?.achievements || []);
+const favoriteCourses = computed(() => data.value?.favoriteCourses || []);
+const enrolledCourses = computed(() => data.value?.enrolledCourses || []);
 
 const achievementRows = computed(() => {
-  const rows = []
+  const rows = [];
   for (let index = 0; index < achievements.value.length; index += 4) {
-    rows.push(achievements.value.slice(index, index + 4))
+    rows.push(achievements.value.slice(index, index + 4));
   }
-  return rows
-})
+  return rows;
+});
 
-const avatarUrl = computed(() => mediaUrl(currentUser.value?.avatar_key) || defaultAvatar)
+const avatarUrl = computed(
+  () => mediaUrl(currentUser.value?.avatar_key) || defaultAvatar
+);
 const fullName = computed(() => {
-  const parts = [currentUser.value?.surname, currentUser.value?.name].filter(Boolean)
-  return parts.join(" ") || currentUser.value?.email || "Пользователь"
-})
+  const parts = [currentUser.value?.surname, currentUser.value?.name].filter(
+    Boolean
+  );
+  return parts.join(" ") || currentUser.value?.email || "Пользователь";
+});
 const rankLabel = computed(() => {
   const rankMap = {
     novice: "Новичок",
     amateur: "Любитель",
     pro: "Профи",
-  }
-  return rankMap[currentUser.value?.cached_rank || "novice"] || "Новичок"
-})
+  };
+  return rankMap[currentUser.value?.cached_rank || "novice"] || "Новичок";
+});
 
 const toggleDescription = (courseId) => {
-  const next = new Set(expandedCourseIds.value)
+  const next = new Set(expandedCourseIds.value);
   if (next.has(courseId)) {
-    next.delete(courseId)
+    next.delete(courseId);
   } else {
-    next.add(courseId)
+    next.add(courseId);
   }
-  expandedCourseIds.value = next
-}
+  expandedCourseIds.value = next;
+};
 
 const toggleFavorite = async (courseId) => {
   try {
-    await apiFetch(`/users/me/favorites/${courseId}`, { method: "DELETE" })
-    const next = favoriteCourses.value.filter((course) => course.id !== courseId)
+    await apiFetch(`/users/me/favorites/${courseId}`, { method: "DELETE" });
+    const next = favoriteCourses.value.filter(
+      (course) => course.id !== courseId
+    );
     data.value = {
       achievements: achievements.value,
       enrolledCourses: enrolledCourses.value,
       favoriteCourses: next,
-    }
+    };
   } catch (error) {
-    console.error("Failed to remove favorite", error)
+    console.error("Failed to remove favorite", error);
   }
-}
+};
 
 const handleLogout = async () => {
-  await logout()
-  await navigateTo("/auth")
-}
+  await logout();
+  await navigateTo("/auth");
+};
 
-const router = useRouter()
+const router = useRouter();
 
 const goToPage = (page) => {
-  router.push(`/${page}`)
-}
+  router.push(`/${page}`);
+};
 
-// Avatar functions
 const triggerFileUpload = () => {
-  fileInput.value?.click()
-}
+  fileInput.value?.click();
+};
 
 const handleAvatarUpload = async (event) => {
-  const target = event.target
-  const file = target.files?.[0]
+  const target = event.target;
+  const file = target.files?.[0];
 
-  if (!file) return
+  if (!file) return;
 
   if (!file.type.startsWith("image/")) {
-    avatarMessage.value = "Пожалуйста, выберите изображение"
-    avatarMessageType.value = "error"
+    avatarMessage.value = "Пожалуйста, выберите изображение";
+    avatarMessageType.value = "error";
     setTimeout(() => {
-      avatarMessage.value = ""
-    }, 3000)
-    return
+      avatarMessage.value = "";
+    }, 3000);
+    return;
   }
 
   if (file.size > 5 * 1024 * 1024) {
-    avatarMessage.value = "Размер файла не должен превышать 5MB"
-    avatarMessageType.value = "error"
+    avatarMessage.value = "Размер файла не должен превышать 5MB";
+    avatarMessageType.value = "error";
     setTimeout(() => {
-      avatarMessage.value = ""
-    }, 3000)
-    return
+      avatarMessage.value = "";
+    }, 3000);
+    return;
   }
 
-  const formData = new FormData()
-  formData.append("file", file)
+  const formData = new FormData();
+  formData.append("file", file);
 
-  avatarMessage.value = "Загрузка..."
-  avatarMessageType.value = "success"
+  avatarMessage.value = "Загрузка...";
+  avatarMessageType.value = "success";
 
   try {
     const response = await apiFetch("/users/me/avatar", {
       method: "PUT",
       body: formData,
-    })
+    });
 
     if (response.success) {
-      avatarMessage.value = "Аватар успешно обновлен"
-      avatarMessageType.value = "success"
-      await fetchMe()
+      avatarMessage.value = "Аватар успешно обновлен";
+      avatarMessageType.value = "success";
+      await fetchMe();
       setTimeout(() => {
-        avatarMessage.value = ""
-      }, 3000)
+        avatarMessage.value = "";
+      }, 3000);
     } else {
-      throw new Error(response.message || "Ошибка загрузки")
+      throw new Error(response.message || "Ошибка загрузки");
     }
   } catch (error) {
-    avatarMessage.value = error?.data?.detail || "Ошибка при загрузке аватара"
-    avatarMessageType.value = "error"
+    avatarMessage.value = error?.data?.detail || "Ошибка при загрузке аватара";
+    avatarMessageType.value = "error";
     setTimeout(() => {
-      avatarMessage.value = ""
-    }, 3000)
+      avatarMessage.value = "";
+    }, 3000);
   } finally {
     if (fileInput.value) {
-      fileInput.value.value = ""
+      fileInput.value.value = "";
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -501,7 +539,7 @@ const handleAvatarUpload = async (event) => {
   .avatar-wrapper {
     position: relative;
     cursor: pointer;
-    
+
     &:hover .avatar-overlay {
       opacity: 1;
     }
@@ -527,7 +565,7 @@ const handleAvatarUpload = async (event) => {
     justify-content: center;
     opacity: 0;
     transition: opacity 0.3s ease;
-    
+
     span {
       color: white;
       font-size: 12px;
@@ -541,11 +579,11 @@ const handleAvatarUpload = async (event) => {
     margin-left: 0;
     font-size: 12px;
     font-family: "Inter", sans-serif;
-    
+
     &.success {
       color: #4caf50;
     }
-    
+
     &.error {
       color: #c65d3b;
     }
@@ -656,7 +694,7 @@ const handleAvatarUpload = async (event) => {
     flex-direction: column;
     align-items: center;
     gap: 8px;
-  
+
     &--locked {
       opacity: 0.5;
       filter: grayscale(0.5);
@@ -671,7 +709,7 @@ const handleAvatarUpload = async (event) => {
   cursor: pointer;
   border-radius: 12px;
   overflow: hidden;
-  background-color: #fff; 
+  background-color: #fff;
 
   &:hover .achievement-icon {
     filter: blur(4px);

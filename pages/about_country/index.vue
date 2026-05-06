@@ -115,7 +115,6 @@ const galleryImages = computed<string[]>(() => {
       const imageKey = image.image_key || image.image;
       if (!imageKey) return null;
       const url = mediaUrl(imageKey);
-      // Преобразуем null в undefined, но лучше вернуть пустую строку
       return url || "";
     })
     .filter((url): url is string => typeof url === "string" && url.length > 0);

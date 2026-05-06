@@ -90,7 +90,6 @@
           </p>
 
           <div class="test-wrapper">
-            <!-- Кнопки слева -->
             <div class="test-section__number">
               <div
                 class="number-button"
@@ -117,9 +116,7 @@
               </div>
             </div>
 
-            <!-- Контент справа -->
             <div class="test-content">
-              <!-- Блок 1: Выбор утверждений -->
               <div
                 v-if="test.statements.length && activeTestBlock === 1"
                 class="test-section"
@@ -153,7 +150,6 @@
                 </div>
               </div>
 
-              <!-- Блок 2: Письменные ответы -->
               <div
                 v-if="test.write_answers.length && activeTestBlock === 2"
                 class="test-section"
@@ -182,7 +178,6 @@
                 </div>
               </div>
 
-              <!-- Блок 3: Пазл -->
               <div
                 v-if="puzzleImageUrl && activeTestBlock === 3"
                 class="test-section"

@@ -188,7 +188,7 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <div class="tab-title-hover">продолжающий</div>
             <div class="tab-description"><span>Кол-во курсов:</span> 2</div>
-            <p @click="goToPage('encyclopedia')"> узнать больше
+            <p @click="goToPage('catalog')"> узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -209,7 +209,7 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <div class="tab-title-hover">продолжающий</div>
             <div class="tab-description"><span>Кол-во курсов:</span> 1</div>
-            <p @click="goToPage('encyclopedia')"> узнать больше
+            <p @click="goToPage('catalog')"> узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -230,7 +230,7 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <br />
             <div class="tab-description"><span>Кол-во курсов:</span> 2</div>
-            <p @click="goToPage('encyclopedia')">
+            <p @click="goToPage('catalog')">
               узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"

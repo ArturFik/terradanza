@@ -59,7 +59,6 @@
       </div>
     </div>
 
-    <!-- Блок Костюмы - исправлен -->
     <div v-if="costumeImages.length" class="about_dance-block4">
       <h1>Костюмы</h1>
       <div class="media-grid">
@@ -73,14 +72,12 @@
       </div>
     </div>
 
-    <!-- Блок Фото и видео - исправлен -->
     <div
       v-if="photoMedia.length || videoMedia.length"
       class="about_dance-block4"
     >
       <h1>Фото и видео</h1>
       <div class="media-grid">
-        <!-- Фото -->
         <div
           v-for="(image, index) in photoMedia"
           :key="`photo-${index}`"
@@ -88,7 +85,6 @@
         >
           <img :src="image" alt="media" />
         </div>
-        <!-- Видео -->
         <div
           v-for="(video, index) in videoMedia"
           :key="`video-${index}`"
@@ -456,7 +452,6 @@ const relatedDances = computed(() =>
     }
   }
 
-  // Адаптивность
   @media (max-width: 1024px) {
     .media-grid {
       grid-template-columns: repeat(4, 1fr);

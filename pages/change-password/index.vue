@@ -15,7 +15,6 @@
 
           <h1>Сброс пароля</h1>
 
-          <!-- Шаг 1: Ввод почты -->
           <form v-if="step === 1" @submit.prevent="submitEmail">
             <input
               v-model="emailForm.email"
@@ -29,7 +28,6 @@
             </button>
           </form>
 
-          <!-- Шаг 2: Ввод 4-значного кода -->
           <form v-if="step === 2" @submit.prevent="submitCode">
             <div class="code-inputs">
               <input
@@ -55,7 +53,6 @@
             </button>
           </form>
 
-          <!-- Шаг 3: Ввод нового пароля -->
           <form v-if="step === 3" @submit.prevent="submitNewPassword">
             <input
               v-model="passwordForm.password"
@@ -80,7 +77,6 @@
             </button>
           </form>
 
-          <!-- Сообщения об успехе/ошибке -->
           <div v-if="successMessage" class="success-message">
             {{ successMessage }}
           </div>
@@ -109,7 +105,7 @@ const step = ref(1);
 const loading = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
-const savedCode = ref(""); // Сохраняем код между шагами
+const savedCode = ref("");
 
 const emailForm = ref({
   email: "",
@@ -128,7 +124,6 @@ const passwordError = ref("");
 
 const codeInputs = ref([]);
 
-// Функция для установки ref-ов на инпуты кода
 const setCodeInputRef = (el, index) => {
   if (el) {
     codeInputs.value[index] = el;
@@ -203,7 +198,6 @@ const clearSuccess = () => {
   successMessage.value = "";
 };
 
-// Шаг 1: Отправка email
 const submitEmail = async () => {
   if (!emailForm.value.email) {
     emailError.value = "Введите email";
@@ -249,7 +243,6 @@ const submitEmail = async () => {
   }
 };
 
-// Шаг 2: Сохраняем код и переходим к шагу 3
 const submitCode = async () => {
   const code = getCode();
 
@@ -262,14 +255,11 @@ const submitCode = async () => {
   clearErrors();
 
   try {
-    // Сохраняем код для использования на шаге 3
     savedCode.value = code;
 
-    // Переходим к шагу 3
     step.value = 3;
     successMessage.value = "Код подтвержден, введите новый пароль";
 
-    // Очищаем поля пароля
     passwordForm.value.password = "";
     passwordForm.value.confirmPassword = "";
   } catch (error) {
@@ -280,7 +270,6 @@ const submitCode = async () => {
   }
 };
 
-// Шаг 3: Отправка нового пароля вместе с кодом и email
 const submitNewPassword = async () => {
   if (passwordForm.value.password.length < 6) {
     passwordError.value = "Пароль должен содержать не менее 6 символов";
@@ -296,7 +285,6 @@ const submitNewPassword = async () => {
   clearErrors();
 
   try {
-    // Отправляем все данные на /auth/reset-password
     const response = await apiFetch("/auth/reset-password", {
       method: "POST",
       body: {
@@ -322,7 +310,6 @@ const submitNewPassword = async () => {
     if (error?.data?.detail === "Invalid code" || error?.status === 400) {
       passwordError.value =
         "Неверный код подтверждения. Пожалуйста, запросите новый код";
-      // Возвращаем на шаг 2 при неверном коде
       setTimeout(() => {
         step.value = 2;
         savedCode.value = "";
@@ -341,7 +328,6 @@ const submitNewPassword = async () => {
   }
 };
 
-// Навигация между шагами
 const goToPreviousStep = () => {
   if (step.value === 2) {
     step.value = 1;

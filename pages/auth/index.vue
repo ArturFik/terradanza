@@ -77,7 +77,6 @@
             <button class="auth__submit-btn" :disabled="loading">Войти</button>
           </form>
 
-          <!-- Шаг 1: Ввод почты для сброса пароля -->
           <form
             v-if="activeTab === 'forgot-password' && resetStep === 1"
             @submit.prevent="submitForgotPassword"
@@ -97,7 +96,6 @@
             </button>
           </form>
 
-          <!-- Шаг 2: Ввод 4-значного кода -->
           <form
             v-if="activeTab === 'forgot-password' && resetStep === 2"
             @submit.prevent="submitResetCode"
@@ -129,7 +127,6 @@
             </button>
           </form>
 
-          <!-- Шаг 3: Ввод нового пароля -->
           <form
             v-if="activeTab === 'forgot-password' && resetStep === 3"
             @submit.prevent="submitResetPassword"
@@ -181,7 +178,7 @@ const resetStep = ref(1);
 const loading = ref(false);
 const message = ref("");
 const errorMessage = ref("");
-const resetCode = ref(""); // Сохраняем код между шагами
+const resetCode = ref("");
 
 const registerForm = ref({
   name: "",
@@ -195,7 +192,6 @@ const loginForm = ref({
   password: "",
 });
 
-// Формы для сброса пароля
 const forgotPasswordEmail = ref("");
 const resetEmailError = ref("");
 const resetCodeError = ref("");
@@ -207,7 +203,6 @@ const resetPasswordForm = ref({
 });
 const codeInputs = ref([]);
 
-// Функция для установки ref-ов на инпуты кода
 const setCodeInputRef = (el, index) => {
   if (el) {
     codeInputs.value[index] = el;
@@ -233,7 +228,6 @@ const getErrorMessage = (error) => {
   return error?.data?.detail || error?.message || "Произошла ошибка";
 };
 
-// Функция возврата к форме входа/регистрации
 const goBackToAuth = () => {
   resetStep.value = 1;
   forgotPasswordEmail.value = "";
@@ -287,7 +281,6 @@ const submitLogin = async () => {
   }
 };
 
-// Обработчики для кода
 const handleCodeInput = (index, event) => {
   const input = event.target;
   const value = input.value;
@@ -339,7 +332,6 @@ const clearResetErrors = () => {
   resetPasswordError.value = "";
 };
 
-// Шаг 1: Отправка email
 const submitForgotPassword = async () => {
   if (!forgotPasswordEmail.value) {
     resetEmailError.value = "Введите email";
@@ -366,7 +358,6 @@ const submitForgotPassword = async () => {
       errorMessage.value =
         response.message || "Код подтверждения отправлен на вашу почту";
       resetStep.value = 2;
-      // Фокусируемся на первом инпуте кода
       setTimeout(() => {
         if (codeInputs.value[0]) {
           codeInputs.value[0].focus();
@@ -387,7 +378,6 @@ const submitForgotPassword = async () => {
   }
 };
 
-// Шаг 2: Проверка кода (сохраняем код для следующего шага)
 const submitResetCode = async () => {
   const code = getResetCode();
 
@@ -400,11 +390,8 @@ const submitResetCode = async () => {
   clearResetErrors();
 
   try {
-    // Сохраняем код для использования на шаге 3
     resetCode.value = code;
 
-    // Переходим к шагу 3 без проверки кода на бекенде
-    // (проверка произойдет при отправке нового пароля)
     resetStep.value = 3;
     errorMessage.value = "Код подтвержден, введите новый пароль";
   } catch (error) {
@@ -415,7 +402,6 @@ const submitResetCode = async () => {
   }
 };
 
-// Шаг 3: Установка нового пароля (отправляем все данные)
 const submitResetPassword = async () => {
   if (resetPasswordForm.value.password.length < 6) {
     resetPasswordError.value = "Пароль должен содержать не менее 6 символов";
@@ -433,7 +419,6 @@ const submitResetPassword = async () => {
   clearResetErrors();
 
   try {
-    // Отправляем все данные на /auth/reset-password
     const response = await apiFetch("/auth/reset-password", {
       method: "POST",
       body: {
@@ -447,7 +432,6 @@ const submitResetPassword = async () => {
 
     if (response.success) {
       errorMessage.value = response.message || "Пароль успешно изменен";
-      // Показываем сообщение об успехе и возвращаемся к логину
       setTimeout(() => {
         activeTab.value = "login";
         resetStep.value = 1;
@@ -466,7 +450,6 @@ const submitResetPassword = async () => {
     if (error?.data?.detail === "Invalid code" || error?.status === 400) {
       resetPasswordError.value =
         "Неверный код подтверждения. Пожалуйста, запросите новый код";
-      // Возвращаем на шаг 2 при неверном коде
       setTimeout(() => {
         resetStep.value = 2;
         resetCode.value = "";

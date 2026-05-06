@@ -16,10 +16,10 @@
 </template>
 
 <script setup lang="ts">
-const { currentUser } = useAuth()
-
-const accountLink = computed(() => (currentUser.value ? "/profile" : "/auth"))
-const accountLabel = computed(() => (currentUser.value ? "Профиль" : "Войти"))
+const { currentUser } = useAuth();
+const accountLink = computed(() => (currentUser.value ? "/profile" : "/auth"));
+const accountLabel = computed(() => (currentUser.value ? "Профиль" : "Войти"));
+const { lastAchievement, achievementQueue } = useWebSocket();
 </script>
 
 <style lang="scss">
@@ -33,7 +33,7 @@ const accountLabel = computed(() => (currentUser.value ? "Профиль" : "В�
 .header-container {
   width: 100%;
   background-color: #11243f;
-  padding: 20px 0;
+  padding: 10px 0;
   color: #fffcf6;
   height: 70px;
 }
@@ -62,7 +62,7 @@ const accountLabel = computed(() => (currentUser.value ? "Профиль" : "В�
 .header-menu {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 40px;
   font-family: "Inter", sans-serif;
   margin-right: 50px;
 

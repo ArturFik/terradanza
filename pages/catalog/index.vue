@@ -11,8 +11,12 @@
               :class="{ 'filter-item--active': activeFilter === 'level' }"
               @click="toggleFilter('level')"
             >
-              <p :class="{ 'style-active': activeFilter === 'level' }">
-                {{ selectedFilters.level || "Уровень сложности" }}
+              <p>
+                {{
+                  selectedFilters.level
+                    ? translateLevel(selectedFilters.level)
+                    : "Уровень сложности"
+                }}
               </p>
               <span
                 class="filter-arrow"
@@ -38,19 +42,19 @@
                   v-for="option in levelOptions"
                   :key="option"
                   class="filter-option"
-                  @click.stop="selectOption('level', option)"
+                  @click.stop="selectLevelOption(option)"
                 >
-                  {{ option }}
+                  {{ translateLevel(option) }}
                 </div>
               </div>
             </div>
 
             <div
-              class="filter-item"
+              class="filter-item filter-item--checkbox"
               :class="{ 'filter-item--active': activeFilter === 'region' }"
               @click="toggleFilter('region')"
             >
-              <p>{{ selectedFilters.region || "Регион" }}</p>
+              <p>{{ getRegionFilterLabel() }}</p>
               <span
                 class="filter-arrow"
                 :class="{ 'filter-arrow--open': activeFilter === 'region' }"
@@ -69,15 +73,32 @@
                   />
                 </svg>
               </span>
-              <div v-if="activeFilter === 'region'" class="filter-dropdown">
-                <p>Фильтр региона</p>
-                <div
-                  v-for="option in regionOptions"
-                  :key="option"
-                  class="filter-option"
-                  @click.stop="selectOption('region', option)"
-                >
-                  {{ option }}
+              <div
+                v-if="activeFilter === 'region'"
+                class="filter-dropdown filter-dropdown--checkbox"
+              >
+                <p>Выберите регионы</p>
+                <div v-if="allRegions.length === 0" class="filter-loading">
+                  Загрузка регионов...
+                </div>
+                <div v-else class="filter-options-list">
+                  <div
+                    v-for="region in allRegions"
+                    :key="region.id"
+                    class="filter-option-checkbox"
+                    @click.stop
+                  >
+                    <label class="checkbox-label">
+                      <input
+                        type="checkbox"
+                        :value="region.name"
+                        v-model="selectedFilters.region"
+                        @change="handleRegionFilterChange"
+                      />
+                      <span class="checkbox-custom"></span>
+                      {{ region.name }}
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -87,7 +108,7 @@
               :class="{ 'filter-item--active': activeFilter === 'style' }"
               @click="toggleFilter('style')"
             >
-              <p>{{ selectedFilters.style || "Тег" }}</p>
+              <p>{{ selectedFilters.style || "Стиль" }}</p>
               <span
                 class="filter-arrow"
                 :class="{ 'filter-arrow--open': activeFilter === 'style' }"
@@ -107,7 +128,7 @@
                 </svg>
               </span>
               <div v-if="activeFilter === 'style'" class="filter-dropdown">
-                <p>Фильтр тегов</p>
+                <p>Фильтр стилей</p>
                 <div
                   v-for="option in styleOptions"
                   :key="option"
@@ -210,74 +231,64 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import Header from "@/component/header/header.vue";
 import Footer from "@/component/footer/footer.vue";
 import fallbackCourseImage from "@/assets/img/imgtest.png";
-
-type CourseItem = {
-  id: string;
-  slug: string;
-  name: string;
-  description?: string | null;
-  region_name?: string | null;
-  region_id?: string | null;
-  difficulty: string;
-  main_image_key?: string | null;
-  tags: string[];
-};
-
-type CourseListResponse = {
-  success: boolean;
-  data: {
-    items: CourseItem[];
-    total: number;
-    page: number;
-    per_page: number;
-    total_pages: number;
-  };
-  message: string;
-};
-
-type FavoriteResponse = {
-  success: boolean;
-  data: {
-    courses: string[];
-  };
-};
-
-type DisplayCourse = {
-  id: string;
-  slug: string;
-  title: string;
-  region: string;
-  region_id?: string;
-  description: string;
-  backgroundImage: string;
-  level: string;
-  style: string | null;
-  tags: string[];
-};
 
 const { apiFetch } = useApi();
 const { isAuthenticated } = useAuth();
 const { mediaUrl } = useMedia();
 
-const activeFilter = ref<string | null>(null);
+const levelTranslation = {
+  beginner: "Начинающий",
+  intermediate: "Продолжающий",
+  advanced: "Продвинутый",
+};
+
+const translateLevel = (level) => {
+  return levelTranslation[level?.toLowerCase()] || level;
+};
+
+const activeFilter = ref(null);
 const selectedFilters = ref({
-  level: null as string | null,
-  region: null as string | null,
-  style: null as string | null,
+  level: null,
+  region: [],
+  style: null,
 });
 
-const expandedCourseIds = ref(new Set<string>());
-const favoriteCourseIds = ref(new Set<string>());
+const expandedCourseIds = ref(new Set());
+const favoriteCourseIds = ref(new Set());
 
-// Хранилище для регионов с их ID
-const regionMap = ref<Map<string, string>>(new Map());
+const allRegions = ref([]);
+const regionMap = ref(new Map());
 
-// Функция для получения курсов с фильтрами
-const fetchCourses = async (): Promise<DisplayCourse[]> => {
+const fetchRegions = async () => {
+  try {
+    const response = await apiFetch("/regions");
+    console.log("Regions API Response:", response);
+
+    if (Array.isArray(response)) {
+      allRegions.value = response;
+      regionMap.value.clear();
+      allRegions.value.forEach((region) => {
+        if (region.name && region.id) {
+          regionMap.value.set(region.name, region.id);
+        }
+      });
+      console.log(`Loaded ${allRegions.value.length} regions`);
+      return allRegions.value;
+    }
+
+    console.warn("Regions response is not an array:", response);
+    return [];
+  } catch (error) {
+    console.error("Error fetching regions:", error);
+    return [];
+  }
+};
+
+const fetchCourses = async () => {
   try {
     const params = new URLSearchParams();
 
@@ -285,11 +296,16 @@ const fetchCourses = async (): Promise<DisplayCourse[]> => {
       params.append("difficulty", selectedFilters.value.level);
     }
 
-    if (selectedFilters.value.region) {
-      const regionId = regionMap.value.get(selectedFilters.value.region);
-      if (regionId) {
-        params.append("region_id", regionId);
-      }
+    if (
+      selectedFilters.value.region &&
+      selectedFilters.value.region.length > 0
+    ) {
+      selectedFilters.value.region.forEach((regionName) => {
+        const regionId = regionMap.value.get(regionName);
+        if (regionId) {
+          params.append("region_id", regionId);
+        }
+      });
     }
 
     if (selectedFilters.value.style) {
@@ -299,82 +315,95 @@ const fetchCourses = async (): Promise<DisplayCourse[]> => {
     const queryString = params.toString();
     const url = queryString ? `/courses?${queryString}` : "/courses";
 
-    console.log("Fetching courses with URL:", url); // Для отладки
+    console.log("Fetching courses with URL:", url);
 
-    const response = await apiFetch<CourseListResponse>(url);
+    const response = await apiFetch(url);
 
-    console.log("API Response:", response); // Для отладки
+    console.log("Courses API Response:", response);
 
-    const courses = response.data.items.map((course) => ({
-      id: course.id,
-      slug: course.slug,
-      title: course.name,
-      region: course.region_name || "Регион не указан",
-      region_id: course.region_id || undefined,
-      description: course.description || "Описание курса пока не добавлено.",
-      backgroundImage: mediaUrl(course.main_image_key) || fallbackCourseImage,
-      level: course.difficulty,
-      style: course.tags[0] || null,
-      tags: course.tags,
-    }));
+    if (response.success && response.data && response.data.items) {
+      const courses = response.data.items.map((course) => ({
+        id: course.id,
+        slug: course.slug,
+        title: course.name,
+        region: course.region_name || "Регион не указан",
+        region_id: course.region_id || undefined,
+        description: course.description || "Описание курса пока не добавлено.",
+        backgroundImage: mediaUrl(course.main_image_key) || fallbackCourseImage,
+        level: course.difficulty,
+        style: course.tags && course.tags.length > 0 ? course.tags[0] : null,
+        tags: course.tags || [],
+      }));
+      return courses;
+    }
 
-    // Обновляем карту регионов
-    courses.forEach((course) => {
-      if (course.region && course.region_id) {
-        regionMap.value.set(course.region, course.region_id);
-      }
-    });
-
-    return courses;
+    return [];
   } catch (error) {
     console.error("Error fetching courses:", error);
     return [];
   }
 };
 
-const coursesData = ref<DisplayCourse[]>([]);
+const coursesData = ref([]);
 
-// Загружаем курсы
 const loadCourses = async () => {
   coursesData.value = await fetchCourses();
 };
 
-// Начальная загрузка
-await loadCourses();
+const getRegionFilterLabel = () => {
+  if (selectedFilters.value.region.length === 0) return "Регион";
+  if (selectedFilters.value.region.length === 1)
+    return selectedFilters.value.region[0];
+  return `Регион (${selectedFilters.value.region.length})`;
+};
 
-// Загружаем избранное, если пользователь авторизован
+const handleRegionFilterChange = () => {
+  loadCourses();
+};
+
+const initializeData = async () => {
+  console.log("Initializing data...");
+  await fetchRegions();
+  await loadCourses();
+};
+
+await initializeData();
+
 if (isAuthenticated.value) {
   try {
-    const favorites = await apiFetch<FavoriteResponse>("/users/me/favorites");
-    const favoriteSlugs = new Set(favorites.data.courses);
-    favoriteCourseIds.value = new Set(
-      coursesData.value
-        .filter((course) => favoriteSlugs.has(course.slug))
-        .map((course) => course.id)
-    );
-  } catch {
+    const favorites = await apiFetch("/users/me/favorites");
+    if (favorites.success && favorites.data && favorites.data.courses) {
+      const favoriteSlugs = new Set(favorites.data.courses);
+      favoriteCourseIds.value = new Set(
+        coursesData.value
+          .filter((course) => favoriteSlugs.has(course.slug))
+          .map((course) => course.id)
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching favorites:", error);
     favoriteCourseIds.value = new Set();
   }
 }
 
 const courses = computed(() => coursesData.value || []);
 
-const levelOptions = computed(() => [
-  ...new Set(courses.value.map((course) => course.level).filter(Boolean)),
-]);
-
-const regionOptions = computed(() => {
-  // Получаем все уникальные регионы из карты регионов
-  return Array.from(regionMap.value.keys());
+const levelOptions = computed(() => {
+  const levels = new Set(
+    courses.value.map((course) => course.level).filter(Boolean)
+  );
+  return Array.from(levels);
 });
 
-const styleOptions = computed(() => [
-  ...new Set(courses.value.flatMap((course) => course.tags).filter(Boolean)),
-]);
+const styleOptions = computed(() => {
+  const tags = new Set(
+    courses.value.flatMap((course) => course.tags).filter(Boolean)
+  );
+  return Array.from(tags);
+});
 
 const filteredCourses = computed(() => courses.value);
 
-// Используем watch для отслеживания изменений фильтров
 watch(
   () => [
     selectedFilters.value.level,
@@ -387,25 +416,33 @@ watch(
   { deep: true }
 );
 
-const toggleFilter = (filter: string) => {
+const toggleFilter = (filter) => {
   activeFilter.value = activeFilter.value === filter ? null : filter;
 };
 
-const selectOption = (filter: "level" | "region" | "style", option: string) => {
+const selectOption = (filter, option) => {
+  if (filter === "region") {
+    return;
+  }
   selectedFilters.value[filter] = option;
+  activeFilter.value = null;
+};
+
+const selectLevelOption = (option) => {
+  selectedFilters.value.level = option;
   activeFilter.value = null;
 };
 
 const resetFilters = () => {
   selectedFilters.value = {
     level: null,
-    region: null,
+    region: [],
     style: null,
   };
   activeFilter.value = null;
 };
 
-const toggleDescription = (courseId: string) => {
+const toggleDescription = (courseId) => {
   const next = new Set(expandedCourseIds.value);
   if (next.has(courseId)) {
     next.delete(courseId);
@@ -415,7 +452,7 @@ const toggleDescription = (courseId: string) => {
   expandedCourseIds.value = next;
 };
 
-const toggleFavorite = async (courseId: string) => {
+const toggleFavorite = async (courseId) => {
   if (!isAuthenticated.value) {
     await navigateTo("/auth");
     return;
@@ -442,8 +479,8 @@ const toggleFavorite = async (courseId: string) => {
   }
 };
 
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as HTMLElement | null;
+const handleClickOutside = (event) => {
+  const target = event.target;
   if (!target?.closest(".filter-item")) {
     activeFilter.value = null;
   }
@@ -779,7 +816,17 @@ onBeforeUnmount(() => {
     margin: 0;
     background-color: #fff;
     pointer-events: none;
+    border-bottom: 1px solid #e8e4dd;
   }
+
+  &--checkbox {
+    min-width: 250px;
+  }
+}
+
+.filter-options-list {
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .filter-option {
@@ -793,6 +840,78 @@ onBeforeUnmount(() => {
   &:hover {
     background-color: #e8e4dd;
     padding-left: 24px;
+  }
+}
+
+.filter-loading {
+  padding: 20px;
+  text-align: center;
+  color: #11243f;
+  font-size: 14px;
+}
+
+.filter-option-checkbox {
+  padding: 8px 20px;
+  font-size: 14px;
+  color: #11243f;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #e8e4dd;
+  }
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  user-select: none;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #11243f;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    transition: all 0.2s ease;
+    background-color: #fff;
+    flex-shrink: 0;
+  }
+
+  input:checked + .checkbox-custom {
+    background-color: #c65d3b;
+    border-color: #c65d3b;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  input:focus + .checkbox-custom {
+    box-shadow: 0 0 0 2px rgba(198, 93, 59, 0.3);
+  }
+
+  &:hover .checkbox-custom {
+    border-color: #c65d3b;
   }
 }
 

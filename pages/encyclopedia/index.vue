@@ -42,45 +42,55 @@
         </div>
       </div>
 
-      <div
-        v-for="(region, index) in sortedRegions"
-        :key="region.id"
-        class="encyclopedia-block1"
-      >
-        <img v-if="index % 2 === 0" :src="getRegionImage(index)" :alt="region.name" />
-        <div class="encyclopedia-block1__text">
-          <h1>{{ region.name }}</h1>
-          <div class="encyclopedia-block1__block">
-            <p
-              v-for="dance in region.dances"
-              :key="dance.slug"
-              class="dance-item"
-              @click="navigateToDance(dance.slug)"
-            >
-              {{ dance.name }}
-            </p>
-          </div>
-          <NuxtLink
-            class="ency__button"
-            :to="{ path: '/about_country', query: { slug: region.slug } }"
-          >
-            <h4>больше танцев</h4>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="26"
-              height="31"
-              viewBox="0 0 26 31"
-              fill="none"
-            >
-              <path
-                d="M0.40297 28.3793C-0.162016 28.9852 -0.128871 29.9344 0.477003 30.4994C1.08288 31.0644 2.03204 31.0312 2.59703 30.4253L1.5 29.4023L0.40297 28.3793ZM24.823 5.94668C24.7941 5.11876 24.0995 4.47103 23.2716 4.49994L9.77982 4.97108C8.9519 5 8.30417 5.6946 8.33308 6.52252C8.362 7.35044 9.0566 7.99817 9.88452 7.96926L21.8772 7.55046L22.296 19.5432C22.3249 20.3711 23.0195 21.0188 23.8474 20.9899C24.6754 20.961 25.3231 20.2664 25.2942 19.4385L24.823 5.94668ZM1.5 29.4023L2.59703 30.4253L24.421 7.02202L23.3239 5.99903L22.2269 4.97603L0.40297 28.3793L1.5 29.4023Z"
-                fill="#FFFEFB"
-              />
-            </svg>
-          </NuxtLink>
+      <template v-for="(region, index) in sortedRegions" :key="region.id">
+        <div v-if="index === getFirstRussianRegionIndex()" class="russia-title">
+          <h1 class="russia-text">Россия</h1>
         </div>
-        <img v-if="index % 2 === 1" :src="getRegionImage(index)" :alt="region.name" />
-      </div>
+
+        <div class="encyclopedia-block1">
+          <img
+            v-if="index % 2 === 0"
+            :src="getRegionImage(index)"
+            :alt="region.name"
+          />
+          <div class="encyclopedia-block1__text">
+            <h1>{{ region.name }}</h1>
+            <div class="encyclopedia-block1__block">
+              <p
+                v-for="dance in region.dances"
+                :key="dance.slug"
+                class="dance-item"
+                @click="navigateToDance(dance.slug)"
+              >
+                {{ dance.name }}
+              </p>
+            </div>
+            <NuxtLink
+              class="ency__button"
+              :to="{ path: '/about_country', query: { slug: region.slug } }"
+            >
+              <h4>больше танцев</h4>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="26"
+                height="31"
+                viewBox="0 0 26 31"
+                fill="none"
+              >
+                <path
+                  d="M0.40297 28.3793C-0.162016 28.9852 -0.128871 29.9344 0.477003 30.4994C1.08288 31.0644 2.03204 31.0312 2.59703 30.4253L1.5 29.4023L0.40297 28.3793ZM24.823 5.94668C24.7941 5.11876 24.0995 4.47103 23.2716 4.49994L9.77982 4.97108C8.9519 5 8.30417 5.6946 8.33308 6.52252C8.362 7.35044 9.0566 7.99817 9.88452 7.96926L21.8772 7.55046L22.296 19.5432C22.3249 20.3711 23.0195 21.0188 23.8474 20.9899C24.6754 20.961 25.3231 20.2664 25.2942 19.4385L24.823 5.94668ZM1.5 29.4023L2.59703 30.4253L24.421 7.02202L23.3239 5.99903L22.2269 4.97603L0.40297 28.3793L1.5 29.4023Z"
+                  fill="#FFFEFB"
+                />
+              </svg>
+            </NuxtLink>
+          </div>
+          <img
+            v-if="index % 2 === 1"
+            :src="getRegionImage(index)"
+            :alt="region.name"
+          />
+        </div>
+      </template>
     </div>
     <Footer />
   </div>
@@ -110,20 +120,18 @@ type RegionDetail = RegionListItem & {
   dances: Array<{ id: string; name: string; slug: string }>;
 };
 
-// Правильный порядок регионов (используем slug'и из ответа API)
 const regionOrder = [
-  "afrika",           // Африка
-  "evropa",           // Европа
-  "aziia",            // Азия
-  "amerika",          // Америка
-  "avstraliia",       // Австралия
-  "severnyi-kavkaz",  // Северный Кавказ
-  "povolzhe-i-priurale", // Поволжье и Приуралье
-  "sibir-i-dalnii-vostok", // Сибирь и Дальний Восток
-  "severo-zapad-i-tsentralnaia-rossiia" // Северо-Запад и Центральная Россия
+  "afrika",
+  "evropa",
+  "aziia",
+  "amerika",
+  "avstraliia",
+  "severnyi-kavkaz",
+  "povolzhe-i-priurale",
+  "sibir-i-dalnii-vostok",
+  "severo-zapad-i-tsentralnaia-rossiia",
 ];
 
-// Локальные изображения в том же порядке
 const localImages = [
   africaImage,
   europeImage,
@@ -140,6 +148,19 @@ const getRegionImage = (index: number) => {
   return localImages[index % localImages.length];
 };
 
+const getFirstRussianRegionIndex = () => {
+  const russianRegionSlugs = [
+    "severnyi-kavkaz",
+    "povolzhe-i-priurale",
+    "sibir-i-dalnii-vostok",
+    "severo-zapad-i-tsentralnaia-rossiia",
+  ];
+
+  return sortedRegions.value.findIndex((region) =>
+    russianRegionSlugs.includes(region.slug)
+  );
+};
+
 const { apiFetch } = useApi();
 
 const { data } = await useAsyncData("encyclopedia-regions", async () => {
@@ -150,37 +171,32 @@ const { data } = await useAsyncData("encyclopedia-regions", async () => {
     )
   );
 
-  // Возвращаем только данные без изображений с бэка
   return detailedRegions.map((region) => ({
     ...region,
     dances: region.dances.slice(0, 10),
   }));
 });
 
-// Сортируем регионы в нужном порядке
 const sortedRegions = computed(() => {
   if (!data.value) return [];
-  
+
   return [...data.value].sort((a, b) => {
     const indexA = regionOrder.indexOf(a.slug);
     const indexB = regionOrder.indexOf(b.slug);
-    
-    // Если регион не найден в порядке, помещаем его в конец
+
     if (indexA === -1) return 1;
     if (indexB === -1) return -1;
-    
+
     return indexA - indexB;
   });
 });
 
-// Поиск
 const searchQuery = ref("");
 const showDropdown = ref(false);
 const searchResults = ref<
   Array<{ danceName: string; danceSlug: string; regionName: string }>
 >([]);
 
-// Функция поиска танцев (используем отсортированные регионы)
 const searchDances = (query: string) => {
   if (!query.trim()) {
     searchResults.value = [];
@@ -219,7 +235,6 @@ const performSearch = () => {
   showDropdown.value = true;
 };
 
-// Навигация на страницу танца
 const navigateToDance = (slug: string) => {
   if (slug) {
     navigateTo({ path: "/about_dance", query: { slug: slug } });
@@ -228,7 +243,6 @@ const navigateToDance = (slug: string) => {
   }
 };
 
-// Закрываем выпадающий список при клике вне области
 const handleClickOutside = (event: MouseEvent) => {
   const inputContainer = document.querySelector(".encyclopedia__input");
   if (inputContainer && !inputContainer.contains(event.target as Node)) {
@@ -447,5 +461,19 @@ onUnmounted(() => {
   }
 
   gap: 10px;
+}
+
+.russia-title {
+  text-align: center;
+  margin: 40px 0 90px 0;
+
+  h1 {
+    font-size: 80px;
+    font-family: "BergamascoThin", sans-serif;
+    font-weight: 800;
+    color: #11243f;
+    text-align: center;
+    margin: 0;
+  }
 }
 </style>
