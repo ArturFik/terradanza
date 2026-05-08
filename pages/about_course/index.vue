@@ -113,8 +113,8 @@
         <h4>Пройти курс</h4>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="25"
-          height="16"
+          width="35"
+          height="26"
           viewBox="0 0 25 16"
           fill="none"
         >
@@ -303,10 +303,10 @@ const lessonColumns = computed(() => {
 
 .about__course {
   margin-top: 50px;
-  max-width: 1200px;
+  max-width: 1920px;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 20px;
+  padding: 0 100px;
   display: flex;
   flex-direction: column;
 
@@ -326,18 +326,19 @@ const lessonColumns = computed(() => {
     align-items: center;
     gap: 10px;
     font-family: "Inter", sans-serif;
-    margin-top: 12px;
-    padding: 15px 25px;
+    padding: 23px 37px;
     background-color: #c65d3b;
     color: #fffcf6;
     text-decoration: none;
     border-radius: 999px;
-    font-size: 24px;
+    
+    font-size: 40px;
     transition: all 0.3s ease;
     margin: 12px auto 0;
 
     > h4 {
       margin: 0;
+      font-weight: 100;
     }
 
     &:hover {
@@ -348,12 +349,10 @@ const lessonColumns = computed(() => {
 }
 
 .course-image {
-  width: 30%;
+  width: 35%;
   height: auto;
   object-fit: cover;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-
   @media (max-width: 768px) {
     width: 80%;
     max-width: 300px;
@@ -364,43 +363,39 @@ const lessonColumns = computed(() => {
   flex: 1;
 
   h1 {
-    font-size: 64px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
     text-align: left;
     margin: 0;
-    margin-bottom: 10px;
   }
 }
 
 .course-description {
-  font-size: 18px;
+  font-size: 35px;
   font-weight: 300;
   color: #11243f;
   font-family: "Inter", sans-serif;
   line-height: 1.5;
-  margin-bottom: 30px;
+  margin: 0;
 }
 
 .stats-row {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  gap: 30px;
+  gap: 48px;
   flex-wrap: wrap;
 }
 
 .stat-item {
   text-align: center;
-  flex: 1;
-  min-width: 80px;
 }
 
 .stat-circle {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 165px;
+  height: 165px;
   margin: 0 auto 15px;
   border-radius: 50%;
   display: flex;
@@ -415,7 +410,7 @@ const lessonColumns = computed(() => {
     right: 0;
     bottom: 0;
     border-radius: 50%;
-    border: 3px solid #e0e0e0;
+    border: 5px solid #e0e0e0;
     box-sizing: border-box;
     z-index: 1;
   }
@@ -450,15 +445,15 @@ const lessonColumns = computed(() => {
   }
 
   .stat-number {
-    font-size: 38px;
+    font-size: 72px;
     font-weight: 700;
     color: #11243f;
     font-family: "Inter", sans-serif;
     position: relative;
     z-index: 3;
     background: #fff;
-    width: 90px;
-    height: 90px;
+    width: 154px;
+    height: 154px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -467,7 +462,7 @@ const lessonColumns = computed(() => {
 }
 
 .stat-label {
-  font-size: 18px;
+  font-size: 35px;
   font-weight: 300;
   color: #11243f;
   font-family: "Inter", sans-serif;
@@ -580,7 +575,7 @@ const lessonColumns = computed(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 100px;
 }
 
 .lesson-card {
@@ -599,8 +594,8 @@ const lessonColumns = computed(() => {
 .lesson-left {
   position: relative;
   flex-shrink: 0;
-  width: 175px;
-  height: 125px;
+  width: 280px;
+  height: 200px;
 }
 
 .blue-rectangle {
@@ -616,7 +611,7 @@ const lessonColumns = computed(() => {
 }
 
 .lesson-number {
-  font-size: 32px;
+  font-size: 72px;
   font-weight: 800;
   color: white;
   font-family: "BergamascoThin", sans-serif;
@@ -627,8 +622,8 @@ const lessonColumns = computed(() => {
   top: -100%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: 7px solid white;
   overflow: hidden;
@@ -637,7 +632,7 @@ const lessonColumns = computed(() => {
   position: relative;
 
   img {
-    width: 40px;
+    width: 60px;
     height: auto;
     position: absolute;
     top: 50%;
@@ -651,7 +646,7 @@ const lessonColumns = computed(() => {
   flex: 1;
 
   .lesson-title {
-    font-size: 20px;
+    font-size: 45px;
     font-weight: 700;
     color: #11243f;
     font-family: "Inter", sans-serif;
@@ -659,7 +654,7 @@ const lessonColumns = computed(() => {
   }
 
   .lesson-description {
-    font-size: 14px;
+    font-size: 28px;
     font-weight: 400;
     color: #666;
     font-family: "Inter", sans-serif;
@@ -670,7 +665,7 @@ const lessonColumns = computed(() => {
 
 .lessons-lock-note {
   font-family: "Inter", sans-serif;
-  font-size: 18px;
+  font-size: 30px;
   color: #11243f;
   margin: 40px 0;
   text-align: center;
@@ -688,7 +683,7 @@ const lessonColumns = computed(() => {
     .stat-number {
       width: 55px;
       height: 55px;
-      font-size: 22px;
+      font-size: 72px;
     }
   }
 

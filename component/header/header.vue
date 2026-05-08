@@ -35,24 +35,24 @@ const { lastAchievement, achievementQueue } = useWebSocket();
   background-color: #11243f;
   padding: 10px 0;
   color: #fffcf6;
-  height: 70px;
+  height: 134px;
 }
 
 .header {
-  padding: 0 75px;
+  padding: 0 167px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1234px;
+  max-width: 1920px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 35px;
   align-items: center;
 }
 
 .header-logo {
   font-family: "NicoMoji", sans-serif;
-  font-size: 24px;
+  font-size: 40px;
   font-weight: 300;
   padding: 0;
   color: inherit;
@@ -91,7 +91,7 @@ const { lastAchievement, achievementQueue } = useWebSocket();
 }
 
 .header-menu > a {
-  font-size: 18px;
+  font-size: 32px;
 }
 
 .header-account {
@@ -102,10 +102,10 @@ const { lastAchievement, achievementQueue } = useWebSocket();
   gap: 10px;
   color: inherit;
   text-decoration: none;
-
+  font-size: 32px;
   img {
-    width: 20px;
-    height: 22px;
+    width: 30px;
+    height: 32px;
   }
 }
 </style>

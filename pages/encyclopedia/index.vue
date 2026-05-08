@@ -268,7 +268,7 @@ onUnmounted(() => {
   padding: 0 75px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1234px;
+  max-width: 1920px;
   position: relative;
 
   &__input {
@@ -276,28 +276,30 @@ onUnmounted(() => {
     flex-direction: row;
     align-items: center;
     background-color: #fff;
-    border-radius: 18px;
+    border-radius: 30px;
     border: 2px solid #11243f;
     flex: 1;
-    width: 30%;
+    width: 40%;
     min-width: 0;
     overflow: visible;
     margin-left: auto;
+    margin-right: 5%;
     margin-top: 30px;
     margin-bottom: 20px;
     position: relative;
 
     &--input {
+      font-size: 36px;
       flex: 1;
       min-width: 0;
       border: none;
       outline: none;
-      padding: 12px 16px;
+      padding: 30px 36px;
       background: transparent;
     }
 
     &--button {
-      width: 70px;
+      width: 127px;
       flex-shrink: 0;
       cursor: pointer;
       padding: 0;
@@ -320,7 +322,7 @@ onUnmounted(() => {
   right: 0;
   background: white;
   border: 2px solid #11243f;
-  border-radius: 15px;
+  border-radius: 30px;
   margin-top: 5px;
   max-height: 300px;
   overflow-y: auto;
@@ -345,10 +347,12 @@ onUnmounted(() => {
     &__name {
       font-weight: 500;
       margin-bottom: 4px;
+      font-size: 40px;
+      color: #11243f;
     }
 
     &__region {
-      font-size: 12px;
+      font-size: 24px;
       color: #666;
 
       .search-dropdown-item:hover & {
@@ -362,7 +366,7 @@ onUnmounted(() => {
       cursor: default;
       text-align: center;
       color: #999;
-
+      font-size: 40px;
       &:hover {
         background-color: transparent;
         color: #999;
@@ -376,7 +380,7 @@ onUnmounted(() => {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 60px;
+  margin-bottom: 100px;
 
   img {
     width: 30%;
@@ -413,7 +417,7 @@ onUnmounted(() => {
       color: #11243f;
       margin: 0;
       width: auto;
-      font-size: 26px;
+      font-size: 40px;
       white-space: nowrap;
       display: inline-block;
       cursor: pointer;
@@ -427,7 +431,7 @@ onUnmounted(() => {
   }
 
   h1 {
-    font-size: 64px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
@@ -438,11 +442,11 @@ onUnmounted(() => {
 
 .ency__button {
   border-radius: 999px;
-  padding: 10px 15px;
+  padding: 10px 35px;
   color: #fffcf6;
-  margin: 0;
+  margin: 10px 0 0 0;
   width: auto;
-  font-size: 26px;
+  font-size: 40px;
   white-space: nowrap;
   display: inline-flex;
   background-color: #c65d3b;
@@ -468,7 +472,7 @@ onUnmounted(() => {
   margin: 40px 0 90px 0;
 
   h1 {
-    font-size: 80px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;

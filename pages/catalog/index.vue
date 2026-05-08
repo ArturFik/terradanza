@@ -189,8 +189,8 @@
                 <div class="heart-icon" @click="toggleFavorite(course.id)">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
+                    width="40"
+                    height="40"
                     viewBox="0 0 24 24"
                     :fill="
                       favoriteCourseIds.has(course.id) ? '#ff6b6b' : 'none'
@@ -505,7 +505,7 @@ onBeforeUnmount(() => {
   margin-top: 50px;
 
   h1 {
-    font-size: 80px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
@@ -524,7 +524,7 @@ onBeforeUnmount(() => {
     &--view {
       margin-left: auto;
       margin-right: auto;
-      max-width: 1234px;
+      max-width: 1920px;
       padding: 0 75px;
       display: flex;
       flex-direction: row;
@@ -536,15 +536,15 @@ onBeforeUnmount(() => {
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 15px;
+      gap: 30px;
       width: 50%;
     }
 
     &--blocktwo {
       background-color: #fff;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 16px;
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 30px;
       font-weight: 600;
       color: #11243f;
       cursor: pointer;
@@ -568,7 +568,7 @@ onBeforeUnmount(() => {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 30px;
-    max-width: 1234px;
+    max-width: 1920px;
     margin: 40px auto;
     padding: 0 75px;
 
@@ -583,7 +583,7 @@ onBeforeUnmount(() => {
 .catalog__tab {
   width: 100%;
   position: relative;
-  border-radius: 16px;
+  border-radius: 30px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
@@ -613,7 +613,7 @@ onBeforeUnmount(() => {
   &--content {
     position: relative;
     z-index: 2;
-    padding: 24px;
+    padding: 50px;
     color: #fffcf6;
     display: flex;
     flex-direction: column;
@@ -621,7 +621,7 @@ onBeforeUnmount(() => {
   }
 
   h2 {
-    font-size: 24px;
+    font-size: 55px;
     font-weight: 700;
     margin: 0;
     font-family: "Inter", sans-serif;
@@ -629,7 +629,7 @@ onBeforeUnmount(() => {
   }
 
   h3 {
-    font-size: 18px;
+    font-size: 40px;
     font-weight: 500;
     margin: 0;
     opacity: 0.9;
@@ -641,6 +641,7 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     align-items: center;
     margin-top: 12px;
+    font-size: 24px;
   }
 
   &--description {
@@ -648,7 +649,7 @@ onBeforeUnmount(() => {
     overflow: hidden;
     transition: max-height 0.4s ease-out, margin-top 0.3s ease;
     margin-top: 0;
-    font-size: 14px;
+    font-size: 24px;
     line-height: 1.5;
     color: rgba(255, 252, 246, 0.9);
 
@@ -658,7 +659,7 @@ onBeforeUnmount(() => {
     }
 
     &--expanded {
-      max-height: 220px;
+      max-height: 1000px;
       margin-top: 8px;
     }
   }
@@ -670,14 +671,14 @@ onBeforeUnmount(() => {
   gap: 8px;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.2);
-  padding: 8px 16px;
+  padding: 15px 30px;
   border-radius: 30px;
   transition: all 0.3s ease;
   width: fit-content;
 
   p {
     margin: 0;
-    font-size: 14px;
+    font-size: 24px;
     font-weight: 500;
     color: #fffcf6;
   }
@@ -709,8 +710,8 @@ onBeforeUnmount(() => {
 
 .filter-item {
   background-color: #fff;
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: 20px 20px;
+  border-radius: 15px;
   cursor: pointer;
   position: relative;
   display: flex;
@@ -722,7 +723,7 @@ onBeforeUnmount(() => {
 
   > p {
     margin: 0;
-    font-size: 16px;
+    font-size: 30px;
     font-weight: 500;
     color: #11243f;
     white-space: nowrap;
@@ -766,8 +767,8 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   transition: transform 0.3s ease;
-  width: 10px;
-  height: 10px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 
   svg {
@@ -803,7 +804,7 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 100;
   overflow: hidden;
@@ -811,8 +812,8 @@ onBeforeUnmount(() => {
 
   > p {
     color: #11243f;
-    padding: 10px 20px;
-    font-size: 12px;
+    padding: 20px 32px;
+    font-size: 24px;
     margin: 0;
     background-color: #fff;
     pointer-events: none;
@@ -820,7 +821,7 @@ onBeforeUnmount(() => {
   }
 
   &--checkbox {
-    min-width: 250px;
+    min-width: 470px;
   }
 }
 
@@ -831,7 +832,7 @@ onBeforeUnmount(() => {
 
 .filter-option {
   padding: 12px 20px;
-  font-size: 14px;
+  font-size: 30px;
   color: #11243f;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -851,7 +852,7 @@ onBeforeUnmount(() => {
 }
 
 .filter-option-checkbox {
-  padding: 8px 20px;
+  padding: 20px 32px;
   font-size: 14px;
   color: #11243f;
   transition: all 0.2s ease;
@@ -869,7 +870,7 @@ onBeforeUnmount(() => {
   width: 100%;
   position: relative;
   user-select: none;
-
+  font-size: 24px;
   input {
     position: absolute;
     opacity: 0;
@@ -878,10 +879,10 @@ onBeforeUnmount(() => {
   }
 
   .checkbox-custom {
-    width: 20px;
-    height: 20px;
+    width: 35px;
+    height: 35px;
     border: 2px solid #11243f;
-    border-radius: 4px;
+    border-radius: 10px;
     display: inline-block;
     position: relative;
     transition: all 0.2s ease;
@@ -929,11 +930,11 @@ onBeforeUnmount(() => {
 
 .button {
   border-radius: 999px;
-  padding: 7px 30px;
+  padding: 15px 30px;
   color: #fffcf6;
   font-weight: 700;
   margin: 20px 0 0 0;
-  font-size: 14px;
+  font-size: 24px;
   white-space: nowrap;
   display: inline-flex;
   background-color: #c65d3b;

@@ -135,7 +135,7 @@ const galleryImages = computed<string[]>(() => {
   margin-top: 50px;
 
   h1 {
-    font-size: 64px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
@@ -145,7 +145,7 @@ const galleryImages = computed<string[]>(() => {
   }
 
   .about {
-    font-size: 48px;
+    font-size: 80px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
@@ -156,7 +156,7 @@ const galleryImages = computed<string[]>(() => {
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
-    max-width: 1234px;
+    max-width: 1920px;
     padding: 0 75px;
   }
 
@@ -168,7 +168,7 @@ const galleryImages = computed<string[]>(() => {
   }
 
   .intro-text {
-    font-size: 18px;
+    font-size: 40px;
     font-weight: 300;
     color: #11243f;
     text-align: left;
@@ -180,7 +180,7 @@ const galleryImages = computed<string[]>(() => {
   .toggle-button {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 40px;
     font-weight: bold;
     color: #11243f;
     cursor: pointer;
@@ -201,7 +201,7 @@ const galleryImages = computed<string[]>(() => {
 
   &__continue {
     position: relative;
-
+    padding: 0 100px;
     .dance-item {
       border-radius: 999px;
       padding: 5px 15px;
@@ -209,7 +209,7 @@ const galleryImages = computed<string[]>(() => {
       color: #11243f;
       margin: 0;
       width: auto;
-      font-size: 26px;
+      font-size: 40px;
       white-space: nowrap;
       display: inline-block;
       text-decoration: none;
@@ -225,7 +225,7 @@ const galleryImages = computed<string[]>(() => {
   &__block {
     margin-left: auto;
     margin-right: auto;
-    max-width: 1234px;
+    max-width: 1920px;
   }
 
   &__view {
@@ -241,7 +241,7 @@ const galleryImages = computed<string[]>(() => {
     width: 90%;
 
     p {
-      font-size: 18px;
+      font-size: 40px;
       font-weight: 300;
       color: #11243f;
       text-align: left;
@@ -253,14 +253,13 @@ const galleryImages = computed<string[]>(() => {
   &__tab {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    width: 100%;
+    gap: 28px;
     margin-left: auto;
     margin-right: auto;
-    max-width: 1234px;
+    max-width: 1920px;
     margin-top: 50px;
     margin-bottom: 50px;
-    padding: 0 75px;
+    padding: 0 100px;
 
     .tab-item {
       position: relative;

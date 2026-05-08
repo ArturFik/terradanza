@@ -471,14 +471,14 @@ const submitResetPassword = async () => {
 }
 
 .auth {
-  padding: 0 75px;
+  padding: 0 135px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1234px;
+  max-width: 1920px;
   margin-top: 50px;
 
   h1 {
-    font-size: 36px;
+    font-size: 50px;
     font-family: "Inter", sans-serif;
     font-weight: 600;
     color: #11243f;
@@ -488,12 +488,12 @@ const submitResetPassword = async () => {
   }
 
   &__bg {
-    border-radius: 25px;
+    border-radius: 70px;
     background-color: #11243f;
     background-image: url("@/assets/img/bgauth.png");
     background-size: auto;
     background-size: 100% auto;
-    padding: 40px 0px;
+    padding: 75px 0px;
     position: relative;
 
     &--white {
@@ -501,21 +501,21 @@ const submitResetPassword = async () => {
       margin-left: auto;
       margin-right: auto;
       background-color: #fff;
-      border-radius: 25px;
-      padding: 60px 40px;
+      border-radius: 70px;
+      padding: 115px 83px 85px 83px;
       position: relative;
     }
   }
 
   &__close-btn {
     position: absolute;
-    top: 20px;
-    right: 25px;
-    width: 32px;
-    height: 32px;
+    top: 50px;
+    right: 50px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: none;
-    font-size: 32px;
+    font-size: 50px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -537,19 +537,21 @@ const submitResetPassword = async () => {
     display: flex;
     background-color: #f8f5ee;
     border-radius: 9999px;
-    margin-bottom: 30px;
+    margin-bottom: 73px;
     transition: all 0.3s ease;
-
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
     &:hover:not(&--active) {
       background-color: #f8f5ee;
     }
   }
 
   &__tab-btn {
-    padding: 12px 24px;
+    padding: 12px 82px;
     border: none;
     border-radius: 9999px;
-    font-size: 16px;
+    font-size: 35px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -563,19 +565,18 @@ const submitResetPassword = async () => {
   }
 
   &__submit-btn {
-    flex: 1;
     display: flex;
     margin-left: auto;
     margin-right: auto;
-    padding: 12px 20px;
+    padding: 16px 59px;
     background-color: #c65d3b;
     color: white;
     border: none;
     border-radius: 9999px;
-    font-size: 16px;
+    font-size: 35px;
     font-weight: 500;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 100px;
     transition: background-color 0.3s ease;
 
     &:hover {
@@ -590,10 +591,11 @@ const submitResetPassword = async () => {
 
   input:not(.code-digit) {
     width: 100%;
-    padding: 12px;
+    padding: 20px;
     border: 0px;
     border-bottom: 1px solid #ddd;
-    font-size: 14px;
+    font-size: 32px;
+    margin-bottom: 20px;
     box-sizing: border-box;
 
     &:focus {
@@ -644,7 +646,7 @@ const submitResetPassword = async () => {
 }
 
 .register {
-  width: 60%;
+  width: 65%;
 }
 
 .login {
@@ -652,12 +654,12 @@ const submitResetPassword = async () => {
 }
 
 .change-password {
-  font-size: 12px;
+  font-size: 24px;
   font-weight: 300;
   color: #777777;
   text-align: left;
   font-family: "Inter", sans-serif;
-  margin: 10px 0 0 0;
+  margin: 20px 0 0 20px;
   flex: 1;
   cursor: pointer;
 
@@ -668,9 +670,9 @@ const submitResetPassword = async () => {
 
 .auth-message,
 .auth-error {
-  font-size: 12px;
-  margin-top: 0;
-  text-align: left;
+  margin-top: 10px;
+  font-size: 18px;
+  text-align: center;
   font-family: "Inter", sans-serif;
 }
 

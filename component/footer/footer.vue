@@ -3,8 +3,8 @@
     <div class="footer">
       <div class="footer-1">
         <h1 class="footer-logo">TerraDanza</h1>
-        <p>+1 (7635) 547-12-97</p>
-        <p>support@TerraDanza</p>
+        <p class="footer-number">+1 (7635) 547-12-97</p>
+        <p class="footer-mail">support@TerraDanza</p>
       </div>
       <div class="footer-2">
         <div class="">
@@ -19,12 +19,14 @@
         </div>
       </div>
       <div class="footer-3">
-        <p>Подпишитесь на наши новости</p>
+        <p class="footer-3-sub">Подпишитесь на наши новости</p>
         <div class="footer-3-view">
           <input type="text" placeholder="Ваша почта" />
-          <div class="footer-3-button">-></div>
+          <div class="footer-3-button"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="18" viewBox="0 0 21 18" fill="none">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5198 17.627L20.1893 10.0724C20.8955 9.37647 20.8955 8.24842 20.1893 7.5546L12.5198 7.05719e-05L9.9631 2.5195L14.546 7.03277H0L0 10.5937H14.546L9.9631 15.1086L12.5198 17.627Z" fill="#FFFEFB"/>
+</svg></div>
         </div>
-        <p>
+        <p class="footer-3-dis">
           Хотите быть в курсе новых направлений, получать ссылки на полезные
           видео и узнавать о выходе курсов первыми? Оставьте email — мы будем
           писать только по делу.
@@ -53,10 +55,10 @@
 }
 
 .footer {
-  padding: 0 75px;
+  padding: 0 103px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1234px;
+  max-width: 1920px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -80,49 +82,88 @@
   > div {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    font-size: 14px;
+    font-size: 18.9px;
     font-weight: 100;
     width: 100%;
-    gap: 20px;
+    gap: 16px;
+    margin-top: auto;
+    margin-bottom: auto;
     > a {
       width: 100%;
       font-weight: 100;
       font-family: "Inter", sans-serif;
       text-decoration: none;
-      color: #fffcf6;
+      color: #a4a9b3;
     }
   }
 }
 
 .footer-3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24.41px;
   .footer-3-view {
     display: flex;
     flex-direction: row;
     align-items: center;
+    width: 80%;
   }
   input {
     padding: 15px 10px;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     width: 50%;
+    font-size: 18.98px;
     border: 2px solid white;
   }
   .footer-3-button {
-    padding: 15px 10px;
+    padding: 19px 10px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     height: auto;
+    display: flex;
     width: 10%;
     background-color: #c65d3b;
+    svg{
+      margin-left: auto;
+      margin-right: auto;
+    }
   }
 }
 
 .footer-logo {
   font-family: "NicoMoji", sans-serif;
-  font-size: 24px;
+  font-size: 40px;
   font-weight: 300;
-  margin-bottom: 140px;
+  margin-bottom: 102px;
   padding: 0;
+}
+
+.footer-number{
+  font-size: 23.63px;
+  font-weight: 300;
+  padding: 0;
+  margin: 0;
+}
+.footer-mail{
+  font-size: 18.9px;
+  font-weight: 300;
+  padding: 0;
+  margin: 20px 0 0 0;
+}
+.footer-3-sub{
+  font-size: 21.69px;
+  font-weight: 300;
+  padding: 0;
+  margin: 0;
+}
+.footer-3-dis{
+  font-weight: 100;
+  font-family: "Inter", sans-serif;
+  color: #a4a9b3;
+  margin: 0;
+  font-size: 16.27px;
+  width: 90%;
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
-  <div class="account-container">
+  <div class="profile-page-container">
     <Header />
-    <div v-if="currentUser" class="account">
-      <h1>ПРОФИЛЬ</h1>
-      <div class="account__logo">
-        <div class="avatar-wrapper" @click="triggerFileUpload">
-          <img :src="avatarUrl" alt="logo" class="logo" />
-          <div class="avatar-overlay">
+    <div v-if="currentUser" class="profile-page-container__account">
+      <h1 class="profile-page-container__title">ПРОФИЛЬ</h1>
+      <div class="profile-page-container__logo">
+        <div class="profile-page-container__avatar-wrapper" @click="triggerFileUpload">
+          <img :src="avatarUrl" alt="logo" class="profile-page-container__avatar" />
+          <div class="profile-page-container__avatar-overlay">
             <span>Изменить</span>
           </div>
         </div>
@@ -17,185 +17,192 @@
           style="display: none"
           @change="handleAvatarUpload"
         />
-        <div class="logo__view">
-          <p class="logo__view--1">{{ fullName }}</p>
-          <p class="logo__view--2">{{ rankLabel }}</p>
-          <p class="logo__view--3" @click="goToPage('profile/edit')">
+        <div class="profile-page-container__logo-view">
+          <p class="profile-page-container__logo-view--name">{{ fullName }}</p>
+          <p class="profile-page-container__logo-view--rank">{{ rankLabel }}</p>
+          <p class="profile-page-container__logo-view--edit" @click="goToPage('profile/edit')">
             Редактировать профиль
           </p>
-          <p class="logo__view--4" @click="handleLogout">Выйти</p>
+          <p class="profile-page-container__logo-view--logout" @click="handleLogout">Выйти</p>
         </div>
       </div>
       <div
         v-if="avatarMessage"
-        class="avatar-message"
+        class="profile-page-container__avatar-message"
         :class="avatarMessageType"
       >
         {{ avatarMessage }}
       </div>
 
-      <div class="account-tab">
+      <div class="profile-page-container__tabs">
         <img
           v-for="(tab, index) in tabs"
           :key="index"
           :src="tab.img"
           :alt="`tab-${index}`"
-          :class="{ active: activeTab === index }"
+          :class="{ 'profile-page-container__tab--active': activeTab === index }"
+          class="profile-page-container__tab"
           @click="activeTab = index"
         />
       </div>
 
-      <div v-if="activeTab === 0" class="achievements-container">
+      <div v-if="activeTab === 0" class="profile-page-container__achievements">
         <div v-if="achievementRows.length">
           <div
-            class="check-tab"
+            class="profile-page-container__achievements-row"
             v-for="(row, rowIndex) in achievementRows"
             :key="rowIndex"
           >
             <div
               v-for="achievement in row"
               :key="achievement.id"
-              class="achievement-item"
+              class="profile-page-container__achievement-item"
             >
-              <div class="achievement-image-wrapper">
+              <div class="profile-page-container__achievement-image-wrapper">
                 <img
                   :src="achievement.icon"
                   :alt="achievement.name"
-                  class="achievement-icon"
+                  class="profile-page-container__achievement-icon"
                 />
-                <div class="achievement-overlay">
-                  <p class="achievement-description">
+                <div class="profile-page-container__achievement-overlay">
+                  <p class="profile-page-container__achievement-description">
                     {{ achievement.description }}
                   </p>
                 </div>
               </div>
-              <p class="achievement-name">{{ achievement.name }}</p>
+              <p class="profile-page-container__achievement-name">{{ achievement.name }}</p>
             </div>
           </div>
         </div>
-        <p v-else class="empty-state">Пока нет полученных достижений.</p>
+        <p v-else class="profile-page-container__empty-state">Пока нет полученных достижений.</p>
       </div>
 
-      <div v-if="activeTab === 1" class="progress-container">
-        <div class="account__grid progress-grid">
+      <div v-if="activeTab === 1" class="profile-page-container__progress">
+        <div class="profile-page-container__grid">
           <div
             v-for="course in enrolledCourses"
             :key="course.id"
-            class="account__view progress-card"
+            class="profile-page-container__card-wrapper"
           >
             <div
-              class="account__view--view"
-              :style="{ backgroundImage: `url(${course.backgroundImage})` }"
+              class="profile-page-container__card"
+              :class="{ 'profile-page-container__card--expanded': expandedCourseIds.has(course.id) }"
             >
-              <div class="account__view--overlay"></div>
-              <div class="account__view--content">
-                <h2>{{ course.title }}</h2>
-                <h3>{{ course.region }}</h3>
-                <div class="progress-bar-container">
-                  <div class="progress-bar-bg">
-                    <div
-                      class="progress-bar-fill"
-                      :style="{ width: course.progress + '%' }"
-                    ></div>
+              <div
+                class="profile-page-container__card-bg"
+                :style="{ backgroundImage: `url(${course.backgroundImage})` }"
+              >
+                <div class="profile-page-container__card-overlay"></div>
+                <div class="profile-page-container__card-content">
+                  <h2 class="profile-page-container__card-title">{{ course.title }}</h2>
+                  <h3 class="profile-page-container__card-region">{{ course.region }}</h3>
+                  <div class="profile-page-container__progress-bar-wrapper">
+                    <div class="profile-page-container__progress-bar-bg">
+                      <div
+                        class="profile-page-container__progress-bar-fill"
+                        :style="{ width: course.progress + '%' }"
+                      ></div>
+                    </div>
+                    <span class="profile-page-container__progress-percentage"
+                      >{{ course.progress }}%</span
+                    >
                   </div>
-                  <span class="progress-percentage"
-                    >{{ course.progress }}%</span
-                  >
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <p v-if="!enrolledCourses.length" class="empty-state">
+        <p v-if="!enrolledCourses.length" class="profile-page-container__empty-state">
           Вы пока не записаны ни на один курс.
         </p>
       </div>
 
-      <div v-if="activeTab === 2" class="favorites-container">
-        <div class="account__grid favorites-grid">
+      <div v-if="activeTab === 2" class="profile-page-container__favorites">
+        <div class="profile-page-container__grid">
           <div
             v-for="course in favoriteCourses"
             :key="course.id"
-            class="account__view"
+            class="profile-page-container__card-wrapper"
           >
             <div
-              class="account__view--view"
-              :style="{ backgroundImage: `url(${course.backgroundImage})` }"
+              class="profile-page-container__card"
+              :class="{ 'profile-page-container__card--expanded': expandedCourseIds.has(course.id) }"
             >
-              <div class="account__view--overlay"></div>
-              <div class="account__view--content">
-                <h2>{{ course.title }}</h2>
-                <h3>{{ course.region }}</h3>
-                <div class="account__view--actions">
-                  <div
-                    class="description-toggle"
-                    :class="{
-                      'description-toggle--open': expandedCourseIds.has(
-                        course.id
-                      ),
-                    }"
-                    @click="toggleDescription(course.id)"
-                  >
-                    <p>Описание</p>
-                    <svg
-                      class="description-arrow"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 22 14"
-                      fill="none"
+              <div
+                class="profile-page-container__card-bg"
+                :style="{ backgroundImage: `url(${course.backgroundImage})` }"
+              >
+                <div class="profile-page-container__card-overlay"></div>
+                <div class="profile-page-container__card-content">
+                  <h2 class="profile-page-container__card-title">{{ course.title }}</h2>
+                  <h3 class="profile-page-container__card-region">{{ course.region }}</h3>
+                  <div class="profile-page-container__card-actions">
+                    <div
+                      class="profile-page-container__description-toggle"
+                      :class="{
+                        'profile-page-container__description-toggle--open': expandedCourseIds.has(
+                          course.id
+                        ),
+                      }"
+                      @click="toggleDescription(course.id)"
                     >
-                      <path
-                        d="M1.15625 1.1543L10.9575 10.9556L20.7588 1.1543"
+                      <p>Описание</p>
+                      <svg
+                        class="profile-page-container__description-arrow"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 22 14"
+                        fill="none"
+                      >
+                        <path
+                          d="M1.15625 1.1543L10.9575 10.9556L20.7588 1.1543"
+                          stroke="currentColor"
+                          stroke-width="3.2671"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      class="profile-page-container__heart-icon profile-page-container__heart-icon--active"
+                      @click="toggleFavorite(course.id)"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="35"
+                        height="35"
+                        viewBox="0 0 24 24"
+                        fill="#ff6b6b"
                         stroke="currentColor"
-                        stroke-width="3.2671"
-                      />
-                    </svg>
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                        />
+                      </svg>
+                    </div>
                   </div>
-                  <div
-                    class="heart-icon active"
-                    @click="toggleFavorite(course.id)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="#ff6b6b"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path
-                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                      />
-                    </svg>
+                  <div class="profile-page-container__card-description">
+                    <div class="profile-page-container__card-description-inner">
+                      <p>{{ course.description }}</p>
+                      <NuxtLink
+                        class="profile-page-container__button"
+                        :to="{
+                          path: '/about_course',
+                          query: { slug: course.slug },
+                        }"
+                      >
+                        Подробнее о курсе
+                      </NuxtLink>
+                    </div>
                   </div>
-                </div>
-                <div
-                  class="account__view--description"
-                  :class="{
-                    'account__view--description--expanded':
-                      expandedCourseIds.has(course.id),
-                  }"
-                >
-                  <p>{{ course.description }}</p>
-                  <NuxtLink
-                    class="button"
-                    :to="{
-                      path: '/about_course',
-                      query: { slug: course.slug },
-                    }"
-                  >
-                    Подробнее о курсе
-                  </NuxtLink>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <p v-if="!favoriteCourses.length" class="empty-state">
+        <p v-if="!favoriteCourses.length" class="profile-page-container__empty-state">
           Избранных курсов пока нет.
         </p>
       </div>
@@ -506,54 +513,78 @@ const handleAvatarUpload = async (event) => {
 </script>
 
 <style lang="scss" scoped>
-.account-container {
+.profile-page-container {
   background-color: #fff;
-}
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 
-.account {
-  padding: 0 75px;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 1234px;
-  margin-top: 50px;
+  & > &__account {
+    padding: 0 135px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1920px;
+    width: 100%;
+    margin-top: 50px;
+    box-sizing: border-box;
 
-  h1 {
-    font-size: 64px;
+    @media (max-width: 768px) {
+      padding: 0 20px;
+    }
+  }
+
+  &__title {
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
     text-align: center;
     margin: 0;
     margin-bottom: 10px;
+
+    @media (max-width: 768px) {
+      font-size: 60px;
+    }
   }
 
   &__logo {
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 50%;
-    margin-right: auto;
+    width: 100%;
+    max-width: 100%;
     gap: 20px;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      justify-content: center;
+    }
   }
 
-  .avatar-wrapper {
+  &__avatar-wrapper {
     position: relative;
     cursor: pointer;
+    flex-shrink: 0;
 
-    &:hover .avatar-overlay {
+    &:hover .profile-page-container__avatar-overlay {
       opacity: 1;
     }
   }
 
-  .logo {
-    width: 125px;
-    height: 125px;
+  &__avatar {
+    width: 293px;
+    height: 293px;
     border-radius: 9999px;
     object-fit: cover;
+
+    @media (max-width: 768px) {
+      width: 200px;
+      height: 200px;
+    }
   }
 
-  .avatar-overlay {
-    height: 125px;
+  &__avatar-overlay {
+    height: 293px;
     position: absolute;
     top: 0;
     left: 0;
@@ -568,13 +599,17 @@ const handleAvatarUpload = async (event) => {
 
     span {
       color: white;
-      font-size: 12px;
+      font-size: 24px;
       font-family: "Inter", sans-serif;
       text-align: center;
     }
+
+    @media (max-width: 768px) {
+      height: 200px;
+    }
   }
 
-  .avatar-message {
+  &__avatar-message {
     margin-top: 10px;
     margin-left: 0;
     font-size: 12px;
@@ -589,42 +624,56 @@ const handleAvatarUpload = async (event) => {
     }
   }
 
-  .logo__view {
+  &__logo-view {
     display: flex;
     flex-direction: column;
-    align-items: left;
-    margin-right: auto;
+    align-items: flex-start;
     justify-content: space-between;
+    flex: 1;
 
-    &--1 {
-      font-size: 18px;
+    &--name {
+      font-size: 51.1px;
       font-weight: 600;
       color: #11243f;
       text-align: left;
       font-family: "Inter", sans-serif;
-      margin: 20px 0 0 0;
+      margin: 0;
+
+      @media (max-width: 768px) {
+        font-size: 28px;
+      }
     }
 
-    &--2 {
-      font-size: 18px;
+    &--rank {
+      font-size: 45px;
       font-weight: 400;
       color: #11243f;
       text-align: left;
       font-family: "Inter", sans-serif;
       margin: 5px 0;
+
+      @media (max-width: 768px) {
+        font-size: 24px;
+      }
     }
 
-    &--3 {
-      font-size: 16px;
+    &--edit {
+      font-size: 36px;
       font-weight: 400;
       color: #c65d3b;
       text-align: left;
       font-family: "Inter", sans-serif;
-      margin: 2px 0;
+      margin: 28px 0 0 0;
       cursor: pointer;
+
+      @media (max-width: 768px) {
+        font-size: 20px;
+        margin-top: 15px;
+      }
     }
-    &--4 {
-      font-size: 16px;
+
+    &--logout {
+      font-size: 36px;
       font-weight: 400;
       text-decoration: underline;
       color: #c65d3b;
@@ -632,42 +681,158 @@ const handleAvatarUpload = async (event) => {
       font-family: "Inter", sans-serif;
       margin: 10px 0;
       cursor: pointer;
+
+      @media (max-width: 768px) {
+        font-size: 20px;
+      }
     }
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 30px;
-    max-width: 1234px;
-    margin: 40px auto;
-    padding: 0 75px;
+    width: 100%;
+    margin: 40px 0;
+    align-items: start; /* Важно: выравниваем карточки по верхнему краю */
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
-      padding: 0 20px;
       gap: 20px;
     }
   }
-}
 
-.account-tab {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 75%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 50px;
+  &__card-wrapper {
+    width: 100%;
+    display: flex;
+  }
 
-  > img {
-    width: 20%;
+  &__card {
+    width: 100%;
+    display: flex;
+    transition: all 0.3s ease;
+    
+    &-bg {
+      font-family: "Inter", sans-serif;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 37px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      width: 100%;
+      min-height: 300px;
+      overflow: hidden;
+    }
+
+    &-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #11243f;
+      opacity: 0.6;
+      border-radius: 37px;
+      pointer-events: none;
+    }
+
+    &-content {
+      position: relative;
+      z-index: 2;
+      padding: 30px;
+      color: #fffcf6;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      box-sizing: border-box;
+
+      @media (max-width: 768px) {
+        padding: 20px;
+      }
+    }
+
+    &-title {
+      font-size: 51px;
+      font-weight: 700;
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      color: #fffcf6;
+      word-break: break-word;
+
+      @media (max-width: 768px) {
+        font-size: 28px;
+      }
+    }
+
+    &-region {
+      font-size: 37px;
+      font-weight: 500;
+      margin: 0;
+      opacity: 0.9;
+      color: #fffcf6;
+      word-break: break-word;
+
+      @media (max-width: 768px) {
+        font-size: 20px;
+      }
+    }
+
+    &-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    &-description {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 0;
+      
+      &-inner {
+        padding-top: 12px;
+        font-size: 25px;
+        line-height: 1.5;
+        color: rgba(255, 252, 246, 0.9);
+        
+        p {
+          margin: 0 0 12px 0;
+        }
+      }
+    }
+  }
+
+  /* Стили для развернутой карточки */
+  &__card--expanded {
+    .profile-page-container__card-description {
+      max-height: 1000px; /* Достаточно для контента */
+    }
+  }
+
+  &__tabs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 50px;
+    gap: 20px;
+    padding: 0 100px;
+  }
+
+  &__tab {
     cursor: pointer;
     transition: all 0.3s ease;
     padding-bottom: 10px;
+    object-fit: contain;
 
-    &.active {
+    &--active {
       border-bottom: 3px solid #c65d3b;
     }
 
@@ -676,278 +841,207 @@ const handleAvatarUpload = async (event) => {
       transform: translateY(-2px);
     }
   }
-}
 
-.check-tab {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 50px;
+  &__achievements-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    width: 100%;
+    margin-top: 50px;
 
-  > .achievement-item {
-    width: 15%;
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__achievement-item {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
+  }
 
-    &--locked {
-      opacity: 0.5;
-      filter: grayscale(0.5);
+  &__achievement-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1.2;
+    cursor: pointer;
+    overflow: hidden;
+    background-color: #fff;
+
+    &:hover .profile-page-container__achievement-icon {
+      filter: blur(4px);
+    }
+
+    &:hover .profile-page-container__achievement-overlay {
+      opacity: 1;
     }
   }
-}
 
-.achievement-image-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  cursor: pointer;
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #fff;
-
-  &:hover .achievement-icon {
-    filter: blur(4px);
+  &__achievement-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: filter 0.3s ease;
+    display: block;
   }
 
-  &:hover .achievement-overlay {
-    opacity: 1;
-  }
-}
-
-.achievement-icon {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: filter 0.3s ease;
-  display: block;
-}
-
-.achievement-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(4px);
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.achievement-description {
-  font-size: 12px;
-  text-align: center;
-  color: #11243f;
-  font-family: "Inter", sans-serif;
-  padding: 12px;
-  margin: 0;
-  line-height: 1.4;
-  font-weight: 500;
-}
-
-.achievement-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #11243f;
-  text-align: center;
-  font-family: "Inter", sans-serif;
-  margin: 8px 0 0 0;
-}
-
-.progress-bar-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 12px;
-  width: 100%;
-}
-
-.progress-bar-bg {
-  flex: 1;
-  height: 8px;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: #c65d3b;
-  border-radius: 4px;
-  transition: width 0.3s ease;
-}
-
-.progress-percentage {
-  font-size: 14px;
-  font-weight: 600;
-  color: #fffcf6;
-  min-width: 45px;
-  text-align: right;
-}
-
-.progress-grid,
-.favorites-grid {
-  margin-top: 20px;
-}
-
-.account__view {
-  &--view {
-    font-family: "Inter", sans-serif;
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 170px;
-  }
-
-  &--overlay {
+  &__achievement-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #11243f;
-    opacity: 0.6;
-    border-radius: 16px;
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
     pointer-events: none;
   }
 
-  &--content {
-    position: relative;
-    z-index: 2;
-    padding: 24px;
-    color: #fffcf6;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  h2 {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0;
+  &__achievement-description {
+    font-size: 27px;
+    text-align: center;
+    color: #11243f;
     font-family: "Inter", sans-serif;
-    color: #fffcf6;
-  }
-
-  h3 {
-    font-size: 18px;
-    font-weight: 500;
+    padding: 12px;
     margin: 0;
-    opacity: 0.9;
-    color: #fffcf6;
+    line-height: 1.4;
+    font-weight: 500;
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
   }
 
-  &--actions {
+  &__achievement-name {
+    font-size: 28px;
+    font-weight: 600;
+    color: #11243f;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    margin: 8px 0 0 0;
+
+    @media (max-width: 768px) {
+      font-size: 18px;
+    }
+  }
+
+  &__progress-bar-wrapper {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 12px;
     margin-top: 12px;
+    width: 100%;
   }
 
-  &--description {
-    max-height: 0;
+  &__progress-bar-bg {
+    flex: 1;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
     overflow: hidden;
-    transition: max-height 0.4s ease-out, margin-top 0.3s ease;
-    margin-top: 0;
-    font-size: 14px;
-    line-height: 1.5;
-    color: rgba(255, 252, 246, 0.9);
+  }
+
+  &__progress-bar-fill {
+    height: 100%;
+    background-color: #c65d3b;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  &__progress-percentage {
+    font-size: 28px;
+    font-weight: 400;
+    color: #fffcf6;
+    min-width: 45px;
+    text-align: right;
+
+    @media (max-width: 768px) {
+      font-size: 18px;
+      min-width: 35px;
+    }
+  }
+
+  &__description-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 50px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    width: fit-content;
 
     p {
       margin: 0;
-      padding-top: 12px;
+      font-size: 24px;
+      font-weight: 500;
+      color: #fffcf6;
     }
 
-    &--expanded {
-      max-height: 200px;
-      margin-top: 8px;
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateX(2px);
+    }
+
+    &--open .profile-page-container__description-arrow {
+      transform: rotate(180deg);
     }
   }
-}
 
-.description-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 8px 16px;
-  border-radius: 30px;
-  transition: all 0.3s ease;
-  width: fit-content;
+  &__description-arrow {
+    transition: transform 0.3s ease;
+  }
 
-  p {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 500;
+  &__heart-icon {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    color: rgba(255, 252, 246, 0.8);
+    display: flex;
+    align-items: center;
+
+    &--active {
+      color: #ff6b6b;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &__button {
+    display: inline-block;
+    padding: 13px 50px;
+    background-color: #c65d3b;
     color: #fffcf6;
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 24px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #a84a2d;
+      transform: translateY(-2px);
+    }
   }
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateX(2px);
+  &__empty-state {
+    text-align: center;
+    color: #11243f;
+    font-family: "Inter", sans-serif;
+    margin-top: 40px;
   }
-}
-
-.description-arrow {
-  transition: transform 0.3s ease;
-}
-
-.description-toggle--open .description-arrow {
-  transform: rotate(180deg);
-}
-
-.heart-icon {
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  color: rgba(255, 252, 246, 0.8);
-
-  &.active {
-    color: #ff6b6b;
-  }
-
-  &:hover {
-    transform: scale(1.1);
-  }
-}
-
-.button {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 8px 16px;
-  background-color: #c65d3b;
-  color: #fffcf6;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #a84a2d;
-    transform: translateY(-2px);
-  }
-}
-
-.empty-state {
-  text-align: center;
-  color: #11243f;
-  font-family: "Inter", sans-serif;
-  margin-top: 40px;
 }
 </style>

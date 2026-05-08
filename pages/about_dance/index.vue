@@ -34,7 +34,7 @@
     </div>
 
     <div v-if="dance && historyBlocks.length" class="about_dancetwo">
-      <h1 class="abouttwo">История и культура</h1>
+      <h1 class="abouttwo">ИСТОРИЯ И КУЛЬТУРА</h1>
       <div class="about_dance__viewtwo">
         <img src="@/assets/img/line.png" alt="line" class="line" />
         <div
@@ -46,14 +46,15 @@
             v-if="index % 2 === 0"
             :src="block.image"
             :alt="dance.name"
-            class="img"
+            class="img imgleft"
           />
-          <p class="intro-text">{{ block.text }}</p>
+          <p class="intro-text-left" v-if="index % 2 === 0">{{ block.text }}</p>
+          <p class="intro-text-right" v-if="index % 2 === 1">{{ block.text }}</p>
           <img
             v-if="index % 2 === 1"
             :src="block.image"
             :alt="dance.name"
-            class="img"
+            class="img imgright"
           />
         </div>
       </div>
@@ -264,8 +265,8 @@ const relatedDances = computed(() =>
   align-items: center;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 70px;
-  max-width: 1234px;
+  padding: 0 100px;
+  max-width: 1920px;
   gap: 30px;
 
   &__view {
@@ -275,17 +276,16 @@ const relatedDances = computed(() =>
     width: 50%;
 
     h1 {
-      font-size: 64px;
+      font-size: 140px;
       font-family: "BergamascoThin", sans-serif;
       font-weight: 800;
       color: #11243f;
       text-align: left;
       margin: 0;
-      margin-bottom: 10px;
     }
 
     .about {
-      font-size: 48px;
+      font-size: 74px;
       font-family: "BergamascoThin", sans-serif;
       font-weight: 800;
       color: #11243f;
@@ -293,7 +293,7 @@ const relatedDances = computed(() =>
     }
 
     .intro-text {
-      font-size: 18px;
+      font-size: 30px;
       font-weight: 300;
       color: #11243f;
       text-align: left;
@@ -344,18 +344,18 @@ const relatedDances = computed(() =>
   align-items: left;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 70px;
-  max-width: 1234px;
+  max-width: 1920px;
   gap: 30px;
 
   .abouttwo {
-    font-size: 64px;
+    font-size: 96px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
     text-align: left;
     margin: 0;
     margin-bottom: 10px;
+    padding: 0 100px;
   }
 
   .about_dance__viewtwo {
@@ -371,18 +371,25 @@ const relatedDances = computed(() =>
     flex-direction: row;
     align-items: center;
     width: 100%;
-    gap: 150px;
+    gap: 12%;
     position: relative;
     z-index: 1;
 
-    .intro-text {
-      font-size: 18px;
+    .intro-text-right, .intro-text-left {
+      display: flex;
+      font-size: 30px;
       font-weight: 300;
       color: #11243f;
       text-align: left;
       font-family: "Inter", sans-serif;
-      margin: 0;
+      margin: 0 100px;
       flex: 1;
+    }
+    .intro-text-right {
+      margin: 0 0 0 100px;
+    }
+    .intro-text-left{
+      margin: 0 100px 0 0;
     }
   }
 
@@ -400,9 +407,8 @@ const relatedDances = computed(() =>
 
   .img {
     width: 44%;
-    max-height: 250px;
+    max-height: 400px;
     object-fit: cover;
-    border-radius: 20px;
   }
 }
 
@@ -411,12 +417,12 @@ const relatedDances = computed(() =>
   margin-left: auto;
   margin-right: auto;
   padding: 0 70px;
-  max-width: 1234px;
+  max-width: 1920px;
 
   h1 {
-    font-size: 64px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
-    font-weight: 800;
+    font-weight: 600;
     color: #11243f;
     text-align: left;
     margin: 0;
@@ -485,22 +491,33 @@ const relatedDances = computed(() =>
 .related-dances {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 15px;
   margin-top: 30px;
 }
 
 .dance-chip {
   border-radius: 999px;
-  padding: 10px 16px;
+  padding: 10px 35px;
   border: 2px solid #11243f;
   color: #11243f;
   text-decoration: none;
   font-family: "Inter", sans-serif;
   transition: all 0.3s ease;
-
+  font-size: 40px;
   &:hover {
     background-color: #11243f;
     color: white;
   }
 }
+
+.imgleft{
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.imgright{
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
 </style>

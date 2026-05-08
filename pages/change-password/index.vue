@@ -9,8 +9,7 @@
             class="reset__back-btn-top"
             @click="goToPreviousStep"
             aria-label="Назад"
-          >
-            ← Назад
+          >Назад
           </button>
 
           <h1>Сброс пароля</h1>
@@ -24,7 +23,7 @@
             />
             <div v-if="emailError" class="error-message">{{ emailError }}</div>
             <button class="reset__submit-btn" :disabled="loading">
-              {{ loading ? "Отправка..." : "Отправить код" }}
+              {{ loading ? "Отправка..." : "Далее" }}
             </button>
           </form>
 
@@ -358,22 +357,22 @@ const goToPreviousStep = () => {
   padding: 0 75px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1234px;
+  max-width: 1920px;
   margin-top: 50px;
   margin-bottom: 50px;
 
   h1 {
-    font-size: 36px;
+    font-size: 50px;
     font-family: "Inter", sans-serif;
     font-weight: 600;
     color: #11243f;
     text-align: center;
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
   }
 
   &__bg {
-    border-radius: 25px;
+    border-radius: 70px;
     background-color: #11243f;
     background-image: url("@/assets/img/bgauth.png");
     background-size: 100% auto;
@@ -386,19 +385,19 @@ const goToPreviousStep = () => {
       margin-left: auto;
       margin-right: auto;
       background-color: #fff;
-      border-radius: 25px;
-      padding: 60px 40px;
+      border-radius: 70px;
+      padding: 80px 80px;
       position: relative;
     }
   }
 
   &__back-btn-top {
     position: absolute;
-    top: 20px;
-    left: 25px;
+    top: 40px;
+    left: 40px;
     background: none;
     border: none;
-    font-size: 14px;
+    font-size: 30px;
     font-weight: 500;
     color: #11243f;
     cursor: pointer;
@@ -414,14 +413,16 @@ const goToPreviousStep = () => {
   }
 
   &__submit-btn {
-    display: block;
-    width: 100%;
-    padding: 12px 20px;
+    display: flex;
+    flex: 1;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 16px 68px;
     background-color: #c65d3b;
     color: white;
     border: none;
     border-radius: 9999px;
-    font-size: 16px;
+    font-size: 35px;
     font-weight: 500;
     cursor: pointer;
     margin-top: 20px;
@@ -439,11 +440,11 @@ const goToPreviousStep = () => {
 
   input:not(.code-digit) {
     width: 100%;
-    padding: 12px;
+    padding: 35px;
     margin-bottom: 15px;
     border: 0;
     border-bottom: 1px solid #ddd;
-    font-size: 14px;
+    font-size: 30px;
     box-sizing: border-box;
     font-family: "Inter", sans-serif;
     background-color: transparent;
@@ -463,7 +464,7 @@ const goToPreviousStep = () => {
     display: flex;
     gap: 15px;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
 
     .code-digit {
       width: 60px;
@@ -491,11 +492,12 @@ const goToPreviousStep = () => {
   }
 
   .error-message {
-    font-size: 12px;
+    font-size: 18px;
     font-family: "Inter", sans-serif;
     color: #c65d3b;
     margin-top: -10px;
     margin-bottom: 10px;
+    margin-left: 35px;
     text-align: left;
 
     &.global-error {
@@ -511,7 +513,6 @@ const goToPreviousStep = () => {
     margin-top: 20px;
     padding: 10px;
     text-align: center;
-    background-color: rgba(76, 175, 80, 0.1);
     border-radius: 8px;
   }
 }

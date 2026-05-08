@@ -555,13 +555,13 @@ const submitTest = async () => {
 
 .course {
   margin-top: 50px;
-  max-width: 1234px;
+  max-width: 1920px;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 70px;
+  
 
   h1 {
-    font-size: 80px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
@@ -571,14 +571,14 @@ const submitTest = async () => {
   }
 
   > p {
-    font-size: 18px;
+    font-size: 30px;
     font-family: "Inter", sans-serif;
     font-weight: 400;
     color: #11243f;
     text-align: left;
     margin: 0;
     margin-bottom: 50px;
-
+    padding: 0 140px;
     span {
       font-weight: 700;
     }
@@ -589,17 +589,16 @@ const submitTest = async () => {
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding-bottom: 50px;
-
+    padding: 0 100px 50px 100px;
     &--box {
-      position: absolute;
-      width: 100%;
+      position: absolute; 
       background-color: #11243f;
       border-radius: 20px;
       padding: 35px 35px;
       transition: top 0.4s ease;
       cursor: pointer;
-
+      left: 100px;    // такой же как горизонтальный padding
+      right: 100px;
       &.box-alternate {
         background-color: #c65d3b;
       }
@@ -632,7 +631,7 @@ const submitTest = async () => {
 
       h4 {
         margin: 0;
-        font-size: 32px;
+        font-size: 77px;
         font-weight: 700;
         font-family: "BergamascoThin", sans-serif;
       }

@@ -4,6 +4,13 @@
     <div class="profile-edit">
       <div class="profile-edit__bg">
         <div class="profile-edit__bg--white">
+          <button
+            class="profile-edit__close-btn"
+            @click="goBackToAuth"
+            aria-label="Вернуться в профиль"
+          >
+            ✕
+          </button>
           <h1>Редактирование профиля</h1>
 
           <form @submit.prevent="handleSubmit">
@@ -69,6 +76,8 @@ const { apiFetch } = useApi();
 if (!isAuthenticated.value) {
   await navigateTo({ path: "/auth", redirect: "/profile/edit" });
 }
+
+const goBackToAuth = () => { navigateTo("/profile");}
 
 if (!currentUser.value) {
   await fetchMe();
@@ -176,22 +185,48 @@ const handleSubmit = () => {};
   padding: 0 75px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1234px;
+  max-width: 1920px;
   margin-top: 50px;
   margin-bottom: 50px;
-
+  position: relative;
   h1 {
-    font-size: 36px;
+    font-size: 50px;
     font-family: "Inter", sans-serif;
     font-weight: 600;
     color: #11243f;
     text-align: center;
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 43px;
+  }
+
+  &__close-btn {
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    font-size: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #11243f;
+    background-color: #fff;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
   }
 
   &__bg {
-    border-radius: 25px;
+    border-radius: 70px;
     background-color: #11243f;
     background-image: url("@/assets/img/bgauth.png");
     background-size: 100% auto;
@@ -202,9 +237,9 @@ const handleSubmit = () => {};
       margin-left: auto;
       margin-right: auto;
       background-color: #fff;
-      border-radius: 25px;
-      padding: 60px 40px;
-
+      border-radius: 70px;
+      padding: 78px 83px;
+      position: relative;
       @media (max-width: 768px) {
         width: 90%;
         padding: 40px 20px;
@@ -214,16 +249,17 @@ const handleSubmit = () => {};
 
   &__submit-btn {
     display: block;
-    width: 100%;
-    padding: 12px 20px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 12px 50px;
     background-color: #c65d3b;
     color: white;
     border: none;
     border-radius: 9999px;
-    font-size: 16px;
+    font-size: 35px;
     font-weight: 500;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 63px;
     transition: background-color 0.3s ease;
 
     &:hover {
@@ -242,15 +278,15 @@ const handleSubmit = () => {};
 
     input {
       width: 100%;
-      padding: 12px;
+      padding: 18px;
       border: 0;
       border-bottom: 1px solid #ddd;
-      font-size: 14px;
+      font-size: 32px;
       box-sizing: border-box;
       font-family: "Inter", sans-serif;
       transition: border-color 0.3s ease;
       background-color: transparent;
-
+      margin-bottom: 20px;
       &:focus {
         outline: none;
         border-color: #11243f;
@@ -269,7 +305,7 @@ const handleSubmit = () => {};
   }
 
   .save-message {
-    font-size: 12px;
+    font-size: 18px;
     font-family: "Inter", sans-serif;
     margin-top: 5px;
 

@@ -3,17 +3,26 @@
     <Header />
     <div class="home">
       <div class="home-block1">
-        <div class="home-block1__danza">
-          <h1>D <span>A </span>N <span>Z </span>A</h1>
+        <!-- Фоновый текст TERRA -->
+        <div class="home-block1__background-text">
+          <div class="bg-row" v-for="i in 6" :key="i">
+            <span class="bg-word" v-for="j in 12" :key="j">TERRA</span>
+          </div>
         </div>
-        <div class="home-block1__text">
-          <img src="@/assets/img/terra.png" alt="" />
-          <p>
-            История мирового танца <span>в единой системе</span>
-            Terra Danza
-          </p>
+        
+        <div class="home-block1__content">
+          <div class="home-block1__danza">
+            <h1>D <span>A </span>n <span>Z </span>A</h1>
+          </div>
+          <div class="home-block1__text">
+            <p>
+              История мирового танца <span>в единой системе</span>
+              Terra Danza
+            </p>
+          </div>
         </div>
       </div>
+      <!-- Остальной код без изменений -->
       <div class="home-block2">
         <h1>Карта</h1>
         <div class="home-map">
@@ -188,7 +197,7 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <div class="tab-title-hover">продолжающий</div>
             <div class="tab-description"><span>Кол-во курсов:</span> 2</div>
-            <p @click="goToPage('catalog')"> узнать больше
+            <p @click="goToPage('catalog')">узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -209,7 +218,7 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <div class="tab-title-hover">продолжающий</div>
             <div class="tab-description"><span>Кол-во курсов:</span> 1</div>
-            <p @click="goToPage('catalog')"> узнать больше
+            <p @click="goToPage('catalog')">узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -230,8 +239,7 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <br />
             <div class="tab-description"><span>Кол-во курсов:</span> 2</div>
-            <p @click="goToPage('catalog')">
-              узнать больше
+            <p @click="goToPage('catalog')">узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -271,50 +279,167 @@ const goToPage = (page) => {
 }
 
 .home {
-  padding: 0 75px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1234px;
+  max-width: 1920px;
 }
 
 .home-block1 {
   position: relative;
   color: #11243f;
+  overflow: hidden;
+  
+  &__background-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    .bg-row {
+      display: flex;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      animation: scrollRow 20s linear infinite;
+      line-height: 0.8;
+      margin: -10px 0; 
+      &:nth-child(even) {
+        animation-direction: reverse;
+        animation-duration: 25s;
+      }
+    }
+    
+    .bg-word {
+      font-family: "Luckiest", sans-serif;
+      font-weight: 600;
+      font-size: 300px;
+      color: #fff;
+      line-height: 1;
+      letter-spacing: -2px;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      display: inline-block;
+      -webkit-text-stroke: 3px #e7e8e8;
+      text-stroke: 2px #e7e8e8;
+    }
+  }
+  
+  @keyframes scrollRow {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  &__content {
+    position: relative;
+    z-index: 1;
+  }
+  
   span {
     color: #c65d3b;
   }
 
   h1 {
-    font-size: 160px;
+    font-size: 379.38px;
     font-weight: 600;
     font-family: "Luckiest", sans-serif;
     line-height: 0.8;
-    margin: 150px 0 50px 0;
+    margin: 319.85px 0 148px 0;
   }
 
   p {
     margin: 0;
-    font-size: 36px;
+    font-size: 73.5px;
     font-weight: 600;
     font-family: "Inter", sans-serif;
-    width: 30%;
-    margin-right: 12%;
+    width: 44%;
+    margin-left: auto;
   }
   &__danza {
     display: flex;
     justify-content: center;
-    background-image: url("@/assets/img/terra.png");
-    background-repeat: repeat;
-    background-size: auto;
-    background-size: 50% auto;
   }
   &__text {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    img {
-      width: 50%;
+  }
+}
+
+// Адаптивные стили
+@media (max-width: 1400px) {
+  .home-block1 {
+    h1 {
+      font-size: 280px;
+      margin: 200px 0 100px 0;
+    }
+    
+    p {
+      font-size: 52px;
+      width: 48%;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .home {
+    padding: 0 40px;
+  }
+  
+  .home-block1 {
+    h1 {
+      font-size: 180px;
+      margin: 150px 0 80px 0;
+    }
+    
+    p {
+      font-size: 36px;
+      width: 55%;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .home {
+    padding: 0 20px;
+  }
+
+  .home-block1 {
+    h1 {
+      font-size: 100px;
+      margin: 100px 0 50px 0;
+    }
+
+    p {
+      font-size: 20px;
+      width: 100%;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    &__text {
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .home-block1 {
+    h1 {
+      font-size: 56px;
+      margin: 80px 0 30px 0;
+    }
+    
+    p {
+      font-size: 16px;
     }
   }
 }
@@ -323,12 +448,11 @@ const goToPage = (page) => {
   margin-top: 100px;
 
   h1 {
-    font-size: 96px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
     text-align: center;
-    margin-bottom: 50px;
     margin: 0;
   }
 }
@@ -336,7 +460,7 @@ const goToPage = (page) => {
 .home-map {
   position: relative;
   width: 100%;
-  max-width: 1234px;
+  max-width: 1920px;
   margin: 0 auto;
   aspect-ratio: 16 / 11;
   overflow: hidden;
@@ -389,40 +513,40 @@ const goToPage = (page) => {
   }
 
   .europa {
-    width: 22%;
-    left: 38.8%;
-    top: 16.5%;
+    width: 20.5%;
+    left: 43.6%;
+    top: 18.6%;
   }
 
   .asia {
-    width: 40%;
-    left: 54.2%;
-    top: 21.8%;
+    width: 31.6%;
+    left: 62.5%;
+    top: 26.8%;
   }
 
   .kavkaz {
-    width: 7%;
-    left: 54.8%;
-    top: 28.2%;
+    width: 6%;
+    left: 60.1%;
+    top: 29.5%;
   }
 
   .center {
-    width: 15%;
-    left: 56.1%;
-    top: 13.37%;
+    width: 13%;
+    left: 62.2%;
+    top: 15%;
   }
 
   .privol {
     width: 7%;
-    left: 59.9%;
-    top: 23.9%;
+    left: 64.9%;
+    top: 24%;
     z-index: 999;
   }
 
   .west {
-    width: 31%;
-    left: 62.7%;
-    top: 0%;
+    width: 24%;
+    left: 70%;
+    top: 5%;
     z-index: 999;
   }
 
@@ -434,22 +558,6 @@ const goToPage = (page) => {
 }
 
 @media (max-width: 768px) {
-  .home {
-    padding: 0 20px;
-  }
-
-  .home-block1 {
-    h1 {
-      font-size: 80px;
-      margin: 80px 0 30px 0;
-    }
-
-    p {
-      font-size: 20px;
-      width: 50%;
-    }
-  }
-
   .home-map {
     aspect-ratio: 4 / 3;
 
@@ -495,7 +603,7 @@ const goToPage = (page) => {
   margin-top: 100px;
 
   h1 {
-    font-size: 96px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
@@ -507,9 +615,9 @@ const goToPage = (page) => {
   .home-tab {
     display: flex;
     flex-direction: row;
-    gap: 16px;
+    gap: 22px;
     width: 100%;
-    padding: 0 16px;
+    padding: 0 100px;
     box-sizing: border-box;
     color: #fffcf6;
     margin-top: 50px;
@@ -520,15 +628,15 @@ const goToPage = (page) => {
       align-items: center;
       flex: 1;
       min-width: 0;
-      border-radius: 20px;
+      border-radius: 40px;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       cursor: pointer;
       padding: 2px;
-      height: 300px;
+      height: 477px;
       font-family: "Inter", sans-serif;
-      border: 10px solid #fff;
+      border: 15px solid #fff;
       outline: 3px solid #11243f;
       transition: all 0.3s ease;
       position: relative;
@@ -562,22 +670,24 @@ const goToPage = (page) => {
 
     .tab-number {
       font-weight: 500;
-      font-size: 48px;
+      font-size: 86px;
       opacity: 1;
       visibility: visible;
       text-align: center;
       transition: opacity 0.3s ease, visibility 0.3s ease;
       margin: 0;
       position: relative;
+      margin-top: 50%;
     }
 
     .tab-title {
-      font-size: 24px;
+      font-size: 48px;
       text-align: center;
       transition: opacity 0.3s ease, visibility 0.3s ease;
       opacity: 1;
       visibility: visible;
-      margin-top: 20px;
+      margin-top: auto;
+      margin-bottom: 10%;
       position: relative;
     }
 
@@ -586,9 +696,9 @@ const goToPage = (page) => {
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
       text-align: center;
-      font-size: 12px;
+      font-size: 24px;
       position: absolute;
-      bottom: 100px;
+      top: 55%;
       left: 20px;
       right: 20px;
     }
@@ -598,10 +708,10 @@ const goToPage = (page) => {
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
       font-weight: 700;
-      font-size: 26px;
+      font-size: 48px;
       text-align: center;
       position: absolute;
-      top: 45%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 80%;
@@ -658,22 +768,23 @@ const goToPage = (page) => {
     margin-top: 50px;
 
     h1 {
-      font-size: 24px;
+      font-size: 40px;
+      font-weight: 500;
       text-align: center;
       width: 50%;
       font-family: "Inter", sans-serif;
     }
     h2 {
-      font-size: 14px;
+      font-size: 24px;
       color: #fffcf6;
       text-align: center;
       background-color: #c65d3b;
       width: 40%;
       font-weight: 400;
-      padding: 10px 10px;
+      padding: 20.5px 30px;
       margin-left: auto;
       margin-right: auto;
-      border-radius: 999px;
+      border-radius: 9999px;
       font-family: "Inter", sans-serif;
       transition: transform 0.3s ease;
       cursor: pointer;
@@ -688,7 +799,7 @@ const goToPage = (page) => {
   margin-top: 100px;
 
   h1 {
-    font-size: 96px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
@@ -701,10 +812,10 @@ const goToPage = (page) => {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 50px;
+    padding: 0 148px;
     > img {
       width: 20%;
     }
@@ -713,9 +824,13 @@ const goToPage = (page) => {
 
 .home-block5 {
   margin-top: 150px;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  overflow-x: clip;
   h1 {
-    font-size: 96px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
@@ -724,39 +839,44 @@ const goToPage = (page) => {
     margin: 0;
   }
   h2 {
-    font-size: 96px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
-    text-align: right;
-    margin-bottom: 50px;
-    margin: 0;
+    margin: -20px 0 0 55%;
+    font-style: italic;
   }
   .home-tab {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: stretch;
     width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
-    gap: 70px;
+    max-width: 1400px;
+    margin: 50px auto 0;
+    gap: 100px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    
     .tab-item {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
       position: relative;
       border-radius: 15px;
       border: 3px solid #11243f;
-      padding: 20px 20px;
+      padding: 24px 27px;
       color: #11243f;
-      flex: 1;
       height: auto;
+      overflow: visible;
       .tab-number {
-        font-size: 60px;
+        font-size: 67px;
         font-family: "BergamascoThin", sans-serif;
         font-weight: 800;
       }
       .tab-title {
-        font-size: 18px;
+        font-size: 25.46px;
         font-weight: 400;
         font-family: "Inter", sans-serif;
         span {
@@ -784,7 +904,7 @@ const goToPage = (page) => {
         font-weight: 700;
         padding: 5px 10px;
         border-radius: 999px;
-        margin-top: 35px;
+        margin: 35px 0 0 0;
         border: 2px solid #11243f;
         font-family: "Inter", sans-serif;
         text-align: center;
@@ -817,6 +937,76 @@ const goToPage = (page) => {
         top: -30px;
         right: -85px;
       }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .home-block5 {
+    .home-tab {
+      gap: 30px;
+      flex-wrap: wrap;
+      
+      .tab-item {
+        flex: 1 1 calc(33.33% - 30px);
+        min-width: 250px;
+        
+        .tab-img-dance {
+          width: 150px;
+          top: -20px;
+          right: -40px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .home-block5 {
+    h1, h2 {
+      font-size: 48px;
+    }
+    
+    .home-tab {
+      flex-direction: column;
+      
+      .tab-item {
+        width: 100%;
+        
+        .tab-img-dance {
+          width: 120px;
+          top: -15px;
+          right: -30px;
+        }
+        
+        p {
+          width: 80%;
+        }
+      }
+    }
+  }
+  
+  .home-block3 .home-view-button {
+    width: 80%;
+    flex-direction: column;
+    text-align: center;
+    
+    h1 {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    
+    h2 {
+      width: 80%;
+    }
+  }
+  
+  .home-block4 .home-tab {
+    flex-wrap: wrap;
+    
+    > img {
+      width: calc(50% - 20px);
+      margin-bottom: 20px;
     }
   }
 }
