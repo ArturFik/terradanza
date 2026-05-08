@@ -933,9 +933,9 @@ const goToPage = (page) => {
 
       .tab-img-dance {
         position: absolute;
-        width: 230px;
-        top: -30px;
-        right: -85px;
+        right: -113px;
+        top: -18px;
+        width: 220px;
       }
     }
   }
