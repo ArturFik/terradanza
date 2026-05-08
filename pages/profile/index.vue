@@ -5,7 +5,13 @@
       <h1 class="profile-page-container__title">ПРОФИЛЬ</h1>
       <div class="profile-page-container__logo">
         <div class="profile-page-container__avatar-wrapper" @click="triggerFileUpload">
-          <img :src="avatarUrl" alt="logo" class="profile-page-container__avatar" />
+          <!-- Если есть avatarUrl – показываем изображение, иначе – буквы -->
+          <div v-if="avatarUrl" class="profile-page-container__avatar-image-wrapper">
+            <img :src="avatarUrl" alt="logo" class="profile-page-container__avatar" />
+          </div>
+          <div v-else class="profile-page-container__avatar-initials">
+            <span>{{ userInitials }}</span>
+          </div>
           <div class="profile-page-container__avatar-overlay">
             <span>Изменить</span>
           </div>
@@ -217,7 +223,6 @@ import Footer from "@/component/footer/footer.vue";
 import frameImg from "@/assets/img/Frame.png";
 import frame2Img from "@/assets/img/Frame2.png";
 import frame3Img from "@/assets/img/Frame3.png";
-import defaultAvatar from "@/assets/img/logo.png";
 import { useRouter } from "vue-router";
 
 import notShyLocked from "/assets/img/not_shy_locked.png";
@@ -329,7 +334,7 @@ const { data, refresh } = await useAsyncData("profile-data", async () => {
         title: course.name,
         region: course.region_name || "Регион не указан",
         description: course.description || "Описание курса пока не добавлено.",
-        backgroundImage: mediaUrl(course.main_image_key) || defaultAvatar,
+        backgroundImage: mediaUrl(course.main_image_key) || "/placeholder-course.jpg",
       },
     ])
   );
@@ -393,15 +398,30 @@ const achievementRows = computed(() => {
   return rows;
 });
 
-const avatarUrl = computed(
-  () => mediaUrl(currentUser.value?.avatar_key) || defaultAvatar
-);
+// Новый computed: avatarUrl теперь возвращает null, если нет avatar_key
+const avatarUrl = computed(() => {
+  const key = currentUser.value?.avatar_key;
+  return key ? mediaUrl(key) : null;
+});
+
+// Имя и фамилия пользователя для отображения
 const fullName = computed(() => {
-  const parts = [currentUser.value?.surname, currentUser.value?.name].filter(
-    Boolean
-  );
+  const parts = [currentUser.value?.surname, currentUser.value?.name].filter(Boolean);
   return parts.join(" ") || currentUser.value?.email || "Пользователь";
 });
+
+// Инициалы пользователя (максимум 2 буквы)
+const userInitials = computed(() => {
+  const surname = currentUser.value?.surname || '';
+  const name = currentUser.value?.name || '';
+  const firstChar = name ? name.charAt(0).toUpperCase() : '';
+  const secondChar = surname ? surname.charAt(0).toUpperCase() : '';
+  if (firstChar && secondChar) return `${firstChar}${secondChar}`;
+  if (firstChar) return firstChar;
+  if (secondChar) return secondChar;
+  return '?';
+});
+
 const rankLabel = computed(() => {
   const rankMap = {
     novice: "Новичок",
@@ -571,24 +591,59 @@ const handleAvatarUpload = async (event) => {
     }
   }
 
-  &__avatar {
+  // Стили для аватарки-изображения
+  &__avatar-image-wrapper {
     width: 293px;
     height: 293px;
     border-radius: 9999px;
-    object-fit: cover;
-
+    overflow: hidden;
+    
     @media (max-width: 768px) {
       width: 200px;
       height: 200px;
     }
   }
+  
+  &__avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // Стили для аватарки с инициалами
+  &__avatar-initials {
+    width: 293px;
+    height: 293px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #c65d3b 0%, #a84a2d 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    span {
+      font-size: 100px;
+      font-weight: 600;
+      color: #fffcf6;
+      font-family: "Inter", sans-serif;
+      text-transform: uppercase;
+    }
+    
+    @media (max-width: 768px) {
+      width: 200px;
+      height: 200px;
+      
+      span {
+        font-size: 68px;
+      }
+    }
+  }
 
   &__avatar-overlay {
-    height: 293px;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
+    height: 100%;
     border-radius: 9999px;
     background-color: rgba(0, 0, 0, 0.6);
     display: flex;
@@ -602,10 +657,6 @@ const handleAvatarUpload = async (event) => {
       font-size: 24px;
       font-family: "Inter", sans-serif;
       text-align: center;
-    }
-
-    @media (max-width: 768px) {
-      height: 200px;
     }
   }
 
@@ -694,7 +745,7 @@ const handleAvatarUpload = async (event) => {
     gap: 30px;
     width: 100%;
     margin: 40px 0;
-    align-items: start; /* Важно: выравниваем карточки по верхнему краю */
+    align-items: start;
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
@@ -809,10 +860,9 @@ const handleAvatarUpload = async (event) => {
     }
   }
 
-  /* Стили для развернутой карточки */
   &__card--expanded {
     .profile-page-container__card-description {
-      max-height: 1000px; /* Достаточно для контента */
+      max-height: 1000px;
     }
   }
 
