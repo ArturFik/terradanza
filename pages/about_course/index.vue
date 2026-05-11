@@ -373,15 +373,16 @@ const lessonColumns = computed(() => {
 }
 
 .course-description {
+  margin: 33px 0 0 0;
   font-size: 35px;
   font-weight: 300;
   color: #11243f;
   font-family: "Inter", sans-serif;
   line-height: 1.5;
-  margin: 0;
 }
 
 .stats-row {
+  margin-top: 33px;
   display: flex;
   flex-direction: row;
   gap: 48px;
@@ -471,7 +472,7 @@ const lessonColumns = computed(() => {
 }
 
 .courses-title {
-  font-size: 48px;
+  font-size: 100px;
   font-family: "BergamascoThin", sans-serif;
   font-weight: 800;
   color: #11243f;
@@ -489,8 +490,8 @@ const lessonColumns = computed(() => {
 
 .teacher-card {
   background: #ffffff;
-  border-radius: 20px;
-  padding: 20px 0 20px 0;
+  border-radius: 40px;
+  padding: 50px 90px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -503,8 +504,8 @@ const lessonColumns = computed(() => {
 }
 
 .teacher-avatar {
-  width: 80px;
-  height: 80px;
+  width: 210px;
+  height: 210px;
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto 10px;
@@ -512,7 +513,7 @@ const lessonColumns = computed(() => {
 }
 
 .teacher-name {
-  font-size: 14px;
+  font-size: 30px;
   font-weight: 400;
   color: #11243f;
   font-family: "Inter", sans-serif;
@@ -520,7 +521,7 @@ const lessonColumns = computed(() => {
 }
 
 .teacher-description {
-  font-size: 16px;
+  font-size: 33px;
   font-weight: 700;
   color: #11243f;
   font-family: "Inter", sans-serif;
@@ -545,8 +546,8 @@ const lessonColumns = computed(() => {
   transition: all 0.3s ease;
 
   img {
-    width: 18px;
-    height: 18px;
+    width: 36px;
+    height: 36px;
     object-fit: contain;
   }
 
@@ -696,7 +697,7 @@ const lessonColumns = computed(() => {
   }
 
   .course-content h1 {
-    font-size: 48px;
+    font-size: 100px;
   }
 
   .courses-title {
