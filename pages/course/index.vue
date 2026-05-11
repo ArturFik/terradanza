@@ -83,10 +83,10 @@
           </div>
         </div>
 
-        <div v-if="test" class="final-test">
+        <div v-if="test" class="final-test" :style="{ marginTop: testMarginTop + 'px' }">
           <h2 class="final-test__title">ФИНАЛЬНЫЙ ТЕСТ</h2>
           <p class="final-test__subtitle">
-            Для завершения курса выполните задания ниже
+            *Для получения сертификата о прохождении курса выполните все задания
           </p>
 
           <div class="test-wrapper">
@@ -249,6 +249,7 @@ const router = useRouter();
 const goToPage = (page: any) => {
   router.push(`/${page}`);
 };
+
 type CourseResponse = {
   id: string;
   name: string;
@@ -373,7 +374,7 @@ const { data } = await useAsyncData(
           ? `Продолжительность: ${Math.round(lesson.video_duration / 60)} мин`
           : "Продолжительность не указана",
         videoUrl: mediaUrl(lesson.hls_manifest_key || lesson.video_key),
-        thumbnail: mediaUrl(lesson.thumbnail_key) || bookIcon,
+        thumbnail: bookIcon,
       })),
       test,
     };
@@ -385,27 +386,63 @@ const lessons = computed(() => data.value?.lessons || []);
 const test = computed(() => data.value?.test || null);
 
 const expandedIndex = ref<number | null>(null);
-const EXPANDED_HEIGHT = 520;
+
+const getExpandedHeight = (index: number): number => {
+  const heights = [350, 435, 520, 605, 690, 775, 860, 945, 1030, 1115];
+  
+  if (index < heights.length) {
+    return heights[index]!;
+  }
+  
+  return heights[heights.length - 1]! + (index - heights.length + 1) * 90;
+};
+
+const currentExpandedHeight = computed(() => {
+  if (expandedIndex.value === null) return 0;
+  return getExpandedHeight(expandedIndex.value);
+});
 
 const toggleExpand = (index: number) => {
   expandedIndex.value = expandedIndex.value === index ? null : index;
 };
 
 const getBoxTop = (index: number) => {
-  let top = index * 105;
+  let top = index * 205;
   if (expandedIndex.value !== null && index > expandedIndex.value) {
-    top += EXPANDED_HEIGHT;
+    top += currentExpandedHeight.value;
   }
   return top;
 };
 
 const containerHeight = computed(() => {
-  const boxHeight = 105;
+  const boxHeight = 205;
   let height = lessons.value.length * boxHeight;
   if (expandedIndex.value !== null) {
-    height += EXPANDED_HEIGHT;
+    height += currentExpandedHeight.value;
   }
   return height + 20;
+});
+
+const testMarginTop = computed(() => {
+  const baseMargin = 80;
+  
+  if (expandedIndex.value === null) {
+    return baseMargin;
+  }
+  
+  const lastLessonIndex = lessons.value.length - 1;
+  
+  const lastLessonTop = getBoxTop(lastLessonIndex);
+  
+  const baseLastLessonTop = lastLessonIndex * 205;
+
+  let shift = lastLessonTop - baseLastLessonTop;
+  
+  if (expandedIndex.value === lastLessonIndex) {
+    shift = currentExpandedHeight.value;
+  }
+  
+  return baseMargin + shift;
 });
 
 const markLessonStarted = async (lessonId: string) => {
@@ -558,7 +595,6 @@ const submitTest = async () => {
   max-width: 1920px;
   margin-left: auto;
   margin-right: auto;
-  
 
   h1 {
     font-size: 140px;
@@ -577,7 +613,7 @@ const submitTest = async () => {
     color: #11243f;
     text-align: left;
     margin: 0;
-    margin-bottom: 50px;
+    margin-bottom: 136px;
     padding: 0 140px;
     span {
       font-weight: 700;
@@ -591,13 +627,13 @@ const submitTest = async () => {
     position: relative;
     padding: 0 100px 50px 100px;
     &--box {
-      position: absolute; 
+      position: absolute;
       background-color: #11243f;
-      border-radius: 20px;
-      padding: 35px 35px;
+      border-radius: 25px;
+      padding: 40px 35px;
       transition: top 0.4s ease;
       cursor: pointer;
-      left: 100px;    // такой же как горизонтальный padding
+      left: 100px;
       right: 100px;
       &.box-alternate {
         background-color: #c65d3b;
@@ -638,8 +674,8 @@ const submitTest = async () => {
 
       h3 {
         margin: 0;
-        font-size: 24px;
-        font-weight: 700;
+        font-size: 65px;
+        font-weight: 400;
         font-family: "Inter", sans-serif;
       }
     }
@@ -649,7 +685,7 @@ const submitTest = async () => {
       align-items: center;
       gap: 10px;
       margin: 0;
-      font-size: 18px;
+      font-size: 41px;
       font-weight: 500;
       cursor: pointer;
       transition: opacity 0.3s ease;
@@ -663,11 +699,11 @@ const submitTest = async () => {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 24px;
-      height: 24px;
+      width: 48px;
+      height: 48px;
       background: rgba(255, 255, 255, 0.2);
       border-radius: 50%;
-      font-size: 12px;
+      font-size: 20px;
     }
   }
 }
@@ -682,10 +718,10 @@ const submitTest = async () => {
   top: 0%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  border: 7px solid white;
+  border: 10px solid white;
   overflow: hidden;
   background: #11243f;
   z-index: 2;
@@ -758,19 +794,18 @@ const submitTest = async () => {
 }
 
 .final-test {
-  margin-top: 80px;
-
+  padding: 0 135px;
   &__title {
-    font-size: 48px;
+    font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
     color: #11243f;
     text-align: center;
-    margin: 0 0 15px 0;
+    margin: 0 ;
   }
 
   &__subtitle {
-    font-size: 16px;
+    font-size: 43px;
     font-family: "Inter", sans-serif;
     color: #666;
     text-align: center;
@@ -780,14 +815,14 @@ const submitTest = async () => {
 
   &__submit {
     display: block;
-    margin: 40px auto 0;
-    padding: 18px 60px;
+    margin: 100px auto 0;
+    padding: 30px 90px;
     background-color: #c65d3b;
     color: #fffcf6;
     border: none;
-    border-radius: 12px;
-    font-size: 20px;
-    font-weight: 700;
+    border-radius: 999px;
+    font-size: 70px;
+    font-weight: 300;
     font-family: "Inter", sans-serif;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -813,11 +848,11 @@ const submitTest = async () => {
   gap: 15px;
 
   .number-button {
-    font-size: 32px;
+    font-size: 80px;
     font-weight: 700;
     font-family: "BergamascoThin", sans-serif;
     padding: 30px 20px;
-    border-radius: 20px;
+    border-radius: 30px;
     background-color: #11243f;
     color: #fffcf6;
     cursor: pointer;
@@ -860,7 +895,7 @@ const submitTest = async () => {
   }
 
   &__header {
-    font-size: 24px;
+    font-size: 47px;
     font-weight: 700;
     font-family: "Inter", sans-serif;
     color: #11243f;
@@ -881,7 +916,7 @@ const submitTest = async () => {
     gap: 15px;
     cursor: pointer;
     color: #11243f;
-    font-size: 18px;
+    font-size: 37px;
     font-family: "Inter", sans-serif;
   }
 
@@ -924,10 +959,10 @@ const submitTest = async () => {
   margin-bottom: 25px;
 
   &__label {
-    font-size: 18px;
+    font-size: 35px;
     font-weight: 500;
     color: #11243f;
-    margin: 0 0 5px 0;
+    margin: 0 0 15px 0;
     font-family: "Inter", sans-serif;
   }
 
@@ -938,7 +973,7 @@ const submitTest = async () => {
     border: 2px solid #d0d5dd;
     border-radius: 12px;
     color: #11243f;
-    font-size: 16px;
+    font-size: 24px;
     font-family: "Inter", sans-serif;
     transition: all 0.3s ease;
     box-sizing: border-box;
@@ -996,14 +1031,14 @@ const submitTest = async () => {
 
 .test-result-message {
   text-align: center;
-  font-size: 18px;
+  font-size: 32px;
   color: #11243f;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .test-result-message-next {
   text-align: center;
-  font-size: 18px;
+  font-size: 32px;
   color: #11243f;
   margin-top: 20px;
   transition: all 0.2s ease;
