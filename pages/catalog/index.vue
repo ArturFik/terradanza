@@ -6,76 +6,82 @@
       <div class="catalog__filters--container">
         <div class="catalog__filters--view">
           <div class="catalog__filters--block">
-            <div
-              class="filter-item"
-              :class="{ 'filter-item--active': activeFilter === 'level' }"
-              @click="toggleFilter('level')"
-            >
-              <p>
-                {{
-                  selectedFilters.level
-                    ? translateLevel(selectedFilters.level)
-                    : "Уровень сложности"
-                }}
-              </p>
-              <span
-                class="filter-arrow"
-                :class="{ 'filter-arrow--open': activeFilter === 'level' }"
+            <div class="filter-item-wrapper">
+              <div
+                class="filter-item"
+                :class="{ 'filter-item--active': activeFilter === 'level' }"
+                @click.stop="toggleFilter('level')"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="10"
-                  height="10"
-                  viewBox="0 0 22 14"
-                  fill="none"
+                <p>
+                  {{
+                    selectedFilters.level
+                      ? translateLevel(selectedFilters.level)
+                      : "Уровень сложности"
+                  }}
+                </p>
+                <span
+                  class="filter-arrow"
+                  :class="{ 'filter-arrow--open': activeFilter === 'level' }"
                 >
-                  <path
-                    d="M1.15625 1.1543L10.9575 10.9556L20.7588 1.1543"
-                    stroke="currentColor"
-                    stroke-width="3.2671"
-                  />
-                </svg>
-              </span>
-              <div v-if="activeFilter === 'level'" class="filter-dropdown">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="10"
+                    height="10"
+                    viewBox="0 0 22 14"
+                    fill="none"
+                  >
+                    <path
+                      d="M1.15625 1.1543L10.9575 10.9556L20.7588 1.1543"
+                      stroke="currentColor"
+                      stroke-width="3.2671"
+                    />
+                  </svg>
+                </span>
+              </div>
+              <div v-if="activeFilter === 'level'" class="filter-dropdown" @click.stop>
                 <p>Фильтр сложности</p>
                 <div
                   v-for="option in levelOptions"
-                  :key="option"
+                  :key="option.value"
                   class="filter-option"
-                  @click.stop="selectLevelOption(option)"
+                  :class="{ 'filter-option--active': selectedFilters.level === option.value }"
+                  @click="selectLevelOption(option.value)"
                 >
-                  {{ translateLevel(option) }}
+                  {{ option.label }}
                 </div>
               </div>
             </div>
 
-            <div
-              class="filter-item filter-item--checkbox"
-              :class="{ 'filter-item--active': activeFilter === 'region' }"
-              @click="toggleFilter('region')"
-            >
-              <p>{{ getRegionFilterLabel() }}</p>
-              <span
-                class="filter-arrow"
-                :class="{ 'filter-arrow--open': activeFilter === 'region' }"
+            <div class="filter-item-wrapper">
+              <div
+                class="filter-item filter-item--checkbox"
+                :class="{ 'filter-item--active': activeFilter === 'region' }"
+                @click.stop="toggleFilter('region')"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="10"
-                  height="10"
-                  viewBox="0 0 22 14"
-                  fill="none"
+                <p>{{ getRegionFilterLabel() }}</p>
+                <span
+                  class="filter-arrow"
+                  :class="{ 'filter-arrow--open': activeFilter === 'region' }"
                 >
-                  <path
-                    d="M1.15625 1.1543L10.9575 10.9556L20.7588 1.1543"
-                    stroke="currentColor"
-                    stroke-width="3.2671"
-                  />
-                </svg>
-              </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="10"
+                    height="10"
+                    viewBox="0 0 22 14"
+                    fill="none"
+                  >
+                    <path
+                      d="M1.15625 1.1543L10.9575 10.9556L20.7588 1.1543"
+                      stroke="currentColor"
+                      stroke-width="3.2671"
+                    />
+                  </svg>
+                </span>
+              </div>
               <div
                 v-if="activeFilter === 'region'"
                 class="filter-dropdown filter-dropdown--checkbox"
+                @click.stop
               >
                 <p>Выберите регионы</p>
                 <div v-if="allRegions.length === 0" class="filter-loading">
@@ -86,7 +92,6 @@
                     v-for="region in allRegions"
                     :key="region.id"
                     class="filter-option-checkbox"
-                    @click.stop
                   >
                     <label class="checkbox-label">
                       <input
@@ -103,39 +108,45 @@
               </div>
             </div>
 
-            <div
-              class="filter-item"
-              :class="{ 'filter-item--active': activeFilter === 'style' }"
-              @click="toggleFilter('style')"
-            >
-              <p>{{ selectedFilters.style || "Стиль" }}</p>
-              <span
-                class="filter-arrow"
-                :class="{ 'filter-arrow--open': activeFilter === 'style' }"
+            <div class="filter-item-wrapper">
+              <div
+                class="filter-item"
+                :class="{ 'filter-item--active': activeFilter === 'style' }"
+                @click.stop="toggleFilter('style')"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="10"
-                  height="10"
-                  viewBox="0 0 22 14"
-                  fill="none"
+                <p>{{ getStyleFilterLabel() }}</p>
+                <span
+                  class="filter-arrow"
+                  :class="{ 'filter-arrow--open': activeFilter === 'style' }"
                 >
-                  <path
-                    d="M1.15625 1.1543L10.9575 10.9556L20.7588 1.1543"
-                    stroke="currentColor"
-                    stroke-width="3.2671"
-                  />
-                </svg>
-              </span>
-              <div v-if="activeFilter === 'style'" class="filter-dropdown">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="10"
+                    height="10"
+                    viewBox="0 0 22 14"
+                    fill="none"
+                  >
+                    <path
+                      d="M1.15625 1.1543L10.9575 10.9556L20.7588 1.1543"
+                      stroke="currentColor"
+                      stroke-width="3.2671"
+                    />
+                  </svg>
+                </span>
+              </div>
+              <div v-if="activeFilter === 'style'" class="filter-dropdown" @click.stop>
                 <p>Фильтр стилей</p>
+                <div v-if="allTags.length === 0" class="filter-loading">
+                  Загрузка стилей...
+                </div>
                 <div
-                  v-for="option in styleOptions"
-                  :key="option"
+                  v-for="tag in allTags"
+                  :key="tag.id"
                   class="filter-option"
-                  @click.stop="selectOption('style', option)"
+                  :class="{ 'filter-option--active': selectedFilters.style === tag.slug }"
+                  @click="selectOption('style', tag.slug)"
                 >
-                  {{ option }}
+                  {{ tag.name }}
                 </div>
               </div>
             </div>
@@ -240,14 +251,15 @@ const { apiFetch } = useApi();
 const { isAuthenticated } = useAuth();
 const { mediaUrl } = useMedia();
 
-const levelTranslation = {
-  beginner: "Начинающий",
-  intermediate: "Продолжающий",
-  advanced: "Продвинутый",
-};
+const levelOptions = ref([
+  { value: "beginner", label: "Начинающий" },
+  { value: "intermediate", label: "Продолжающий" },
+  { value: "advanced", label: "Продвинутый" }
+]);
 
 const translateLevel = (level) => {
-  return levelTranslation[level?.toLowerCase()] || level;
+  const found = levelOptions.value.find(opt => opt.value === level);
+  return found ? found.label : level;
 };
 
 const activeFilter = ref(null);
@@ -262,6 +274,7 @@ const favoriteCourseIds = ref(new Set());
 
 const allRegions = ref([]);
 const regionMap = ref(new Map());
+const allTags = ref([]);
 
 const fetchRegions = async () => {
   try {
@@ -284,6 +297,25 @@ const fetchRegions = async () => {
     return [];
   } catch (error) {
     console.error("Error fetching regions:", error);
+    return [];
+  }
+};
+
+const fetchTags = async () => {
+  try {
+    const response = await apiFetch("/tags");
+    console.log("Tags API Response:", response);
+
+    if (response.success && response.data && response.data.tags) {
+      allTags.value = response.data.tags;
+      console.log(`Loaded ${allTags.value.length} tags`);
+      return allTags.value;
+    }
+
+    console.warn("Tags response structure unexpected:", response);
+    return [];
+  } catch (error) {
+    console.error("Error fetching tags:", error);
     return [];
   }
 };
@@ -331,7 +363,6 @@ const fetchCourses = async () => {
         description: course.description || "Описание курса пока не добавлено.",
         backgroundImage: mediaUrl(course.main_image_key) || fallbackCourseImage,
         level: course.difficulty,
-        style: course.tags && course.tags.length > 0 ? course.tags[0] : null,
         tags: course.tags || [],
       }));
       return courses;
@@ -357,13 +388,19 @@ const getRegionFilterLabel = () => {
   return `Регион (${selectedFilters.value.region.length})`;
 };
 
+const getStyleFilterLabel = () => {
+  if (!selectedFilters.value.style) return "Стиль";
+  const selectedTag = allTags.value.find(tag => tag.slug === selectedFilters.value.style);
+  return selectedTag ? selectedTag.name : selectedFilters.value.style;
+};
+
 const handleRegionFilterChange = () => {
   loadCourses();
 };
 
 const initializeData = async () => {
   console.log("Initializing data...");
-  await fetchRegions();
+  await Promise.all([fetchRegions(), fetchTags()]);
   await loadCourses();
 };
 
@@ -387,20 +424,6 @@ if (isAuthenticated.value) {
 }
 
 const courses = computed(() => coursesData.value || []);
-
-const levelOptions = computed(() => {
-  const levels = new Set(
-    courses.value.map((course) => course.level).filter(Boolean)
-  );
-  return Array.from(levels);
-});
-
-const styleOptions = computed(() => {
-  const tags = new Set(
-    courses.value.flatMap((course) => course.tags).filter(Boolean)
-  );
-  return Array.from(tags);
-});
 
 const filteredCourses = computed(() => courses.value);
 
@@ -481,7 +504,7 @@ const toggleFavorite = async (courseId) => {
 
 const handleClickOutside = (event) => {
   const target = event.target;
-  if (!target?.closest(".filter-item")) {
+  if (!target?.closest(".filter-item-wrapper")) {
     activeFilter.value = null;
   }
 };
@@ -496,6 +519,11 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
+.filter-item-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .catalog-container {
   background-color: #fff;
   font-family: "Inter", sans-serif;
@@ -713,7 +741,6 @@ onBeforeUnmount(() => {
   padding: 20px 20px;
   border-radius: 15px;
   cursor: pointer;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -800,7 +827,7 @@ onBeforeUnmount(() => {
 
 .filter-dropdown {
   position: absolute;
-  top: 130%;
+  top: 100%;
   left: 0;
   right: 0;
   background-color: #fff;
@@ -809,6 +836,7 @@ onBeforeUnmount(() => {
   z-index: 100;
   overflow: hidden;
   animation: dropdownFadeIn 0.2s ease;
+  margin-top: 5px;
 
   > p {
     color: #11243f;
@@ -842,13 +870,22 @@ onBeforeUnmount(() => {
     background-color: #e8e4dd;
     padding-left: 24px;
   }
+
+  &--active {
+    background-color: #c65d3b;
+    color: white;
+    
+    &:hover {
+      background-color: #c65d3b;
+    }
+  }
 }
 
 .filter-loading {
   padding: 20px;
   text-align: center;
   color: #11243f;
-  font-size: 14px;
+  font-size: 20px;
 }
 
 .filter-option-checkbox {
@@ -897,10 +934,10 @@ onBeforeUnmount(() => {
     &::after {
       content: "";
       position: absolute;
-      left: 6px;
-      top: 2px;
-      width: 5px;
-      height: 10px;
+      left: 10px;
+      top: 8px;
+      width: 12px;
+      height: 12px;
       border: solid white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
