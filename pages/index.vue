@@ -22,117 +22,135 @@
           </div>
         </div>
       </div>
-      <!-- Остальной код без изменений -->
+      
       <div class="home-block2">
         <h1>Карта</h1>
         <div class="home-map">
-          <div class="map-item privol">
-            <img
-              src="@/assets/img/privol.png"
-              alt="privol"
-              class="default-img"
-            />
-            <img
-              src="@/assets/img/privolwhite.png"
-              alt="privol"
-              class="hover-img"
-            />
-          </div>
-          <div class="map-item america">
-            <img
-              src="@/assets/img/america.png"
-              alt="America"
-              class="default-img"
-            />
-            <img
-              src="@/assets/img/americawhite.png"
-              alt="America"
-              class="hover-img"
-            />
-          </div>
-          <div class="map-item africa">
-            <img
-              src="@/assets/img/africa.png"
-              alt="Africa"
-              class="default-img"
-            />
-            <img
-              src="@/assets/img/africawhite.png"
-              alt="Africa"
-              class="hover-img"
-            />
-          </div>
-          <div class="map-item europa">
-            <img
-              src="@/assets/img/europa.png"
-              alt="Europa"
-              class="default-img"
-            />
-            <img
-              src="@/assets/img/europawhite.png"
-              alt="Europa"
-              class="hover-img"
-            />
-          </div>
-          <div class="map-item asia">
-            <img src="@/assets/img/asia.png" alt="Asia" class="default-img" />
-            <img
-              src="@/assets/img/asiawhite.png"
-              alt="Asia"
-              class="hover-img"
-            />
-          </div>
-          <div class="map-item kavkaz">
-            <img
-              src="@/assets/img/kavkaz.png"
-              alt="Kavkaz"
-              class="default-img"
-            />
-            <img
-              src="@/assets/img/kavkazwhite.png"
-              alt="Kavkaz"
-              class="hover-img"
-            />
+          <!-- Приволжье -->
+          <div class="map-item privol" @mouseenter="showTooltip('privol')" @mouseleave="hideTooltip('privol')">
+            <img src="@/assets/img/privol.png" alt="privol" class="default-img" />
+            <img src="@/assets/img/privolwhite.png" alt="privol" class="hover-img" />
+            <div v-if="activeTooltip === 'privol'" class="map-tooltip" :style="tooltipStyles.privol">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Приволжье</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>12</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=povolzhe-i-priurale')">Узнать больше →</button>
+              </div>
+            </div>
           </div>
           
-          <div class="map-item west">
-            <img
-              src="@/assets/img/west.png"
-              alt="west"
-              class="default-img"
-            />
-            <img
-              src="@/assets/img/westwhite.png"
-              alt="west"
-              class="hover-img"
-            />
+          <!-- Америка (два блока) -->
+          <div class="map-item america" @mouseenter="showTooltip('america')" @mouseleave="hideTooltip('america')">
+            <img src="@/assets/img/america.png" alt="America" class="default-img" />
+            <img src="@/assets/img/americawhite.png" alt="America" class="hover-img" />
+            <div v-if="activeTooltip === 'america'" class="map-tooltip america-tooltip-1" :style="tooltipStyles.america1">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Северная Америка</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>24</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=amerika')">Узнать больше →</button>
+              </div>
+            </div>
+            <div v-if="activeTooltip === 'america'" class="map-tooltip america-tooltip-2" :style="tooltipStyles.america2">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Южная Америка</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>18</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=amerika')">Узнать больше →</button>
+              </div>
+            </div>
           </div>
-          <div class="map-item center">
-            <img
-              src="@/assets/img/center.png"
-              alt="center"
-              class="default-img"
-            />
-            <img
-              src="@/assets/img/centerwhite.png"
-              alt="center"
-              class="hover-img"
-            />
+          
+          <!-- Африка -->
+          <div class="map-item africa" @mouseenter="showTooltip('africa')" @mouseleave="hideTooltip('africa')">
+            <img src="@/assets/img/africa.png" alt="Africa" class="default-img" />
+            <img src="@/assets/img/africawhite.png" alt="Africa" class="hover-img" />
+            <div v-if="activeTooltip === 'africa'" class="map-tooltip" :style="tooltipStyles.africa">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Африка</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>32</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=afrika')">Узнать больше →</button>
+              </div>
+            </div>
           </div>
-          <div class="map-item australia">
-            <img
-              src="@/assets/img/avstralia.png"
-              alt="Australia"
-              class="default-img"
-            />
-            <img
-              src="@/assets/img/avstraliawhite.png"
-              alt="Australia"
-              class="hover-img"
-            />
+          
+          <!-- Европа -->
+          <div class="map-item europa" @mouseenter="showTooltip('europa')" @mouseleave="hideTooltip('europa')">
+            <img src="@/assets/img/europa.png" alt="Europa" class="default-img" />
+            <img src="@/assets/img/europawhite.png" alt="Europa" class="hover-img" />
+            <div v-if="activeTooltip === 'europa'" class="map-tooltip" :style="tooltipStyles.europa">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Европа</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>45</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=evropa')">Узнать больше →</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Азия -->
+          <div class="map-item asia" @mouseenter="showTooltip('asia')" @mouseleave="hideTooltip('asia')">
+            <img src="@/assets/img/asia.png" alt="Asia" class="default-img" />
+            <img src="@/assets/img/asiawhite.png" alt="Asia" class="hover-img" />
+            <div v-if="activeTooltip === 'asia'" class="map-tooltip" :style="tooltipStyles.asia">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Азия</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>56</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=aziia')">Узнать больше →</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Кавказ -->
+          <div class="map-item kavkaz" @mouseenter="showTooltip('kavkaz')" @mouseleave="hideTooltip('kavkaz')">
+            <img src="@/assets/img/kavkaz.png" alt="Kavkaz" class="default-img" />
+            <img src="@/assets/img/kavkazwhite.png" alt="Kavkaz" class="hover-img" />
+            <div v-if="activeTooltip === 'kavkaz'" class="map-tooltip" :style="tooltipStyles.kavkaz">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Кавказ</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>28</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=severnyi-kavkaz')">Узнать больше →</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Запад -->
+          <div class="map-item west" @mouseenter="showTooltip('west')" @mouseleave="hideTooltip('west')">
+            <img src="@/assets/img/west.png" alt="west" class="default-img" />
+            <img src="@/assets/img/westwhite.png" alt="west" class="hover-img" />
+            <div v-if="activeTooltip === 'west'" class="map-tooltip" :style="tooltipStyles.west">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Западная Европа</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>38</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')">Узнать больше →</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Центр -->
+          <div class="map-item center" @mouseenter="showTooltip('center')" @mouseleave="hideTooltip('center')">
+            <img src="@/assets/img/center.png" alt="center" class="default-img" />
+            <img src="@/assets/img/centerwhite.png" alt="center" class="hover-img" />
+            <div v-if="activeTooltip === 'center'" class="map-tooltip" :style="tooltipStyles.center">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Центральная Азия</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>22</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=severo-zapad-i-tsentralnaia-rossiia')">Узнать больше →</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="map-item australia" @mouseenter="showTooltip('australia')" @mouseleave="hideTooltip('australia')">
+            <img src="@/assets/img/avstralia.png" alt="Australia" class="default-img" />
+            <img src="@/assets/img/avstraliawhite.png" alt="Australia" class="hover-img" />
+            <div v-if="activeTooltip === 'australia'" class="map-tooltip" :style="tooltipStyles.australia">
+              <div class="tooltip-content">
+                <h3 class="tooltip-title">Австралия</h3>
+                <p class="tooltip-dances">Кол-во танцев: <span>15</span></p>
+                <button class="tooltip-button" @click="goToPage('about_country?slug=avstraliia')">Узнать больше →</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      
       <div class="home-block3">
         <h1>О нас</h1>
         <div class="home-tab">
@@ -178,6 +196,7 @@
           <h2 @click="goToPage('catalog')">НАЧАТЬ ОБУЧЕНИЕ</h2>
         </div>
       </div>
+      
       <div class="home-block4">
         <h1>Почему мы</h1>
         <div class="home-tab">
@@ -187,6 +206,7 @@
           <img src="@/assets/img/ico4.png" alt="ico" />
         </div>
       </div>
+      
       <div class="home-block5">
         <h1>Популярные стили</h1>
         <h2>2026</h2>
@@ -262,11 +282,36 @@
 </template>
 
 <script setup>
+import { ref, reactive } from 'vue'
 import Header from "../component/header/header.vue";
 import Footer from "../component/footer/footer.vue";
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const activeTooltip = ref(null)
+
+const tooltipStyles = reactive({
+  privol: { top: '0%', left: '0%' },
+  america1: { top: '35%', left: '30%' },
+  america2: { top: '67%', left: '55%' },
+  africa: { top: '18%', left: '30%' },
+  europa: { top: '33%', left: '40%' },
+  asia: { top: '25%', left: '30%' },
+  kavkaz: { top: '0%', left: '0%' },
+  west: { top: '50%', left: '25%' },
+  center: { top: '30%', left: '10%' },
+  australia: { top: '18%', left: '15%' }
+})
+
+const showTooltip = (region) => {
+  activeTooltip.value = region
+}
+
+const hideTooltip = (region) => {
+  if (activeTooltip.value === region) {
+    activeTooltip.value = null
+  }
+}
 
 const goToPage = (page) => {
   router.push(`/${page}`)
@@ -463,7 +508,7 @@ const goToPage = (page) => {
   max-width: 1920px;
   margin: 0 auto;
   aspect-ratio: 16 / 11;
-  overflow: hidden;
+  overflow: visible;
 
   .map-item {
     position: absolute;
@@ -499,61 +544,116 @@ const goToPage = (page) => {
       }
     }
   }
+  
+  .map-tooltip {
+    position: absolute;
+    z-index: 100000;
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+    text-align: center;
+    
+    .tooltip-content {
+      color: white;
+      
+      .tooltip-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+        font-family: "Inter", sans-serif;
+        text-shadow: 3px 3px 5px black;
+
+      }
+      
+      .tooltip-dances {
+        font-size: 13px;
+        margin: 0 0 10px 0;
+        font-family: "Inter", sans-serif;
+        text-shadow: 3px 3px 5px black;
+
+        
+        span {
+          font-weight: 700;
+          color: white;
+        }
+      }
+      
+      .tooltip-button {
+        background: none;
+        border: none;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+        width: 100%;
+        text-shadow: 3px 3px 5px black;
+
+
+      }
+    }
+  }
+  
+  .america-tooltip-1,
+  .america-tooltip-2 {
+    position: absolute;
+  }
 
   .america {
-    width: 40%;
-    left: -2%;
-    top: 2%;
+    width: 30%;
+    left: 5%;
+    top: 6%;
   }
 
   .africa {
-    width: 20%;
-    left: 38%;
-    top: 52%;
+    width: 15%;
+    left: 47%;
+    top: 45%;
   }
 
   .europa {
-    width: 20.5%;
-    left: 43.6%;
-    top: 18.6%;
+    width: 18%;
+    left: 43.355%;
+    top: 17.6%;
   }
 
   .asia {
-    width: 31.6%;
-    left: 62.5%;
-    top: 26.8%;
+    width: 30.059375%;
+    left: 57.4%;
+    top: 23.6%;
   }
 
   .kavkaz {
-    width: 6%;
-    left: 60.1%;
-    top: 29.5%;
+    width: 5%;
+    left: 57.3%;
+    top: 27.4%;
   }
 
   .center {
-    width: 13%;
-    left: 62.2%;
-    top: 15%;
+    width: 11.3%;
+    left: 58.5%;
+    top: 15.2%;
   }
 
   .privol {
-    width: 7%;
-    left: 64.9%;
-    top: 24%;
+    width: 5.5%;
+    left: 61.1%;
+    top: 23.6%;
     z-index: 999;
   }
 
   .west {
-    width: 24%;
-    left: 70%;
-    top: 5%;
-    z-index: 999;
+    width: 23.26%;
+    left: 63.9%;
+    top: 4.8%;
+    z-index: 998;
   }
 
   .australia {
-    width: 22%;
-    left: 74%;
-    top: 70%;
+    width: 11%;
+    left: 75%;
+    top: 62%;
   }
 }
 
