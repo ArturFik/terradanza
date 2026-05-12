@@ -29,12 +29,12 @@
           <!-- Приволжье -->
           <div class="map-item privol" @mouseenter="showTooltip('privol')" @mouseleave="hideTooltip('privol')">
             <img src="@/assets/img/privol.png" alt="privol" class="default-img" />
-            <img src="@/assets/img/privolwhite.png" alt="privol" class="hover-img" style="z-index: 1000;"/>
-            <div v-if="activeTooltip === 'privol'" class="map-tooltip" :style="tooltipStyles.privol">
+            <img src="@/assets/img/privolwhite.png" alt="privol" class="hover-img" style="z-index: 1000;" @click="goToPage('about_country?slug=povolzhe-i-priurale')"/>
+            <div v-if="activeTooltip === 'privol'" class="map-tooltip" :style="tooltipStyles.privol" @click="goToPage('about_country?slug=povolzhe-i-priurale')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Приволжье</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>12</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=povolzhe-i-priurale')">Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
@@ -42,19 +42,19 @@
           <!-- Америка (два блока) -->
           <div class="map-item america" @mouseenter="showTooltip('america')" @mouseleave="hideTooltip('america')">
             <img src="@/assets/img/america.png" alt="America" class="default-img" />
-            <img src="@/assets/img/americawhite.png" alt="America" class="hover-img" />
-            <div v-if="activeTooltip === 'america'" class="map-tooltip america-tooltip-1" :style="tooltipStyles.america1">
+            <img src="@/assets/img/americawhite.png" alt="America" class="hover-img" @click="goToPage('about_country?slug=amerika')"/>
+            <div v-if="activeTooltip === 'america'" class="map-tooltip america-tooltip-1" :style="tooltipStyles.america1" @click="goToPage('about_country?slug=amerika')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Северная Америка</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>24</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=amerika')">Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
-            <div v-if="activeTooltip === 'america'" class="map-tooltip america-tooltip-2" :style="tooltipStyles.america2">
+            <div v-if="activeTooltip === 'america'" class="map-tooltip america-tooltip-2" :style="tooltipStyles.america2" @click="goToPage('about_country?slug=amerika')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Южная Америка</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>18</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=amerika')">Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
@@ -62,12 +62,12 @@
           <!-- Африка -->
           <div class="map-item africa" @mouseenter="showTooltip('africa')" @mouseleave="hideTooltip('africa')">
             <img src="@/assets/img/africa.png" alt="Africa" class="default-img" />
-            <img src="@/assets/img/africawhite.png" alt="Africa" class="hover-img" />
-            <div v-if="activeTooltip === 'africa'" class="map-tooltip" :style="tooltipStyles.africa">
+            <img src="@/assets/img/africawhite.png" alt="Africa" class="hover-img"   @click="goToPage('about_country?slug=afrika')"/>
+            <div v-if="activeTooltip === 'africa'" class="map-tooltip" :style="tooltipStyles.africa"  @click="goToPage('about_country?slug=afrika')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Африка</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>32</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=afrika')">Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
@@ -75,12 +75,12 @@
           <!-- Европа -->
           <div class="map-item europa" @mouseenter="showTooltip('europa')" @mouseleave="hideTooltip('europa')">
             <img src="@/assets/img/europa.png" alt="Europa" class="default-img" />
-            <img src="@/assets/img/europawhite.png" alt="Europa" class="hover-img" style="z-index: 1002;"/>
-            <div v-if="activeTooltip === 'europa'" class="map-tooltip" :style="tooltipStyles.europa">
+            <img src="@/assets/img/europawhite.png" alt="Europa" class="hover-img" style="z-index: 1002;" @click="goToPage('about_country?slug=evropa')"/>
+            <div v-if="activeTooltip === 'europa'" class="map-tooltip" :style="tooltipStyles.europa" @click="goToPage('about_country?slug=evropa')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Европа</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>45</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=evropa')">Узнать больше →</button>
+                <button class="tooltip-button" >Узнать больше →</button>
               </div>
             </div>
           </div>
@@ -88,12 +88,12 @@
           <!-- Азия -->
           <div class="map-item asia" @mouseenter="showTooltip('asia')" @mouseleave="hideTooltip('asia')">
             <img src="@/assets/img/asia.png" alt="Asia" class="default-img" />
-            <img src="@/assets/img/asiawhite.png" alt="Asia" class="hover-img" style="z-index: 999;"/>
-            <div v-if="activeTooltip === 'asia'" class="map-tooltip" :style="tooltipStyles.asia">
+            <img src="@/assets/img/asiawhite.png" alt="Asia" class="hover-img" style="z-index: 999;" @click="goToPage('about_country?slug=aziia')"/>
+            <div v-if="activeTooltip === 'asia'" class="map-tooltip" :style="tooltipStyles.asia" @click="goToPage('about_country?slug=aziia')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Азия</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>56</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=aziia')">Узнать больше →</button>
+                <button class="tooltip-button" >Узнать больше →</button>
               </div>
             </div>
           </div>
@@ -101,12 +101,12 @@
           <!-- Кавказ -->
           <div class="map-item kavkaz" @mouseenter="showTooltip('kavkaz')" @mouseleave="hideTooltip('kavkaz')">
             <img src="@/assets/img/kavkaz.png" alt="Kavkaz" class="default-img" />
-            <img src="@/assets/img/kavkazwhite.png" alt="Kavkaz" class="hover-img" style="z-index: 1001;"/>
-            <div v-if="activeTooltip === 'kavkaz'" class="map-tooltip" :style="tooltipStyles.kavkaz">
+            <img src="@/assets/img/kavkazwhite.png" alt="Kavkaz" class="hover-img" style="z-index: 1001;" @click="goToPage('about_country?slug=severnyi-kavkaz')"/>
+            <div v-if="activeTooltip === 'kavkaz'" class="map-tooltip" :style="tooltipStyles.kavkaz" @click="goToPage('about_country?slug=severnyi-kavkaz')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Кавказ</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>28</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=severnyi-kavkaz')">Узнать больше →</button>
+                <button class="tooltip-button" >Узнать больше →</button>
               </div>
             </div>
           </div>
@@ -114,12 +114,12 @@
           <!-- Запад -->
           <div class="map-item west" @mouseenter="showTooltip('west')" @mouseleave="hideTooltip('west')">
             <img src="@/assets/img/west.png" alt="west" class="default-img" />
-            <img src="@/assets/img/westwhite.png" alt="west" class="hover-img" />
-            <div v-if="activeTooltip === 'west'" class="map-tooltip" :style="tooltipStyles.west">
+            <img src="@/assets/img/westwhite.png" alt="west" class="hover-img" @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')"/>
+            <div v-if="activeTooltip === 'west'" class="map-tooltip" :style="tooltipStyles.west" @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Сибирь и дальний восток</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>38</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')">Узнать больше →</button>
+                <button class="tooltip-button" >Узнать больше →</button>
               </div>
             </div>
           </div>
@@ -127,24 +127,24 @@
           <!-- Центр -->
           <div class="map-item center" @mouseenter="showTooltip('center')" @mouseleave="hideTooltip('center')">
             <img src="@/assets/img/center.png" alt="center" class="default-img" />
-            <img src="@/assets/img/centerwhite.png" alt="center" class="hover-img" />
-            <div v-if="activeTooltip === 'center'" class="map-tooltip" :style="tooltipStyles.center">
+            <img src="@/assets/img/centerwhite.png" alt="center" class="hover-img" @click="goToPage('about_country?slug=severo-zapad-i-tsentralnaia-rossiia')"/>
+            <div v-if="activeTooltip === 'center'" class="map-tooltip" :style="tooltipStyles.center" @click="goToPage('about_country?slug=severo-zapad-i-tsentralnaia-rossiia')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Центральная Россия</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>22</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=severo-zapad-i-tsentralnaia-rossiia')">Узнать больше →</button>
+                <button class="tooltip-button" >Узнать больше →</button>
               </div>
             </div>
           </div>
           
           <div class="map-item australia" @mouseenter="showTooltip('australia')" @mouseleave="hideTooltip('australia')">
             <img src="@/assets/img/avstralia.png" alt="Australia" class="default-img" />
-            <img src="@/assets/img/avstraliawhite.png" alt="Australia" class="hover-img" />
-            <div v-if="activeTooltip === 'australia'" class="map-tooltip" :style="tooltipStyles.australia">
+            <img src="@/assets/img/avstraliawhite.png" alt="Australia" class="hover-img" @click="goToPage('about_country?slug=avstraliia')"/>
+            <div v-if="activeTooltip === 'australia'" class="map-tooltip" :style="tooltipStyles.australia" @click="goToPage('about_country?slug=avstraliia')">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Австралия</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>15</span></p>
-                <button class="tooltip-button" @click="goToPage('about_country?slug=avstraliia')">Узнать больше →</button>
+                <button class="tooltip-button" >Узнать больше →</button>
               </div>
             </div>
           </div>
