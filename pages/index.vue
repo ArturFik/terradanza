@@ -640,7 +640,7 @@ const goToPage = (page) => {
     width: 5.5%;
     left: 61.1%;
     top: 23.6%;
-    z-index: 999;
+    z-index: 1004;
   }
 
   .west {
