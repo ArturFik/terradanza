@@ -350,7 +350,7 @@ const lessonColumns = computed(() => {
 
 .course-image {
   width: 35%;
-  height: auto;
+  height: 600px;
   object-fit: cover;
   border-radius: 20px;
   @media (max-width: 768px) {

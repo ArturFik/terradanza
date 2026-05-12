@@ -1,5 +1,8 @@
 <template>
-  <div class="about_country-container">
+  <div 
+    class="about_country-container" 
+    :style="{ backgroundImage: `url(${currentBackgroundImage})` }"
+  >
     <Header />
     <div class="about_country">
       <h1>{{ region?.name || "Регион" }}</h1>
@@ -61,6 +64,16 @@ import europeImage from "@/assets/img/Rectangle6.png";
 import asiaImage from "@/assets/img/Rectangle7.png";
 import americaImage from "@/assets/img/Rectangle8.png";
 
+import africaBackground from "@/assets/img/back-africa.png";
+import europeBackground from "@/assets/img/back-europa.png";
+import asiaBackground from "@/assets/img/back-asia.png";
+import americaBackground from "@/assets/img/back-america.png";
+import australiaBackground from "@/assets/img/back-australia.png";
+import northCaucasusBackground from "@/assets/img/back-kavkaz.png";
+import volgaRegionBackground from "@/assets/img/back-povol.png";
+import siberiaBackground from "@/assets/img/back-sibir.png";
+import centralRussiaBackground from "@/assets/img/back-center.png";
+
 type RegionDetail = {
   id: string;
   name: string;
@@ -121,6 +134,28 @@ const galleryImages = computed<string[]>(() => {
 
   return urls.length ? urls : fallbackGallery;
 });
+
+const getBackgroundImage = (slug: string | null): string => {
+  if (!slug) return defaultBackground;
+  
+  const backgroundMap: Record<string, string> = {
+    'afrika': africaBackground,
+    'evropa': europeBackground,
+    'aziia': asiaBackground,
+    'amerika': americaBackground,
+    'avstraliia': australiaBackground,
+    'severnyi-kavkaz': northCaucasusBackground,
+    'povolzhe-i-priurale': volgaRegionBackground,
+    'sibir-i-dalnii-vostok': siberiaBackground,
+    'severo-zapad-i-tsentralnaia-rossiia': centralRussiaBackground,
+  };
+  
+  return backgroundMap[slug] || defaultBackground;
+};
+
+const currentBackgroundImage = computed(() => {
+  return getBackgroundImage(selectedSlug.value);
+});
 </script>
 
 <style lang="scss">
@@ -128,7 +163,6 @@ const galleryImages = computed<string[]>(() => {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("@/assets/img/back.png");
 }
 
 .about_country {
@@ -157,7 +191,7 @@ const galleryImages = computed<string[]>(() => {
     margin-left: auto;
     margin-right: auto;
     max-width: 1920px;
-    padding: 0 75px;
+    padding: 0 100px;
   }
 
   .intro-section {
