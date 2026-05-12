@@ -257,7 +257,7 @@ const { data } = await useAsyncData(
         number: String(index + 1).padStart(2, "0"),
         title: lesson.name,
         description: lesson.description || "Описание урока пока не добавлено.",
-        image: mediaUrl(lesson.thumbnail_key) || bookIcon,
+        image: bookIcon,
       })),
     };
   }

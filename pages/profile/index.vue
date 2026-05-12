@@ -5,7 +5,6 @@
       <h1 class="profile-page-container__title">ПРОФИЛЬ</h1>
       <div class="profile-page-container__logo">
         <div class="profile-page-container__avatar-wrapper" @click="triggerFileUpload">
-          <!-- Если есть avatarUrl – показываем изображение, иначе – буквы -->
           <div v-if="avatarUrl" class="profile-page-container__avatar-image-wrapper">
             <img :src="avatarUrl" alt="logo" class="profile-page-container__avatar" />
           </div>
@@ -318,10 +317,11 @@ const tabs = ref([{ img: frameImg }, { img: frame2Img }, { img: frame3Img }]);
 const expandedCourseIds = ref(new Set());
 
 const { data, refresh } = await useAsyncData("profile-data", async () => {
-  const [allCourses, favorites, enrolled, achievements] = await Promise.all([
+  const [allCourses, favorites, enrolled, courseProgress, achievementsResponse] = await Promise.all([
     apiFetch("/courses"),
     apiFetch("/users/me/favorites"),
     apiFetch("/users/me/courses"),
+    apiFetch("/users/me/course-progress"),
     apiFetch("/users/me/achievements"),
   ]);
 
@@ -339,9 +339,16 @@ const { data, refresh } = await useAsyncData("profile-data", async () => {
     ])
   );
 
+  const progressMap = new Map();
+  if (courseProgress.data?.courses) {
+    courseProgress.data.courses.forEach((progress) => {
+      progressMap.set(progress.course_slug, progress.progress_percent || 0);
+    });
+  }
+
   const allAchievementsList = Object.values(ALL_ACHIEVEMENTS).map(
     (achievement) => {
-      const earnedAchievement = achievements.data.achievements.find(
+      const earnedAchievement = achievementsResponse.data.achievements.find(
         (a) => a.code === achievement.code
       );
 
@@ -381,7 +388,7 @@ const { data, refresh } = await useAsyncData("profile-data", async () => {
       .filter(Boolean)
       .map((course) => ({
         ...course,
-        progress: 0,
+        progress: progressMap.get(course.slug) || 0,
       })),
   };
 });
@@ -398,19 +405,16 @@ const achievementRows = computed(() => {
   return rows;
 });
 
-// Новый computed: avatarUrl теперь возвращает null, если нет avatar_key
 const avatarUrl = computed(() => {
   const key = currentUser.value?.avatar_key;
   return key ? mediaUrl(key) : null;
 });
 
-// Имя и фамилия пользователя для отображения
 const fullName = computed(() => {
   const parts = [currentUser.value?.surname, currentUser.value?.name].filter(Boolean);
   return parts.join(" ") || currentUser.value?.email || "Пользователь";
 });
 
-// Инициалы пользователя (максимум 2 буквы)
 const userInitials = computed(() => {
   const surname = currentUser.value?.surname || '';
   const name = currentUser.value?.name || '';
@@ -591,7 +595,6 @@ const handleAvatarUpload = async (event) => {
     }
   }
 
-  // Стили для аватарки-изображения
   &__avatar-image-wrapper {
     width: 293px;
     height: 293px;
@@ -610,7 +613,6 @@ const handleAvatarUpload = async (event) => {
     object-fit: cover;
   }
 
-  // Стили для аватарки с инициалами
   &__avatar-initials {
     width: 293px;
     height: 293px;

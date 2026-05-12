@@ -298,17 +298,17 @@ const relatedDances = computed(() =>
       color: #11243f;
       text-align: left;
       font-family: "Inter", sans-serif;
-      margin: 0;
+      margin: 25px 0 0 0;
       flex: 1;
     }
 
     .button {
       border-radius: 999px;
-      padding: 8px 15px;
+      padding: 15px 40px;
       color: #fffcf6;
       margin: 20px 0 0 0;
       width: auto;
-      font-size: 18px;
+      font-size: 37px;
       white-space: nowrap;
       display: inline-flex;
       background-color: #c65d3b;
@@ -338,7 +338,7 @@ const relatedDances = computed(() =>
 }
 
 .about_dancetwo {
-  margin-top: 50px;
+  margin-top: 90px;
   display: flex;
   flex-direction: column;
   align-items: left;

@@ -64,6 +64,7 @@ import europeImage from "@/assets/img/Rectangle6.png";
 import asiaImage from "@/assets/img/Rectangle7.png";
 import americaImage from "@/assets/img/Rectangle8.png";
 
+import defaultBackground from "@/assets/img/back-africa.png";
 import africaBackground from "@/assets/img/back-africa.png";
 import europeBackground from "@/assets/img/back-europa.png";
 import asiaBackground from "@/assets/img/back-asia.png";
