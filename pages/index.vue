@@ -117,7 +117,7 @@
             <img src="@/assets/img/westwhite.png" alt="west" class="hover-img" />
             <div v-if="activeTooltip === 'west'" class="map-tooltip" :style="tooltipStyles.west">
               <div class="tooltip-content">
-                <h3 class="tooltip-title">Западная Европа</h3>
+                <h3 class="tooltip-title">Сибирь и дальний восток</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>38</span></p>
                 <button class="tooltip-button" @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')">Узнать больше →</button>
               </div>
@@ -130,7 +130,7 @@
             <img src="@/assets/img/centerwhite.png" alt="center" class="hover-img" />
             <div v-if="activeTooltip === 'center'" class="map-tooltip" :style="tooltipStyles.center">
               <div class="tooltip-content">
-                <h3 class="tooltip-title">Центральная Азия</h3>
+                <h3 class="tooltip-title">Центральная Россия</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>22</span></p>
                 <button class="tooltip-button" @click="goToPage('about_country?slug=severo-zapad-i-tsentralnaia-rossiia')">Узнать больше →</button>
               </div>
