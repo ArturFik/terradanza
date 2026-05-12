@@ -628,6 +628,7 @@ const goToPage = (page) => {
     width: 5%;
     left: 57.3%;
     top: 27.4%;
+    z-index: 1004;
   }
 
   .center {
