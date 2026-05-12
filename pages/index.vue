@@ -29,7 +29,7 @@
           <!-- Приволжье -->
           <div class="map-item privol" @mouseenter="showTooltip('privol')" @mouseleave="hideTooltip('privol')">
             <img src="@/assets/img/privol.png" alt="privol" class="default-img" />
-            <img src="@/assets/img/privolwhite.png" alt="privol" class="hover-img" />
+            <img src="@/assets/img/privolwhite.png" alt="privol" class="hover-img" style="z-index: 1000;"/>
             <div v-if="activeTooltip === 'privol'" class="map-tooltip" :style="tooltipStyles.privol">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Приволжье</h3>
@@ -75,7 +75,7 @@
           <!-- Европа -->
           <div class="map-item europa" @mouseenter="showTooltip('europa')" @mouseleave="hideTooltip('europa')">
             <img src="@/assets/img/europa.png" alt="Europa" class="default-img" />
-            <img src="@/assets/img/europawhite.png" alt="Europa" class="hover-img" />
+            <img src="@/assets/img/europawhite.png" alt="Europa" class="hover-img" style="z-index: 1002;"/>
             <div v-if="activeTooltip === 'europa'" class="map-tooltip" :style="tooltipStyles.europa">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Европа</h3>
@@ -88,7 +88,7 @@
           <!-- Азия -->
           <div class="map-item asia" @mouseenter="showTooltip('asia')" @mouseleave="hideTooltip('asia')">
             <img src="@/assets/img/asia.png" alt="Asia" class="default-img" />
-            <img src="@/assets/img/asiawhite.png" alt="Asia" class="hover-img" />
+            <img src="@/assets/img/asiawhite.png" alt="Asia" class="hover-img" style="z-index: 999;"/>
             <div v-if="activeTooltip === 'asia'" class="map-tooltip" :style="tooltipStyles.asia">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Азия</h3>
@@ -101,7 +101,7 @@
           <!-- Кавказ -->
           <div class="map-item kavkaz" @mouseenter="showTooltip('kavkaz')" @mouseleave="hideTooltip('kavkaz')">
             <img src="@/assets/img/kavkaz.png" alt="Kavkaz" class="default-img" />
-            <img src="@/assets/img/kavkazwhite.png" alt="Kavkaz" class="hover-img" />
+            <img src="@/assets/img/kavkazwhite.png" alt="Kavkaz" class="hover-img" style="z-index: 1001;"/>
             <div v-if="activeTooltip === 'kavkaz'" class="map-tooltip" :style="tooltipStyles.kavkaz">
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Кавказ</h3>
