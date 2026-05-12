@@ -295,7 +295,7 @@ const tooltipStyles = reactive({
   america1: { top: '35%', left: '30%' },
   america2: { top: '67%', left: '55%' },
   africa: { top: '18%', left: '30%' },
-  europa: { top: '33%', left: '40%' },
+  europa: { top: '35%', left: '33%' },
   asia: { top: '25%', left: '30%' },
   kavkaz: { top: '0%', left: '0%' },
   west: { top: '50%', left: '25%' },
