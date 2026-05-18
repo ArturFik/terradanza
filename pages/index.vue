@@ -9,7 +9,7 @@
             <span class="bg-word" v-for="j in 12" :key="j">TERRA</span>
           </div>
         </div>
-        
+
         <div class="home-block1__content">
           <div class="home-block1__danza">
             <h1>D <span>A </span>n <span>Z </span>A</h1>
@@ -22,15 +22,34 @@
           </div>
         </div>
       </div>
-      
+
       <div class="home-block2">
         <h1>Карта</h1>
         <div class="home-map">
           <!-- Приволжье -->
-          <div class="map-item privol" @mouseenter="showTooltip('privol')" @mouseleave="hideTooltip('privol')">
-            <img src="@/assets/img/privol.png" alt="privol" class="default-img" />
-            <img src="@/assets/img/privolwhite.png" alt="privol" class="hover-img" style="z-index: 1000;" @click="goToPage('about_country?slug=povolzhe-i-priurale')"/>
-            <div v-if="activeTooltip === 'privol'" class="map-tooltip" :style="tooltipStyles.privol" @click="goToPage('about_country?slug=povolzhe-i-priurale')">
+          <div
+            class="map-item privol"
+            @mouseenter="showTooltip('privol')"
+            @mouseleave="hideTooltip('privol')"
+          >
+            <img
+              src="@/assets/img/privol.png"
+              alt="privol"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/privolwhite.png"
+              alt="privol"
+              class="hover-img"
+              style="z-index: 1000"
+              @click="goToPage('about_country?slug=povolzhe-i-priurale')"
+            />
+            <div
+              v-if="activeTooltip === 'privol'"
+              class="map-tooltip"
+              :style="tooltipStyles.privol"
+              @click="goToPage('about_country?slug=povolzhe-i-priurale')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Приволжье</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>12</span></p>
@@ -38,19 +57,42 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Америка (два блока) -->
-          <div class="map-item america" @mouseenter="showTooltip('america')" @mouseleave="hideTooltip('america')">
-            <img src="@/assets/img/america.png" alt="America" class="default-img" />
-            <img src="@/assets/img/americawhite.png" alt="America" class="hover-img" @click="goToPage('about_country?slug=amerika')"/>
-            <div v-if="activeTooltip === 'america'" class="map-tooltip america-tooltip-1" :style="tooltipStyles.america1" @click="goToPage('about_country?slug=amerika')">
+          <div
+            class="map-item america"
+            @mouseenter="showTooltip('america')"
+            @mouseleave="hideTooltip('america')"
+          >
+            <img
+              src="@/assets/img/america.png"
+              alt="America"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/americawhite.png"
+              alt="America"
+              class="hover-img"
+              @click="goToPage('about_country?slug=amerika')"
+            />
+            <div
+              v-if="activeTooltip === 'america'"
+              class="map-tooltip america-tooltip-1"
+              :style="tooltipStyles.america1"
+              @click="goToPage('about_country?slug=amerika')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Северная Америка</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>24</span></p>
                 <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
-            <div v-if="activeTooltip === 'america'" class="map-tooltip america-tooltip-2" :style="tooltipStyles.america2" @click="goToPage('about_country?slug=amerika')">
+            <div
+              v-if="activeTooltip === 'america'"
+              class="map-tooltip america-tooltip-2"
+              :style="tooltipStyles.america2"
+              @click="goToPage('about_country?slug=amerika')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Южная Америка</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>18</span></p>
@@ -58,12 +100,30 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Африка -->
-          <div class="map-item africa" @mouseenter="showTooltip('africa')" @mouseleave="hideTooltip('africa')">
-            <img src="@/assets/img/africa.png" alt="Africa" class="default-img" />
-            <img src="@/assets/img/africawhite.png" alt="Africa" class="hover-img"   @click="goToPage('about_country?slug=afrika')"/>
-            <div v-if="activeTooltip === 'africa'" class="map-tooltip" :style="tooltipStyles.africa"  @click="goToPage('about_country?slug=afrika')">
+          <div
+            class="map-item africa"
+            @mouseenter="showTooltip('africa')"
+            @mouseleave="hideTooltip('africa')"
+          >
+            <img
+              src="@/assets/img/africa.png"
+              alt="Africa"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/africawhite.png"
+              alt="Africa"
+              class="hover-img"
+              @click="goToPage('about_country?slug=afrika')"
+            />
+            <div
+              v-if="activeTooltip === 'africa'"
+              class="map-tooltip"
+              :style="tooltipStyles.africa"
+              @click="goToPage('about_country?slug=afrika')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Африка</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>32</span></p>
@@ -71,86 +131,197 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Европа -->
-          <div class="map-item europa" @mouseenter="showTooltip('europa')" @mouseleave="hideTooltip('europa')">
-            <img src="@/assets/img/europa.png" alt="Europa" class="default-img" />
-            <img src="@/assets/img/europawhite.png" alt="Europa" class="hover-img" style="z-index: 1002;" @click="goToPage('about_country?slug=evropa')"/>
-            <div v-if="activeTooltip === 'europa'" class="map-tooltip" :style="tooltipStyles.europa" @click="goToPage('about_country?slug=evropa')">
+          <div
+            class="map-item europa"
+            @mouseenter="showTooltip('europa')"
+            @mouseleave="hideTooltip('europa')"
+          >
+            <img
+              src="@/assets/img/europa.png"
+              alt="Europa"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/europawhite.png"
+              alt="Europa"
+              class="hover-img"
+              style="z-index: 1002"
+              @click="goToPage('about_country?slug=evropa')"
+            />
+            <div
+              v-if="activeTooltip === 'europa'"
+              class="map-tooltip"
+              :style="tooltipStyles.europa"
+              @click="goToPage('about_country?slug=evropa')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Европа</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>45</span></p>
-                <button class="tooltip-button" >Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
-          
+
           <!-- Азия -->
-          <div class="map-item asia" @mouseenter="showTooltip('asia')" @mouseleave="hideTooltip('asia')">
+          <div
+            class="map-item asia"
+            @mouseenter="showTooltip('asia')"
+            @mouseleave="hideTooltip('asia')"
+          >
             <img src="@/assets/img/asia.png" alt="Asia" class="default-img" />
-            <img src="@/assets/img/asiawhite.png" alt="Asia" class="hover-img" style="z-index: 999;" @click="goToPage('about_country?slug=aziia')"/>
-            <div v-if="activeTooltip === 'asia'" class="map-tooltip" :style="tooltipStyles.asia" @click="goToPage('about_country?slug=aziia')">
+            <img
+              src="@/assets/img/asiawhite.png"
+              alt="Asia"
+              class="hover-img"
+              style="z-index: 999"
+              @click="goToPage('about_country?slug=aziia')"
+            />
+            <div
+              v-if="activeTooltip === 'asia'"
+              class="map-tooltip"
+              :style="tooltipStyles.asia"
+              @click="goToPage('about_country?slug=aziia')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Азия</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>56</span></p>
-                <button class="tooltip-button" >Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
-          
+
           <!-- Кавказ -->
-          <div class="map-item kavkaz" @mouseenter="showTooltip('kavkaz')" @mouseleave="hideTooltip('kavkaz')">
-            <img src="@/assets/img/kavkaz.png" alt="Kavkaz" class="default-img" />
-            <img src="@/assets/img/kavkazwhite.png" alt="Kavkaz" class="hover-img" style="z-index: 1001;" @click="goToPage('about_country?slug=severnyi-kavkaz')"/>
-            <div v-if="activeTooltip === 'kavkaz'" class="map-tooltip" :style="tooltipStyles.kavkaz" @click="goToPage('about_country?slug=severnyi-kavkaz')">
+          <div
+            class="map-item kavkaz"
+            @mouseenter="showTooltip('kavkaz')"
+            @mouseleave="hideTooltip('kavkaz')"
+          >
+            <img
+              src="@/assets/img/kavkaz.png"
+              alt="Kavkaz"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/kavkazwhite.png"
+              alt="Kavkaz"
+              class="hover-img"
+              style="z-index: 1001"
+              @click="goToPage('about_country?slug=severnyi-kavkaz')"
+            />
+            <div
+              v-if="activeTooltip === 'kavkaz'"
+              class="map-tooltip"
+              :style="tooltipStyles.kavkaz"
+              @click="goToPage('about_country?slug=severnyi-kavkaz')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Кавказ</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>28</span></p>
-                <button class="tooltip-button" >Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
-          
+
           <!-- Запад -->
-          <div class="map-item west" @mouseenter="showTooltip('west')" @mouseleave="hideTooltip('west')">
+          <div
+            class="map-item west"
+            @mouseenter="showTooltip('west')"
+            @mouseleave="hideTooltip('west')"
+          >
             <img src="@/assets/img/west.png" alt="west" class="default-img" />
-            <img src="@/assets/img/westwhite.png" alt="west" class="hover-img" @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')"/>
-            <div v-if="activeTooltip === 'west'" class="map-tooltip" :style="tooltipStyles.west" @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')">
+            <img
+              src="@/assets/img/westwhite.png"
+              alt="west"
+              class="hover-img"
+              @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')"
+            />
+            <div
+              v-if="activeTooltip === 'west'"
+              class="map-tooltip"
+              :style="tooltipStyles.west"
+              @click="goToPage('about_country?slug=sibir-i-dalnii-vostok')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Сибирь и дальний восток</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>38</span></p>
-                <button class="tooltip-button" >Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
-          
+
           <!-- Центр -->
-          <div class="map-item center" @mouseenter="showTooltip('center')" @mouseleave="hideTooltip('center')">
-            <img src="@/assets/img/center.png" alt="center" class="default-img" />
-            <img src="@/assets/img/centerwhite.png" alt="center" class="hover-img" @click="goToPage('about_country?slug=severo-zapad-i-tsentralnaia-rossiia')"/>
-            <div v-if="activeTooltip === 'center'" class="map-tooltip" :style="tooltipStyles.center" @click="goToPage('about_country?slug=severo-zapad-i-tsentralnaia-rossiia')">
+          <div
+            class="map-item center"
+            @mouseenter="showTooltip('center')"
+            @mouseleave="hideTooltip('center')"
+          >
+            <img
+              src="@/assets/img/center.png"
+              alt="center"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/centerwhite.png"
+              alt="center"
+              class="hover-img"
+              @click="
+                goToPage(
+                  'about_country?slug=severo-zapad-i-tsentralnaia-rossiia'
+                )
+              "
+            />
+            <div
+              v-if="activeTooltip === 'center'"
+              class="map-tooltip"
+              :style="tooltipStyles.center"
+              @click="
+                goToPage(
+                  'about_country?slug=severo-zapad-i-tsentralnaia-rossiia'
+                )
+              "
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Центральная Россия</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>22</span></p>
-                <button class="tooltip-button" >Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
-          
-          <div class="map-item australia" @mouseenter="showTooltip('australia')" @mouseleave="hideTooltip('australia')">
-            <img src="@/assets/img/avstralia.png" alt="Australia" class="default-img" />
-            <img src="@/assets/img/avstraliawhite.png" alt="Australia" class="hover-img" @click="goToPage('about_country?slug=avstraliia')"/>
-            <div v-if="activeTooltip === 'australia'" class="map-tooltip" :style="tooltipStyles.australia" @click="goToPage('about_country?slug=avstraliia')">
+
+          <div
+            class="map-item australia"
+            @mouseenter="showTooltip('australia')"
+            @mouseleave="hideTooltip('australia')"
+          >
+            <img
+              src="@/assets/img/avstralia.png"
+              alt="Australia"
+              class="default-img"
+            />
+            <img
+              src="@/assets/img/avstraliawhite.png"
+              alt="Australia"
+              class="hover-img"
+              @click="goToPage('about_country?slug=avstraliia')"
+            />
+            <div
+              v-if="activeTooltip === 'australia'"
+              class="map-tooltip"
+              :style="tooltipStyles.australia"
+              @click="goToPage('about_country?slug=avstraliia')"
+            >
               <div class="tooltip-content">
                 <h3 class="tooltip-title">Австралия</h3>
                 <p class="tooltip-dances">Кол-во танцев: <span>15</span></p>
-                <button class="tooltip-button" >Узнать больше →</button>
+                <button class="tooltip-button">Узнать больше →</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div class="home-block3">
         <h1>О нас</h1>
         <div class="home-tab">
@@ -196,7 +367,7 @@
           <h2 @click="goToPage('catalog')">НАЧАТЬ ОБУЧЕНИЕ</h2>
         </div>
       </div>
-      
+
       <div class="home-block4">
         <h1>Почему мы</h1>
         <div class="home-tab">
@@ -206,7 +377,7 @@
           <img src="@/assets/img/ico4.png" alt="ico" />
         </div>
       </div>
-      
+
       <div class="home-block5">
         <h1>Популярные стили</h1>
         <h2>2026</h2>
@@ -217,7 +388,8 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <div class="tab-title-hover">продолжающий</div>
             <div class="tab-description"><span>Кол-во курсов:</span> 2</div>
-            <p @click="goToPage('catalog')">узнать больше
+            <p @click="goToPage('catalog')">
+              узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -238,7 +410,8 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <div class="tab-title-hover">продолжающий</div>
             <div class="tab-description"><span>Кол-во курсов:</span> 1</div>
-            <p @click="goToPage('catalog')">узнать больше
+            <p @click="goToPage('catalog')">
+              узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -259,7 +432,8 @@
             <div class="tab-title"><span>Уровень:</span> начинающий</div>
             <br />
             <div class="tab-description"><span>Кол-во курсов:</span> 2</div>
-            <p @click="goToPage('catalog')">узнать больше
+            <p @click="goToPage('catalog')">
+              узнать больше
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -282,45 +456,49 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive } from "vue";
 import Header from "../component/header/header.vue";
 import Footer from "../component/footer/footer.vue";
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 
-const router = useRouter()
-const activeTooltip = ref(null)
+const router = useRouter();
+const activeTooltip = ref(null);
 
 const tooltipStyles = reactive({
-  privol: { top: '0%', left: '0%' },
-  america1: { top: '35%', left: '30%' },
-  america2: { top: '67%', left: '55%' },
-  africa: { top: '18%', left: '30%' },
-  europa: { top: '35%', left: '33%' },
-  asia: { top: '25%', left: '30%' },
-  kavkaz: { top: '0%', left: '0%' },
-  west: { top: '50%', left: '25%' },
-  center: { top: '30%', left: '10%' },
-  australia: { top: '18%', left: '15%' }
-})
+  privol: { top: "0%", left: "0%" },
+  america1: { top: "35%", left: "30%" },
+  america2: { top: "67%", left: "55%" },
+  africa: { top: "18%", left: "30%" },
+  europa: { top: "35%", left: "33%" },
+  asia: { top: "25%", left: "30%" },
+  kavkaz: { top: "0%", left: "0%" },
+  west: { top: "50%", left: "25%" },
+  center: { top: "30%", left: "10%" },
+  australia: { top: "18%", left: "15%" },
+});
 
 const showTooltip = (region) => {
-  activeTooltip.value = region
-}
+  activeTooltip.value = region;
+};
 
 const hideTooltip = (region) => {
   if (activeTooltip.value === region) {
-    activeTooltip.value = null
+    activeTooltip.value = null;
   }
-}
+};
 
 const goToPage = (page) => {
-  router.push(`/${page}`)
-}
+  router.push(`/${page}`);
+};
 </script>
 
 <style lang="scss">
+// ============================================
+// 1. КОНТЕЙНЕРЫ И ОСНОВНЫЕ БЛОКИ
+// ============================================
 .home-container {
   background-color: #fff;
+  overflow-x: hidden;
 }
 
 .home {
@@ -329,11 +507,14 @@ const goToPage = (page) => {
   max-width: 1920px;
 }
 
+// ============================================
+// 2. BLOCK 1 (TERRA + Danza)
+// ============================================
 .home-block1 {
   position: relative;
   color: #11243f;
   overflow: hidden;
-  
+
   &__background-text {
     position: absolute;
     top: 0;
@@ -345,19 +526,21 @@ const goToPage = (page) => {
     display: flex;
     flex-direction: column;
     gap: 0;
+
     .bg-row {
       display: flex;
       flex-wrap: nowrap;
       white-space: nowrap;
       animation: scrollRow 20s linear infinite;
       line-height: 0.8;
-      margin: -10px 0; 
+      margin: -10px 0;
+
       &:nth-child(even) {
         animation-direction: reverse;
         animation-duration: 25s;
       }
     }
-    
+
     .bg-word {
       font-family: "Luckiest", sans-serif;
       font-weight: 600;
@@ -372,21 +555,12 @@ const goToPage = (page) => {
       text-stroke: 2px #e7e8e8;
     }
   }
-  
-  @keyframes scrollRow {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-  
+
   &__content {
     position: relative;
     z-index: 1;
   }
-  
+
   span {
     color: #c65d3b;
   }
@@ -407,10 +581,12 @@ const goToPage = (page) => {
     width: 44%;
     margin-left: auto;
   }
+
   &__danza {
     display: flex;
     justify-content: center;
   }
+
   &__text {
     display: flex;
     flex-direction: row;
@@ -419,80 +595,23 @@ const goToPage = (page) => {
   }
 }
 
-// Адаптивные стили
-@media (max-width: 1400px) {
-  .home-block1 {
-    h1 {
-      font-size: 280px;
-      margin: 200px 0 100px 0;
-    }
-    
-    p {
-      font-size: 52px;
-      width: 48%;
-    }
+@keyframes scrollRow {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
 
-@media (max-width: 1024px) {
-  .home {
-    padding: 0 40px;
-  }
-  
-  .home-block1 {
-    h1 {
-      font-size: 180px;
-      margin: 150px 0 80px 0;
-    }
-    
-    p {
-      font-size: 36px;
-      width: 55%;
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .home {
-    padding: 0 20px;
-  }
-
-  .home-block1 {
-    h1 {
-      font-size: 100px;
-      margin: 100px 0 50px 0;
-    }
-
-    p {
-      font-size: 20px;
-      width: 100%;
-      text-align: center;
-      margin-top: 20px;
-    }
-    
-    &__text {
-      justify-content: center;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .home-block1 {
-    h1 {
-      font-size: 56px;
-      margin: 80px 0 30px 0;
-    }
-    
-    p {
-      font-size: 16px;
-    }
-  }
-}
-
+// ============================================
+// 3. BLOCK 2 (КАРТА)
+// ============================================
 .home-block2 {
   margin-top: 100px;
 
   h1 {
+    text-transform: uppercase;
     font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
@@ -507,7 +626,7 @@ const goToPage = (page) => {
   width: 100%;
   max-width: 1920px;
   margin: 0 auto;
-  aspect-ratio: 16 / 11;
+  aspect-ratio: 22 / 11;
   overflow: visible;
 
   .map-item {
@@ -538,13 +657,12 @@ const goToPage = (page) => {
       .default-img {
         opacity: 0;
       }
-
       .hover-img {
         opacity: 1;
       }
     }
   }
-  
+
   .map-tooltip {
     position: absolute;
     z-index: 100000;
@@ -552,32 +670,30 @@ const goToPage = (page) => {
     padding: 12px 16px;
     transition: all 0.2s ease;
     text-align: center;
-    
+
     .tooltip-content {
       color: white;
-      
+
       .tooltip-title {
         font-size: 16px;
         font-weight: 600;
         margin: 0 0 8px 0;
         font-family: "Inter", sans-serif;
         text-shadow: 3px 3px 5px black;
-
       }
-      
+
       .tooltip-dances {
         font-size: 13px;
         margin: 0 0 10px 0;
         font-family: "Inter", sans-serif;
         text-shadow: 3px 3px 5px black;
 
-        
         span {
           font-weight: 700;
           color: white;
         }
       }
-      
+
       .tooltip-button {
         background: none;
         border: none;
@@ -589,121 +705,74 @@ const goToPage = (page) => {
         font-family: "Inter", sans-serif;
         width: 100%;
         text-shadow: 3px 3px 5px black;
-
-
       }
     }
   }
-  
+
   .america-tooltip-1,
   .america-tooltip-2 {
     position: absolute;
   }
 
+  // Позиционирование регионов на карте
   .america {
     width: 30%;
     left: 5%;
     top: 6%;
   }
-
   .africa {
     width: 15%;
     left: 47%;
-    top: 45%;
+    top: 60%;
   }
-
   .europa {
     width: 18%;
     left: 43.355%;
-    top: 17.6%;
+    top: 26.6%;
   }
-
   .asia {
     width: 30.059375%;
     left: 57.4%;
-    top: 23.6%;
+    top: 34.8%;
   }
-
   .kavkaz {
     width: 5%;
     left: 57.3%;
-    top: 27.4%;
+    top: 40.1%;
     z-index: 1004;
   }
-
   .center {
     width: 11.3%;
     left: 58.5%;
-    top: 15.2%;
+    top: 23.2%;
   }
-
   .privol {
     width: 5.5%;
     left: 61.1%;
-    top: 23.6%;
+    top: 34.7%;
     z-index: 1004;
   }
-
   .west {
     width: 23.26%;
     left: 63.9%;
-    top: 4.8%;
+    top: 8.9%;
     z-index: 998;
   }
-
   .australia {
     width: 11%;
     left: 75%;
-    top: 62%;
+    top: 84%;
   }
 }
 
-@media (max-width: 768px) {
-  .home-map {
-    aspect-ratio: 4 / 3;
-
-    .america {
-      width: 40%;
-      left: -2%;
-      top: 2%;
-    }
-
-    .africa {
-      width: 20%;
-      left: 38%;
-      top: 49%;
-    }
-
-    .europa {
-      width: 25%;
-      left: 37%;
-      top: 24.5%;
-    }
-
-    .asia {
-      width: 25%;
-      left: 55%;
-      top: 34%;
-    }
-
-    .west {
-      width: 47%;
-      left: 56%;
-      top: 6%;
-    }
-
-    .australia {
-      width: 16%;
-      left: 65%;
-      top: 62%;
-    }
-  }
-}
-
+// ============================================
+// 4. BLOCK 3 (О НАС + КНОПКА)
+// ============================================
 .home-block3 {
   margin-top: 100px;
 
   h1 {
+    text-transform: uppercase;
     font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
@@ -722,6 +791,7 @@ const goToPage = (page) => {
     box-sizing: border-box;
     color: #fffcf6;
     margin-top: 50px;
+
     .tab-item {
       display: flex;
       flex-direction: column;
@@ -751,17 +821,14 @@ const goToPage = (page) => {
           opacity: 0;
           visibility: hidden;
         }
-
         .tab-title {
           opacity: 0;
           visibility: hidden;
         }
-
         .tab-description {
           opacity: 1;
           visibility: visible;
         }
-
         .tab-title-hover {
           opacity: 1;
           visibility: visible;
@@ -821,41 +888,17 @@ const goToPage = (page) => {
     .tab-item-1 {
       background-image: url("@/assets/img/Rectangle1.png");
     }
-
     .tab-item-2 {
       background-image: url("@/assets/img/Rectangle2.png");
     }
-
     .tab-item-3 {
       background-image: url("@/assets/img/Rectangle3.png");
     }
-
     .tab-item-4 {
       background-image: url("@/assets/img/Rectangle4.png");
     }
-
-    @media (max-width: 768px) {
-      gap: 12px;
-      padding: 0 12px;
-    }
-
-    @media (max-width: 640px) {
-      flex-wrap: wrap;
-      gap: 12px;
-
-      .tab-item {
-        flex: 1 1 calc(50% - 12px);
-        min-width: calc(50% - 12px);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .tab-item {
-        flex: 1 1 100%;
-        min-width: 100%;
-      }
-    }
   }
+
   .home-view-button {
     display: flex;
     flex-direction: row;
@@ -875,6 +918,7 @@ const goToPage = (page) => {
       width: 50%;
       font-family: "Inter", sans-serif;
     }
+
     h2 {
       font-size: 24px;
       color: #fffcf6;
@@ -889,17 +933,22 @@ const goToPage = (page) => {
       font-family: "Inter", sans-serif;
       transition: transform 0.3s ease;
       cursor: pointer;
-      &:hover{
+
+      &:hover {
         background-color: #7c351f;
       }
     }
   }
 }
 
+// ============================================
+// 5. BLOCK 4 (ПОЧЕМУ МЫ - ИКОНКИ)
+// ============================================
 .home-block4 {
   margin-top: 100px;
 
   h1 {
+    text-transform: uppercase;
     font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
@@ -908,6 +957,7 @@ const goToPage = (page) => {
     margin-bottom: 50px;
     margin: 0;
   }
+
   .home-tab {
     display: flex;
     flex-direction: row;
@@ -917,12 +967,16 @@ const goToPage = (page) => {
     margin-right: auto;
     margin-top: 50px;
     padding: 0 148px;
+
     > img {
       width: 20%;
     }
   }
 }
 
+// ============================================
+// 6. BLOCK 5 (ПОПУЛЯРНЫЕ СТИЛИ)
+// ============================================
 .home-block5 {
   margin-top: 150px;
   display: flex;
@@ -930,6 +984,7 @@ const goToPage = (page) => {
   align-items: center;
   width: 100%;
   overflow-x: clip;
+
   h1 {
     font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
@@ -938,7 +993,9 @@ const goToPage = (page) => {
     text-align: center;
     margin-bottom: 50px;
     margin: 0;
+    text-transform: uppercase;
   }
+
   h2 {
     font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
@@ -947,6 +1004,7 @@ const goToPage = (page) => {
     margin: -20px 0 0 55%;
     font-style: italic;
   }
+
   .home-tab {
     display: flex;
     flex-direction: row;
@@ -958,7 +1016,7 @@ const goToPage = (page) => {
     gap: 100px;
     padding: 0 20px;
     box-sizing: border-box;
-    
+
     .tab-item {
       display: flex;
       flex-direction: column;
@@ -971,11 +1029,13 @@ const goToPage = (page) => {
       color: #11243f;
       height: auto;
       overflow: visible;
+
       .tab-number {
         font-size: 67px;
         font-family: "BergamascoThin", sans-serif;
         font-weight: 800;
       }
+
       .tab-title {
         font-size: 25.46px;
         font-weight: 400;
@@ -984,6 +1044,7 @@ const goToPage = (page) => {
           font-weight: 600;
         }
       }
+
       .tab-title-hover {
         font-size: 18px;
         font-weight: 400;
@@ -991,6 +1052,7 @@ const goToPage = (page) => {
         text-align: right;
         width: 65%;
       }
+
       .tab-description {
         margin-top: 10px;
         font-size: 18px;
@@ -1000,6 +1062,7 @@ const goToPage = (page) => {
           font-weight: 600;
         }
       }
+
       p {
         font-size: 18px;
         font-weight: 700;
@@ -1017,19 +1080,23 @@ const goToPage = (page) => {
         gap: 5px;
         transition: all 0.1s ease;
         cursor: pointer;
-      }
-      p:hover {
-        color: #fffcf6;
-        border: 0px;
-        border: 2px solid #c65d3b;
-        background-color: #c65d3b;
-      }
-      p svg {
-        cursor: pointer;
-      }
 
-      p:hover svg path {
-        fill: #fffcf6;
+        &:hover {
+          color: #fffcf6;
+          border: 2px solid #c65d3b;
+          background-color: #c65d3b;
+        }
+
+        svg {
+          cursor: pointer;
+          path {
+            transition: fill 0.1s ease;
+          }
+        }
+
+        &:hover svg path {
+          fill: #fffcf6;
+        }
       }
 
       .tab-img-dance {
@@ -1042,16 +1109,35 @@ const goToPage = (page) => {
   }
 }
 
+// ============================================
+// 7. АДАПТАЦИЯ (MEDIA QUERIES)
+// ============================================
+
+// 1400px
+@media (max-width: 1400px) {
+  .home-block1 {
+    h1 {
+      font-size: 280px;
+      margin: 200px 0 100px 0;
+    }
+    p {
+      font-size: 52px;
+      width: 48%;
+    }
+  }
+}
+
+// 1200px
 @media (max-width: 1200px) {
   .home-block5 {
     .home-tab {
       gap: 30px;
       flex-wrap: wrap;
-      
+
       .tab-item {
         flex: 1 1 calc(33.33% - 30px);
         min-width: 250px;
-        
+
         .tab-img-dance {
           width: 150px;
           top: -20px;
@@ -1062,52 +1148,453 @@ const goToPage = (page) => {
   }
 }
 
+// 1024px
+@media (max-width: 1024px) {
+  .home {
+    padding: 0 40px;
+  }
+
+  .home-block1 {
+    h1 {
+      font-size: 180px;
+      margin: 150px 0 80px 0;
+    }
+    p {
+      font-size: 36px;
+      width: 55%;
+    }
+  }
+}
+
+// 768px
 @media (max-width: 768px) {
+  .home {
+    padding: 0 20px;
+  }
+
+  .home-block1 {
+    h1 {
+      font-size: 100px;
+      margin: 100px 0 50px 0;
+    }
+    p {
+      font-size: 20px;
+      width: 100%;
+      text-align: center;
+      margin-top: 20px;
+    }
+    &__text {
+      justify-content: center;
+    }
+  }
+
+  .home-map {
+    aspect-ratio: 4 / 3;
+    right: 10px;
+    .america {
+      width: 30%;
+      left: 5%;
+      top: 6%;
+    }
+    .africa {
+      width: 15%;
+      left: 47%;
+      top: 45%;
+    }
+    .europa {
+      width: 18%;
+      left: 43.355%;
+      top: 17.6%;
+    }
+    .asia {
+      width: 30.059375%;
+      left: 57.4%;
+      top: 23.6%;
+    }
+    .kavkaz {
+      width: 5%;
+      left: 57.3%;
+      top: 27.4%;
+      z-index: 1004;
+    }
+    .center {
+      width: 11.3%;
+      left: 58.5%;
+      top: 15.2%;
+    }
+    .privol {
+      width: 5.5%;
+      left: 61.1%;
+      top: 23.6%;
+      z-index: 1004;
+    }
+    .west {
+      width: 23.26%;
+      left: 63.9%;
+      top: 4.8%;
+      z-index: 998;
+    }
+    .australia {
+      width: 11%;
+      left: 75%;
+      top: 62%;
+    }
+  }
+
+  .home-block3 {
+    .home-tab {
+      gap: 12px;
+      padding: 0 12px;
+    }
+
+    .home-view-button {
+      width: 80%;
+      flex-direction: column;
+      text-align: center;
+
+      h1 {
+        width: 100%;
+        margin-bottom: 15px;
+      }
+      h2 {
+        width: 80%;
+      }
+    }
+  }
+
+  .home-block4 .home-tab {
+    flex-wrap: wrap;
+    > img {
+      width: calc(50% - 20px);
+      margin-bottom: 20px;
+    }
+  }
+
   .home-block5 {
-    h1, h2 {
+    h1,
+    h2 {
       font-size: 48px;
     }
-    
     .home-tab {
       flex-direction: column;
-      
       .tab-item {
         width: 100%;
-        
         .tab-img-dance {
           width: 120px;
           top: -15px;
           right: -30px;
         }
-        
         p {
           width: 80%;
         }
       }
     }
   }
-  
-  .home-block3 .home-view-button {
-    width: 80%;
-    flex-direction: column;
-    text-align: center;
-    
-    h1 {
-      width: 100%;
-      margin-bottom: 15px;
-    }
-    
-    h2 {
-      width: 80%;
+}
+
+// 640px
+@media (max-width: 640px) {
+  .home-block3 .home-tab {
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .tab-item {
+      flex: 1 1 calc(50% - 12px);
+      min-width: calc(50% - 12px);
     }
   }
-  
-  .home-block4 .home-tab {
-    flex-wrap: wrap;
-    
-    > img {
-      width: calc(50% - 20px);
+}
+
+// 480px
+@media (max-width: 480px) {
+  .home {
+    padding: 0;
+  }
+
+  // ========== BLOCK 1 ==========
+  .home-block1 {
+    h1 {
+      font-size: 78px;
+      margin: 70px 0 30px 0;
+    }
+
+    p {
+      margin: 0 0 0 auto;
+      font-size: 16px;
+      width: 40%;
+      text-align: left;
+    }
+
+    .bg-word {
+      font-size: 60px;
+      font-weight: 500;
+      -webkit-text-stroke: 2px #e7e8e8;
+    }
+
+    .bg-row {
+      line-height: 0.8;
+      margin: -5px 0;
+    }
+  }
+
+  // ========== BLOCK 2 (КАРТА) ==========
+  .home-block2 {
+    margin-top: 15px;
+
+    h1 {
+      font-size: 50px;
+      margin: 0 0;
+    }
+  }
+
+  .home-map {
+    right: 25%;
+    width: 143%;
+    aspect-ratio: 18 / 9;
+    .america {
+      width: 30%;
+      left: 12%;
+      top: 0%;
+    }
+    .africa {
+      width: 15%;
+      left: 47%;
+      top: 56%;
+    }
+    .europa {
+      width: 18%;
+      left: 43.355%;
+      top: 19.6%;
+    }
+    .asia {
+      width: 30.059375%;
+      left: 57.4%;
+      top: 28.5%;
+    }
+    .kavkaz {
+      width: 5%;
+      left: 57.3%;
+      top: 33.4%;
+      z-index: 1004;
+    }
+    .center {
+      width: 11.3%;
+      left: 58.5%;
+      top: 16.6%;
+    }
+    .privol {
+      width: 5.5%;
+      left: 61.1%;
+      top: 28.3%;
+      z-index: 1004;
+    }
+    .west {
+      width: 23.26%;
+      left: 63.9%;
+      top: 2.6%;
+      z-index: 998;
+    }
+    .australia {
+      width: 11%;
+      left: 73%;
+      top: 78%;
+    }
+
+    .map-tooltip {
+      padding: 8px 12px;
+      min-width: 120px;
+
+      .tooltip-content {
+        .tooltip-title {
+          font-size: 12px;
+          margin-bottom: 4px;
+        }
+        .tooltip-dances {
+          font-size: 10px;
+          margin-bottom: 6px;
+        }
+        .tooltip-button {
+          font-size: 10px;
+          padding: 4px 8px;
+        }
+      }
+    }
+  }
+
+  // ========== BLOCK 3 (О НАС) ==========
+  .home-block3 {
+    margin-top: 50px;
+
+    h1 {
+      font-size: 50px;
       margin-bottom: 20px;
+    }
+
+    .home-tab {
+      gap: 16px;
+      padding: 0 16px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      .tab-item {
+        height: 190px;
+        flex: 0 1 calc(50% - 16px);
+        min-width: 140px;
+        max-width: calc(50% - 16px);
+        border-width: 8px;
+        border-radius: 24px;
+        box-sizing: border-box;
+        .tab-number {
+          font-size: 34px;
+          margin-top: 40%;
+        }
+
+        .tab-title {
+          font-size: 20px;
+          margin-bottom: 15%;
+        }
+
+        .tab-title-hover {
+          font-size: 20px;
+          width: 90%;
+          top: 28%;
+        }
+
+        .tab-description {
+          font-size: 12px;
+          top: 40%;
+          left: 16px;
+          right: 16px;
+        }
+      }
+    }
+
+    .home-view-button {
+      padding: 12px 8px;
+      margin-top: 30px;
+      margin-left: 20px;
+      margin-right: 20px;
+      flex-direction: row;
+      width: auto;
+      display: flex;
+      h1 {
+        font-size: 14px;
+        width: 50%;
+        margin: 0;
+        font-weight: 600;
+      }
+
+      h2 {
+        font-size: 14px;
+        width: 50%;
+        padding: 12px 20px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  // ========== BLOCK 4 (ПОЧЕМУ МЫ) ==========
+  .home-block4 {
+    margin-top: 50px;
+
+    h1 {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+
+    .home-tab {
+      padding: 0 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+
+      > img {
+        width: calc(25% - 15px);
+        min-width: 80px;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // ========== BLOCK 5 (ПОПУЛЯРНЫЕ СТИЛИ) ==========
+  .home-block5 {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 48px;
+      margin: -10px 0 0 auto;
+      text-align: right;
+      padding-right: 20px;
+    }
+
+    .home-tab {
+      margin-top: 30px;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      width: 100%;
+
+      .tab-item {
+        width: 300px;
+        padding: 20px;
+        position: relative;
+        margin: 0 auto;
+        overflow: visible;
+        box-sizing: border-box;
+
+        .tab-number {
+          font-size: 36px;
+        }
+
+        .tab-title {
+          font-size: 13px;
+        }
+
+        .tab-title-hover {
+          font-size: 14px;
+          width: 80%;
+        }
+
+        .tab-description {
+          font-size: 14px;
+          margin-top: 8px;
+        }
+
+        p {
+          font-size: 14px;
+          width: 70%;
+          padding: 8px 12px;
+          margin-top: 20px;
+
+          svg {
+            width: 18px;
+            height: 12px;
+          }
+        }
+
+        .tab-img-dance {
+          position: absolute;
+          width: 140px;
+          top: -10px;
+          right: -65px;
+          z-index: 10;
+        }
+      }
     }
   }
 }
