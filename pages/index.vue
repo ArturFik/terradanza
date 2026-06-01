@@ -747,7 +747,7 @@ const goToPage = (page) => {
     top: 23.2%;
   }
   .privol {
-    width: 5.5%;
+    width: 5.5%;  
     left: 61.1%;
     top: 34.7%;
     z-index: 1004;

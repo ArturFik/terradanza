@@ -2,6 +2,7 @@
   <div class="encyclopedia-container">
     <Header />
     <div class="encyclopedia">
+      <h1>энциклопедия</h1>
       <div class="encyclopedia__input">
         <input
           type="text"
@@ -38,7 +39,7 @@
           v-if="showDropdown && searchQuery && searchResults.length === 0"
           class="search-dropdown no-results"
         >
-          <div class="search-dropdown-item">Ничего не найдено</div>
+          <div class="search-dropdown-item"><h4>Ничего не найдено</h4></div>
         </div>
       </div>
 
@@ -49,9 +50,9 @@
 
         <div class="encyclopedia-block1">
           <img
-            v-if="index % 2 === 0"
             :src="getRegionImage(index)"
             :alt="region.name"
+            class="encyclopedia-block1__image"
           />
           <div class="encyclopedia-block1__text">
             <h1>{{ region.name }}</h1>
@@ -84,11 +85,6 @@
               </svg>
             </NuxtLink>
           </div>
-          <img
-            v-if="index % 2 === 1"
-            :src="getRegionImage(index)"
-            :alt="region.name"
-          />
         </div>
       </template>
     </div>
@@ -271,6 +267,9 @@ onUnmounted(() => {
   max-width: 1920px;
   position: relative;
 
+  h1 {
+    display: none;
+  }
   &__input {
     display: flex;
     flex-direction: row;
@@ -387,6 +386,7 @@ onUnmounted(() => {
     margin-left: auto;
     margin-right: auto;
     border-radius: 20px;
+    order: 1;
   }
 
   &__text {
@@ -399,6 +399,7 @@ onUnmounted(() => {
     gap: 20px;
     font-weight: 400;
     font-family: "Inter", sans-serif;
+    order: 2;
   }
 
   &__block {
@@ -437,6 +438,17 @@ onUnmounted(() => {
     color: #11243f;
     text-align: center;
     margin: 0;
+  }
+  &:nth-child(even) {
+    .encyclopedia-block1__image {
+      order: 2;
+    }
+    
+    .encyclopedia-block1__text {
+      order: 1;
+      margin-right: 0;
+      margin-left: auto;
+    }
   }
 }
 
@@ -477,6 +489,95 @@ onUnmounted(() => {
     font-weight: 800;
     color: #11243f;
     text-align: center;
+    margin: 0;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .encyclopedia{
+    padding: 0 22px;
+    h1 {
+      display: block;
+      font-size: 46px;
+      font-family: "BergamascoThin", sans-serif;
+      font-weight: 800;
+      color: #11243f;
+      text-align: center;
+      margin-bottom: 50px;
+      margin: 20px 0;
+      text-transform: uppercase;
+    }
+    &__input{
+      width: 100%;
+      border-radius: 17px;
+      margin: 0 0 38px 0;
+      &--input{
+        padding: 15px 21px;
+        font-size: 17px;
+      }
+      &--button{
+        width: 66px;
+      }
+    }
+  }
+  .encyclopedia-block1{
+    margin-bottom: 60px;
+    flex-direction: column;
+    img{
+      width: 70%;
+      order: 1 !important;
+    }
+    &__text{
+      width: 100%;
+      gap: 11px;
+      order: 2 !important;
+      margin: 0 !important;
+      h1{
+        font-size: 50px;
+        margin: 10px 0 0 0;
+      }
+      
+    }
+    &__block{
+      width: 100%;
+      gap: 6px;
+    }
+    .dance-item{
+      font-size: 14px;
+      border: 2px solid #11243f;
+    }
+  }
+  .ency__button{
+    margin: 0;
+    padding: 2px 22px;
+    h4{
+      font-size: 16px;
+    }
+    svg{
+      width: 14px;
+    }
+  }
+  .search-dropdown-item{
+    &__name{
+      font-size: 18px;
+    }
+    &__region{
+      font-size: 14px;
+    }
+  }
+  .search-dropdown{
+    border-radius: 17px;
+    font-size: 18px;
+  }
+  .search-dropdown-item{
+    padding: 7px 16px;
+    h4{font-size: 18px;}
+  }
+  .russia-title{
+    margin: 0;
+  }
+  .russia-text{
     margin: 0;
   }
 }

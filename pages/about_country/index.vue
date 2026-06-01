@@ -28,7 +28,7 @@
 
       <div class="about_country__tab" v-if="galleryImages.length">
         <div
-          v-for="(image, index) in galleryImages"
+          v-for="(image, index) in displayedGalleryImages"
           :key="`${image}-${index}`"
           class="tab-item"
         >
@@ -134,6 +134,26 @@ const galleryImages = computed<string[]>(() => {
     .filter((url): url is string => typeof url === "string" && url.length > 0);
 
   return urls.length ? urls : fallbackGallery;
+});
+
+const windowWidth = ref(0);
+
+onMounted(() => {
+  windowWidth.value = window.innerWidth;
+  window.addEventListener('resize', () => {
+    windowWidth.value = window.innerWidth;
+  });
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', () => {});
+});
+
+const displayedGalleryImages = computed(() => {
+  if (windowWidth.value <= 600) {
+    return galleryImages.value.slice(0, 3);
+  }
+  return galleryImages.value;
 });
 
 const getBackgroundImage = (slug: string | null): string => {
@@ -328,15 +348,88 @@ const currentBackgroundImage = computed(() => {
       }
     }
 
-    @media (max-width: 480px) {
-      grid-template-columns: 1fr;
-      gap: 20px;
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(3, 123px);
+      gap: 11px;
       padding: 0 20px;
+      justify-content: center;
 
       .tab-item {
-        aspect-ratio: 16 / 9;
+        width: 123px;
+        height: 148px;
+        aspect-ratio: auto;
+
+        img {
+          width: 123px;
+          height: 148px;
+          border-radius: 10px;
+        }
+      }
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: repeat(3, 123px);
+      gap: 11px;
+      padding: 0 20px;
+      justify-content: center;
+
+      .tab-item {
+        width: 123px;
+        height: 148px;
+        aspect-ratio: auto;
+
+        img {
+          width: 123px;
+          height: 148px;
+        }
       }
     }
   }
 }
+
+
+@media (max-width: 480px) {
+  .about_country{
+    margin: 0;
+    h1{
+      font-size: 50px;
+      margin: 10px 0;
+    }
+    .content-wrapper{
+      padding: 0 20px;
+    }
+    .about{
+      font-size: 24px;
+    }
+    .intro-section{
+      width: 100%;
+    }
+    .intro-text{
+      font-size: 14px;
+    }
+    .full-text{
+      p{
+        font-size: 14px;
+      }
+    }
+    &__continue{
+      width: calc(100% - 40px);
+      padding: 0 20px;
+    }
+    &__view{
+      
+      gap: 6px;
+      .dance-item{
+        font-size: 15px;
+        border: 2px solid #11243f;
+      }
+    }
+    .tab-item{
+      img{
+        
+      }
+    }
+  }
+}
+
 </style>

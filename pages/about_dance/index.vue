@@ -37,31 +37,35 @@
       <h1 class="abouttwo">ИСТОРИЯ И КУЛЬТУРА</h1>
       <div class="about_dance__viewtwo">
         <img src="@/assets/img/line.png" alt="line" class="line" />
-        <div
-          v-for="(block, index) in historyBlocks"
-          :key="block.id"
-          class="divtwo"
-        >
-          <img
-            v-if="index % 2 === 0"
-            :src="block.image"
-            :alt="dance.name"
-            class="img imgleft"
+        <template v-for="(block, index) in historyBlocks" :key="block.id">
+          <div class="divtwo">
+            <img
+              v-if="index % 2 === 0"
+              :src="block.image"
+              :alt="dance.name"
+              class="img imgleft"
+            />
+            <p class="intro-text-left" v-if="index % 2 === 0">{{ block.text }}</p>
+            <p class="intro-text-right" v-if="index % 2 === 1">{{ block.text }}</p>
+            <img
+              v-if="index % 2 === 1"
+              :src="block.image"
+              :alt="dance.name"
+              class="img imgright"
+            />
+          </div>
+          <img 
+            v-if="index < historyBlocks.length - 1" 
+            :src="index % 2 === 0 ? Vector17 : Vector18" 
+            :alt="'vector ' + (index + 1)"
+            class="vector-mobile"
           />
-          <p class="intro-text-left" v-if="index % 2 === 0">{{ block.text }}</p>
-          <p class="intro-text-right" v-if="index % 2 === 1">{{ block.text }}</p>
-          <img
-            v-if="index % 2 === 1"
-            :src="block.image"
-            :alt="dance.name"
-            class="img imgright"
-          />
-        </div>
+        </template>
       </div>
     </div>
 
     <div v-if="costumeImages.length" class="about_dance-block4">
-      <h1>Костюмы</h1>
+      <h1>КОСТЮМЫ</h1>
       <div class="media-grid">
         <div
           v-for="(image, index) in costumeImages"
@@ -77,7 +81,7 @@
       v-if="photoMedia.length || videoMedia.length"
       class="about_dance-block4"
     >
-      <h1>Фото и видео</h1>
+      <h1>ФОТО И ВИДЕО</h1>
       <div class="media-grid">
         <div
           v-for="(image, index) in photoMedia"
@@ -97,7 +101,7 @@
     </div>
 
     <div v-if="relatedDances.length" class="about_dance-block4">
-      <h1>Другие танцы региона:</h1>
+      <h1>ДРУГИЕ ТАНЦЫ РЕГИОНА:</h1>
       <div class="related-dances">
         <NuxtLink
           v-for="item in relatedDances"
@@ -118,6 +122,8 @@ import Header from "@/component/header/header.vue";
 import Footer from "@/component/footer/footer.vue";
 import fallbackHero from "@/assets/img/imgtest.png";
 import fallbackGallery from "@/assets/img/testtestest.png";
+import Vector17 from "@/assets/img/Vector 17.png";
+import Vector18 from "@/assets/img/Vector 18.png";
 
 type DanceResponse = {
   id: string;
@@ -274,7 +280,7 @@ const relatedDances = computed(() =>
     flex-direction: column;
     align-items: flex-start;
     width: 50%;
-
+    text-transform: uppercase;
     h1 {
       font-size: 140px;
       font-family: "BergamascoThin", sans-serif;
@@ -410,6 +416,10 @@ const relatedDances = computed(() =>
     max-height: 400px;
     object-fit: cover;
   }
+
+  .vector-mobile {
+    display: none;
+  }
 }
 
 .about_dance-block4 {
@@ -478,12 +488,61 @@ const relatedDances = computed(() =>
 
   @media (max-width: 480px) {
     .media-grid {
-      grid-template-columns: 1fr;
-      gap: 20px;
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      gap: 35px;
+      margin-top: 30px;
+      padding-bottom: 8px;
+      
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
-
+    
     .tab-item {
-      aspect-ratio: 16 / 9;
+      flex: 0 0 auto;
+      width: 220px;
+      height: 266px;
+      aspect-ratio: auto;
+      
+      img, video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 20px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .media-grid {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      gap: 35px;
+      margin-top: 30px;
+      padding-bottom: 8px;
+      
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+    
+    .tab-item {
+      flex: 0 0 auto;
+      width: 220px;
+      height: 266px;
+      aspect-ratio: auto;
+      
+      img, video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 20px;
+      }
     }
   }
 }
@@ -520,4 +579,118 @@ const relatedDances = computed(() =>
   border-bottom-left-radius: 20px;
 }
 
+@media (max-width: 480px) {
+  .about_dance{
+    padding: 0 20px;
+    &__view{
+      width: 100%;
+      h1{
+        font-size: 50px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .about{
+        text-align: center;
+        font-size: 25px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .intro-text{
+        font-size: 14px;
+      }
+    }
+    img{
+      display: none;
+    }
+    &__viewtwo{
+      padding: 0 20px;
+      .line{
+        display: none;
+      }
+      .divtwo{
+        flex-direction: column;
+        .intro-text-left{
+          font-size: 14px;
+          margin: 0;
+          order: 1;
+        }
+        .img {
+          border-radius: 20px;
+          width: 100%;
+          height: 242px;
+        }
+        .imgleft{
+          order: 2;
+        }
+        .intro-text-right{
+          
+          font-size: 14px;
+          margin: 0;
+        }
+      }
+      
+    }
+  }
+  .about_dancetwo{
+      .abouttwo{
+        font-size: 50px;
+        padding: 0 20px;
+      }
+    }
+  .about_dancetwo {
+    .about_dance__viewtwo {
+      gap: 20px;
+      padding: 0 20px;
+      
+      .line {
+        display: none;
+      }
+      
+      .vector-mobile {
+        display: block;
+        width: 80%;
+        height: auto;
+        margin: 0;
+      }
+      
+      .divtwo {
+        flex-direction: column;
+        gap: 15px;
+        
+        .intro-text-left,
+        .intro-text-right {
+          font-size: 14px;
+          margin: 0;
+          padding: 0 10px;
+          order: 1;
+        }
+        
+        .img {
+          border-radius: 20px;
+          width: 100%;
+          height: 242px;
+          order: 2;
+        }
+      }
+    }
+    
+    .abouttwo {
+      font-size: 50px;
+      padding: 0 20px;
+    }
+  }
+  .about_dance-block4{
+    padding: 0 20px;
+    h1{
+      font-size: 47px;
+    }
+    .related-dances{
+      gap: 6px;
+      .dance-chip{
+        font-size: 15px;
+        padding: 5px 20px;
+      }
+    }
+  }
+}
 </style>
