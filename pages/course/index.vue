@@ -238,60 +238,16 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import Header from "@/component/header/header.vue";
 import Footer from "@/component/footer/footer.vue";
 import bookIcon from "@/assets/img/book.png";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
 
-const goToPage = (page: any) => {
+const goToPage = (page) => {
   router.push(`/${page}`);
-};
-
-type CourseResponse = {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string | null;
-  test?: {
-    id: string;
-    statements: Array<{ id: string; statement: string }>;
-    write_answers: Array<{ id: string; question: string }>;
-    puzzles: Array<{ id: string; puzzle_image_key: string }>;
-  };
-};
-
-type CourseListResponse = {
-  success: boolean;
-  data: {
-    items: Array<{ slug: string }>;
-  };
-};
-
-type LessonResponse = {
-  id: string;
-  name: string;
-  description?: string | null;
-  video_key: string;
-  video_duration?: number | null;
-  hls_manifest_key?: string | null;
-  thumbnail_key?: string | null;
-};
-
-type LessonListResponse = {
-  success: boolean;
-  data: {
-    lessons: LessonResponse[];
-  };
-};
-
-type TestData = {
-  id: string;
-  statements: Array<{ id: string; statement: string }>;
-  write_answers: Array<{ id: string; question: string }>;
-  puzzles: Array<{ id: string; puzzle_image_key: string }>;
 };
 
 const route = useRoute();
@@ -310,14 +266,14 @@ const { data } = await useAsyncData(
     let courseSlug = selectedSlug.value;
 
     if (!courseSlug) {
-      const listResponse = await apiFetch<CourseListResponse>("/courses");
+      const listResponse = await apiFetch("/courses");
       courseSlug = listResponse.data.items[0]?.slug || null;
       if (!courseSlug) {
         return null;
       }
     }
 
-    const course = await apiFetch<CourseResponse>(`/courses/${courseSlug}`);
+    const course = await apiFetch(`/courses/${courseSlug}`);
 
     if (!isAuthenticated.value) {
       return {
@@ -327,34 +283,23 @@ const { data } = await useAsyncData(
       };
     }
 
-    const lessonsResponse = await apiFetch<LessonListResponse>(
-      `/courses/${courseSlug}/lessons`
-    );
+    const lessonsResponse = await apiFetch(`/courses/${courseSlug}/lessons`);
 
-    let test: TestData | null = null;
+    let test = null;
 
     if ("test" in course && course.test) {
-      test = course.test as TestData;
+      test = course.test;
     } else {
       try {
-        const testResponse = await apiFetch<{
-          success: boolean;
-          data: { test: TestData };
-        }>(`/courses/${courseSlug}/test`);
+        const testResponse = await apiFetch(`/courses/${courseSlug}/test`);
         test = testResponse.data.test;
       } catch {
         try {
-          const testResponse = await apiFetch<{
-            success: boolean;
-            data: TestData;
-          }>(`/test/${courseSlug}`);
+          const testResponse = await apiFetch(`/test/${courseSlug}`);
           test = testResponse.data;
         } catch {
           try {
-            const testResponse = await apiFetch<{
-              success: boolean;
-              data: TestData;
-            }>(`/courses/${courseSlug}/final-test`);
+            const testResponse = await apiFetch(`/courses/${courseSlug}/final-test`);
             test = testResponse.data;
           } catch {
             console.warn("Тест не найден для курса:", courseSlug);
@@ -385,16 +330,26 @@ const course = computed(() => data.value?.course || null);
 const lessons = computed(() => data.value?.lessons || []);
 const test = computed(() => data.value?.test || null);
 
-const expandedIndex = ref<number | null>(null);
+const expandedIndex = ref(null);
 
-const getExpandedHeight = (index: number): number => {
-  const heights = [350, 435, 520, 605, 690, 775, 860, 945, 1030, 1115];
-  
-  if (index < heights.length) {
-    return heights[index]!;
+const getCollapsedHeight = () => {
+  return isMobile.value ? 68 : 205;
+};
+
+const getExpandedHeight = (index) => {
+  if (isMobile.value) {
+    const mobileHeights = [180, 220, 250, 290, 330, 370, 400, 440, 460, 500];
+    if (index < mobileHeights.length) {
+      return mobileHeights[index];
+    }
+    return mobileHeights[mobileHeights.length - 1] + (index - mobileHeights.length + 1) * 60;
   }
   
-  return heights[heights.length - 1]! + (index - heights.length + 1) * 90;
+  const heights = [370, 470, 570, 670, 770, 870, 970, 1070, 1170, 1270];
+  if (index < heights.length) {
+    return heights[index];
+  }
+  return heights[heights.length - 1] + (index - heights.length + 1) * 90;
 };
 
 const currentExpandedHeight = computed(() => {
@@ -402,12 +357,13 @@ const currentExpandedHeight = computed(() => {
   return getExpandedHeight(expandedIndex.value);
 });
 
-const toggleExpand = (index: number) => {
+const toggleExpand = (index) => {
   expandedIndex.value = expandedIndex.value === index ? null : index;
 };
 
-const getBoxTop = (index: number) => {
-  let top = index * 205;
+const getBoxTop = (index) => {
+  const collapsedHeight = getCollapsedHeight();
+  let top = index * collapsedHeight;
   if (expandedIndex.value !== null && index > expandedIndex.value) {
     top += currentExpandedHeight.value;
   }
@@ -415,8 +371,8 @@ const getBoxTop = (index: number) => {
 };
 
 const containerHeight = computed(() => {
-  const boxHeight = 205;
-  let height = lessons.value.length * boxHeight;
+  const collapsedHeight = getCollapsedHeight();
+  let height = lessons.value.length * collapsedHeight;
   if (expandedIndex.value !== null) {
     height += currentExpandedHeight.value;
   }
@@ -424,17 +380,13 @@ const containerHeight = computed(() => {
 });
 
 const testMarginTop = computed(() => {
-  const baseMargin = 80;
-  
   if (expandedIndex.value === null) {
-    return baseMargin;
+    return 0;
   }
   
   const lastLessonIndex = lessons.value.length - 1;
-  
   const lastLessonTop = getBoxTop(lastLessonIndex);
-  
-  const baseLastLessonTop = lastLessonIndex * 205;
+  const baseLastLessonTop = lastLessonIndex * getCollapsedHeight();
 
   let shift = lastLessonTop - baseLastLessonTop;
   
@@ -442,10 +394,33 @@ const testMarginTop = computed(() => {
     shift = currentExpandedHeight.value;
   }
   
-  return baseMargin + shift;
+  return shift;
 });
 
-const markLessonStarted = async (lessonId: string) => {
+const isMobile = ref(false);
+
+onMounted(() => {
+  const checkMobile = () => {
+    isMobile.value = window.innerWidth <= 1979;
+  };
+  
+  checkMobile();
+  
+  window.addEventListener('resize', () => {
+    const wasMobile = isMobile.value;
+    checkMobile();
+    
+    if (wasMobile !== isMobile.value) {
+      const current = expandedIndex.value;
+      expandedIndex.value = null;
+      setTimeout(() => {
+        expandedIndex.value = current;
+      }, 0);
+    }
+  });
+});
+
+const markLessonStarted = async (lessonId) => {
   try {
     await apiFetch(`/lessons/${lessonId}/progress`, {
       method: "POST",
@@ -454,7 +429,7 @@ const markLessonStarted = async (lessonId: string) => {
   } catch {}
 };
 
-const markLessonCompleted = async (lessonId: string) => {
+const markLessonCompleted = async (lessonId) => {
   try {
     await apiFetch(`/lessons/${lessonId}/progress`, {
       method: "POST",
@@ -463,18 +438,18 @@ const markLessonCompleted = async (lessonId: string) => {
   } catch {}
 };
 
-const selectedStatements = ref<string[]>([]);
-const writeAnswers = ref<Record<string, string>>({});
+const selectedStatements = ref([]);
+const writeAnswers = ref({});
 const testResultMessage = ref("");
-const activeTestBlock = ref<number>(1);
+const activeTestBlock = ref(1);
 
 const PUZZLE_SIZE = 4;
-const PIECE_SIZE = 100;
+const PIECE_SIZE = computed(() => isMobile.value ? 65 : 100);
 const puzzleImageUrl = computed(() =>
   mediaUrl(test.value?.puzzles?.[0]?.puzzle_image_key)
 );
-const puzzlePieces = ref<number[]>([]);
-const draggedPieceIndex = ref<number | null>(null);
+const puzzlePieces = ref([]);
+const draggedPieceIndex = ref(null);
 const isPuzzleComplete = ref(false);
 
 const shufflePuzzle = () => {
@@ -484,15 +459,15 @@ const shufflePuzzle = () => {
   );
   for (let i = pieces.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
-    const temp = pieces[i]!;
-    pieces[i] = pieces[j]!;
+    const temp = pieces[i];
+    pieces[i] = pieces[j];
     pieces[j] = temp;
   }
   puzzlePieces.value = pieces;
   isPuzzleComplete.value = false;
 };
 
-const drop = (targetIndex: number) => {
+const drop = (targetIndex) => {
   if (
     draggedPieceIndex.value === null ||
     draggedPieceIndex.value === targetIndex
@@ -501,8 +476,8 @@ const drop = (targetIndex: number) => {
   }
 
   const next = [...puzzlePieces.value];
-  const draggedPiece = next[draggedPieceIndex.value]!;
-  next[draggedPieceIndex.value] = next[targetIndex]!;
+  const draggedPiece = next[draggedPieceIndex.value];
+  next[draggedPieceIndex.value] = next[targetIndex];
   next[targetIndex] = draggedPiece;
 
   puzzlePieces.value = next;
@@ -510,22 +485,23 @@ const drop = (targetIndex: number) => {
   isPuzzleComplete.value = next.every((piece, index) => piece === index);
 };
 
-const getPieceStyle = (originalIndex: number) => {
+const getPieceStyle = (originalIndex) => {
   const row = Math.floor(originalIndex / PUZZLE_SIZE);
   const col = originalIndex % PUZZLE_SIZE;
+  const pieceSize = PIECE_SIZE.value;
 
   return {
     backgroundImage: `url(${puzzleImageUrl.value})`,
-    backgroundPosition: `-${col * PIECE_SIZE}px -${row * PIECE_SIZE}px`,
-    backgroundSize: `${PUZZLE_SIZE * PIECE_SIZE}px ${
-      PUZZLE_SIZE * PIECE_SIZE
+    backgroundPosition: `-${col * pieceSize}px -${row * pieceSize}px`,
+    backgroundSize: `${PUZZLE_SIZE * pieceSize}px ${
+      PUZZLE_SIZE * pieceSize
     }px`,
     width: "100%",
     height: "100%",
   };
 };
 
-const dragStart = (event: DragEvent, index: number) => {
+const dragStart = (event, index) => {
   if (isPuzzleComplete.value) {
     event.preventDefault();
     return;
@@ -535,7 +511,7 @@ const dragStart = (event: DragEvent, index: number) => {
 
 const gridStyle = computed(() => ({
   display: "grid",
-  gridTemplateColumns: `repeat(${PUZZLE_SIZE}, ${PIECE_SIZE}px)`,
+  gridTemplateColumns: `repeat(${PUZZLE_SIZE}, ${PIECE_SIZE.value}px)`,
   gap: "2px",
   justifyContent: "center",
 }));
@@ -556,15 +532,7 @@ const submitTest = async () => {
   }
 
   try {
-    const response = await apiFetch<{
-      success: boolean;
-      data: {
-        passed: boolean;
-        score: number;
-        correct_answers: number;
-        total_questions: number;
-      };
-    }>(`/courses/${course.value.slug}/test/submit`, {
+    const response = await apiFetch(`/courses/${course.value.slug}/test/submit`, {
       method: "POST",
       body: {
         selected_statements: selectedStatements.value,
@@ -577,7 +545,7 @@ const submitTest = async () => {
     testResultMessage.value = response.data.passed
       ? `Тест пройден. Результат: ${response.data.score}%`
       : `Тест не пройден. Результат: ${response.data.score}%`;
-  } catch (error: any) {
+  } catch (error) {
     testResultMessage.value =
       error?.data?.detail || "Не удалось отправить тест";
   }
@@ -731,7 +699,7 @@ const submitTest = async () => {
   }
 
   img {
-    width: 40px;
+    width: 80px;
     height: auto;
     position: absolute;
     top: 50%;
@@ -1058,4 +1026,154 @@ const submitTest = async () => {
     transform: translateY(0);
   }
 }
+
+
+@media (max-width: 1979px) {
+  .course{
+    margin-top: 26px;
+    h1{
+      font-size: 50px;
+      margin-bottom: 12px;
+    }
+    >p{
+      padding: 0 20px;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    &__view{
+      padding: 0 20px;
+      &--box{
+        left: 20px;
+        right: 20px;
+        padding: 20px 20px;
+        border-radius: 12px;
+        .circle-photo__course{
+          width: 50px;
+          height: 50px;
+          border: 4px solid white;
+          img{
+            width: 30px;
+            height: auto;
+          }
+        }
+      }
+      &--textfirst{
+        h4{
+          font-size: 20px;
+        }
+        h3{
+          font-size: 17px;
+        }
+        
+      }
+      .start-link{
+        font-size: 17px;
+        gap: 5px;
+        .play-icon{
+          width: 25px;
+          height: 25px;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  .final-test{
+    margin: 0px;
+    padding: 0 20px;
+    &__title{
+      font-size: 40px;
+    }
+    &__subtitle{
+      width: 90%;
+      font-size: 12px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 16px;
+    }
+    .test-wrapper{
+      flex-direction: column;
+      gap: 10px;
+      .test-section__number{
+        width: 100%;
+        flex-direction: row;
+        .number-button{
+          border-radius: 10px;
+          height: 40px;
+          padding: 11px 0px;
+          flex: 1;
+          font-size: 18px;
+        }
+      }
+      .test-content{
+        width: 100%;
+        .test-section{
+          &__body{
+            padding: 14px;
+          }
+          &__inner{
+            padding: 18px;
+          }
+          &__header{
+            font-size: 16px;
+          }
+          .checkbox-option{
+            margin-bottom: 0px;
+          }
+          .checkbox-label{
+            .checkbox-custom{
+              width: 15px;
+              height: 15px;
+              border-radius: 4px;
+            }
+            .checkbox-text{
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
+    &__submit{
+      margin: 26px auto 12px;
+      padding: 10px 20px;
+      font-size: 18px;
+    }
+    .text-question{
+      margin-bottom: 0px;
+      &__label{
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+      .text-input{
+        padding: 5px 5px;
+        border: 2px solid #d0d5dd;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+    }
+    .puzzle-container{
+      padding: 0;
+      .puzzle-grid{
+        padding: 0;
+        grid-template-columns: repeat(4, 65px) !important;
+        gap: 2px;
+        .puzzle-piece{
+          width: 65px;
+          height: 65px;
+        }
+      }
+    }
+    .test-result-message,
+    .test-result-message-next{
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+}
+
+@media (max-width: 430px) {
+  .final-test .puzzle-container .puzzle-grid {
+    grid-template-columns: repeat(4, 65px) !important;
+  }
+}
+
 </style>

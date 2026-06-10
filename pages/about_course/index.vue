@@ -57,6 +57,10 @@
         </div>
       </div>
 
+      <h2 class="courses-title" v-if="course.teachers.length">
+        УРОКИ:
+      </h2>
+
       <div
         v-if="
           isAuthenticated &&
@@ -345,6 +349,9 @@ const lessonColumns = computed(() => {
       background-color: #a84a2d;
       transform: translateY(-2px);
     }
+    svg{
+      rotate: -45deg;
+    }
   }
 }
 
@@ -363,6 +370,7 @@ const lessonColumns = computed(() => {
   flex: 1;
 
   h1 {
+    text-transform: uppercase;
     font-size: 140px;
     font-family: "BergamascoThin", sans-serif;
     font-weight: 800;
@@ -481,31 +489,48 @@ const lessonColumns = computed(() => {
 }
 
 .teachers-grid {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   margin: 40px 0 60px;
-  flex-wrap: wrap;
+  max-width: 400px;
+  
+  @media (max-width: 480px) {
+    max-width: 100%;
+    gap: 15px;
+  }
 }
 
 .teacher-card {
   background: #ffffff;
   border-radius: 40px;
-  padding: 50px 90px;
+  padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-width: 220px;
+  width: 185px;
+  height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
+  
+  @media (max-width: 480px) {
+    width: 100%;
+    height: auto;
+    min-height: 170px;
+  }
 }
 
 .teacher-avatar {
-  width: 210px;
-  height: 210px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto 10px;
@@ -513,21 +538,26 @@ const lessonColumns = computed(() => {
 }
 
 .teacher-name {
-  font-size: 30px;
+  font-size: 13px;
   font-weight: 400;
   color: #11243f;
   font-family: "Inter", sans-serif;
-  margin: 0 0 12px;
+  margin: 0 0 5px;
+  text-transform: lowercase;
+  
+  &::first-letter {
+    text-transform: uppercase;
+  }
 }
 
 .teacher-description {
-  font-size: 33px;
+  font-size: 16px;
   font-weight: 700;
   color: #11243f;
   font-family: "Inter", sans-serif;
-  line-height: 1.5;
-  margin: 0 0 20px;
-  padding: 0 10px;
+  line-height: 1.3;
+  margin: 0 0 10px;
+  padding: 0;
 }
 
 .teacher-socials {
@@ -539,15 +569,15 @@ const lessonColumns = computed(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #fff;
   transition: all 0.3s ease;
 
   img {
-    width: 36px;
-    height: 36px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
   }
 
@@ -675,16 +705,22 @@ const lessonColumns = computed(() => {
 @media (max-width: 480px) {
   .stats-row {
     gap: 15px;
+    justify-content: center;
   }
 
   .stat-circle {
     width: 80px;
     height: 80px;
-
+    &::after {
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+    }
     .stat-number {
-      width: 55px;
-      height: 55px;
-      font-size: 72px;
+      width: 78px;
+      height: 78px;
+      font-size: 26px;
     }
   }
 
@@ -706,23 +742,28 @@ const lessonColumns = computed(() => {
   }
 
   .teachers-grid {
-    gap: 20px;
-    flex-wrap: wrap;
+    gap: 15px;
+    max-width: 100%;
   }
 
   .teacher-card {
-    padding: 20px 15px;
-    flex: 1;
-    min-width: 200px;
+    width: 100%;
+    height: auto;
+    min-height: 170px;
+    padding: 15px;
   }
 
   .teacher-avatar {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
   }
 
   .teacher-name {
-    font-size: 18px;
+    font-size: 11px;
+  }
+  
+  .teacher-description {
+    font-size: 14px;
   }
 
   .lesson-left {
@@ -743,4 +784,125 @@ const lessonColumns = computed(() => {
     font-size: 18px;
   }
 }
+
+
+@media (max-width: 480px) {
+  .about__course{
+    margin-top: 24px;
+    padding: 0 20px;
+    &--view{
+      gap: 16px;
+      .course-image{
+        width: 100%;
+        max-width: 1980px;
+        max-height: 419px;
+      }
+      .course-content{
+        h1{
+          font-size: 50px;
+        }
+        .course-description{
+          margin-top: 10px;
+        }
+        .stats-row{
+          margin-top: 10px;
+          .stat-item{
+
+          }
+        }
+      }
+    }
+    .courses-title{
+      margin: 25px 0px;
+    }
+    .teachers-grid{
+      margin-top: 0px;
+      margin-bottom: 0;
+      gap: 15px;
+      grid-template-columns: repeat(2, 1fr);
+      
+      .teacher-card{
+        width: 100%;
+        height: auto;
+        height: 190px;
+        padding: 15px;
+        border-radius: 20px;
+        .teacher-avatar{
+          width: 60px;
+          height: 60px;
+          margin: 0 auto 5px auto;
+        }
+        .teacher-name{
+          margin-bottom: 5px;
+          font-size: 11px;
+        }
+        .teacher-description{
+          font-size: 14px;
+          margin-bottom: 8px;
+        }
+        .teacher-socials{
+          .social-icon{
+            width: 18px;
+            height: 18px;
+            img{
+              width: 18px;
+              height: 18px;
+            }
+          }
+        }
+      }
+    }
+    &--button{
+      padding: 10px 20px;
+      h4{
+        font-size: 18px;
+      }
+      svg{
+        width: 20px;
+      }
+    }
+  }
+  .lessons-section{
+    margin-top: 15px;
+    margin-bottom: 0;
+    gap: 0;
+    .lessons-column{
+      gap: 0px;
+
+      .lesson-card{
+        margin-bottom: 40px;
+        flex-direction: row;
+        .lesson-left{
+          width: 138px;
+          height: 100px;
+          .lesson-number{
+            font-size: 38px;
+            margin-top: 10px;
+          }
+          .circle-photo{
+            width: 50px;
+            height: 50px;
+            border: 4px solid white;
+            img{
+              width: 30px;
+              height: 25px;
+            }
+          }
+        }
+        .lesson-right{
+          h4{
+            font-size: 22px;
+            margin: 0;
+            text-align: left;
+          }
+          .lesson-description{
+            font-size: 14px;
+            text-align: left;
+          }
+        }
+      }
+    }
+  }
+}
+
 </style>

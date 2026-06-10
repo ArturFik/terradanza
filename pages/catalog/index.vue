@@ -155,6 +155,48 @@
             Сбросить
           </p>
         </div>
+        
+        <!-- Мобильная версия -->
+        <div class="catalog__filters--mobile">
+          <!-- Отображение выбранных фильтров в виде чипов -->
+          <div v-if="hasActiveFilters" class="mobile-active-filters">
+            <div 
+              v-if="selectedFilters.level" 
+              class="mobile-filter-chip"
+              @click="removeFilter('level')"
+            >
+              {{ translateLevel(selectedFilters.level) }}
+              <span class="chip-remove">×</span>
+            </div>
+            <div 
+              v-for="region in selectedFilters.region" 
+              :key="region"
+              class="mobile-filter-chip"
+              @click="removeRegionFilter(region)"
+            >
+              {{ region }}
+              <span class="chip-remove">×</span>
+            </div>
+            <div 
+              v-if="selectedFilters.style" 
+              class="mobile-filter-chip"
+              @click="removeFilter('style')"
+            >
+              {{ getStyleName(selectedFilters.style) }}
+              <span class="chip-remove">×</span>
+            </div>
+          </div>
+          
+          <!-- Кнопка управления фильтрами -->
+          <div 
+            class="catalog__filters--mobile-btn"
+            :class="{ 'has-filters': hasActiveFilters }"
+            @click="openMobileFilters"
+          >
+            <span v-if="!hasActiveFilters">Настроить фильтрацию</span>
+            <span v-else>Сбросить фильтры</span>
+          </div>
+        </div>
       </div>
 
       <div class="catalog__grid">
@@ -239,6 +281,82 @@
       </div>
     </div>
     <Footer />
+
+    <div
+      class="mobile-filters-overlay"
+      :class="{ active: isMobileFiltersOpen }"
+      @click="closeMobileFilters"
+    ></div>
+    <div class="mobile-filters-menu" :class="{ active: isMobileFiltersOpen }">
+      <div class="mobile-filters-content">
+        <div class="mobile-filter-section">
+          <div class="mobile-filter-section-header">
+            <span>Фильтр сложности</span>
+          </div>
+          <div class="mobile-filter-options">
+            <div
+              v-for="option in levelOptions"
+              :key="option.value"
+              class="mobile-filter-option"
+              :class="{ 'mobile-filter-option--active': selectedFilters.level === option.value }"
+              @click="selectedFilters.level = option.value"
+            >
+              {{ option.label }}
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-filter-section">
+          <div class="mobile-filter-section-header">
+            <span>Фильтр региона</span>
+          </div>
+          <div class="mobile-filter-options">
+            <div v-if="allRegions.length === 0" class="filter-loading">
+              Загрузка регионов...
+            </div>
+            <div
+              v-for="region in allRegions"
+              :key="region.id"
+              class="mobile-filter-checkbox"
+            >
+              <label class="mobile-checkbox-label">
+                <input
+                  type="checkbox"
+                  :value="region.name"
+                  v-model="selectedFilters.region"
+                />
+                <span class="mobile-checkbox-custom"></span>
+                {{ region.name }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-filter-section">
+          <div class="mobile-filter-section-header">
+            <span>Фильтр стилей</span>
+          </div>
+          <div class="mobile-filter-options">
+            <div v-if="allTags.length === 0" class="filter-loading">
+              Загрузка стилей...
+            </div>
+            <div
+              v-for="tag in allTags"
+              :key="tag.id"
+              class="mobile-filter-option"
+              :class="{ 'mobile-filter-option--active': selectedFilters.style === tag.slug }"
+              @click="selectedFilters.style = tag.slug"
+            >
+              {{ tag.name }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobile-filters-footer">
+        <button class="mobile-filters-apply" @click="applyMobileFilters">Применить</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -269,12 +387,27 @@ const selectedFilters = ref({
   style: null,
 });
 
+// Мобильные фильтры
+const isMobileFiltersOpen = ref(false);
 const expandedCourseIds = ref(new Set());
 const favoriteCourseIds = ref(new Set());
 
 const allRegions = ref([]);
 const regionMap = ref(new Map());
 const allTags = ref([]);
+
+// Вычисляемое свойство для проверки наличия активных фильтров
+const hasActiveFilters = computed(() => {
+  return !!(selectedFilters.value.level || 
+            selectedFilters.value.region.length > 0 || 
+            selectedFilters.value.style);
+});
+
+// Получение имени стиля по slug
+const getStyleName = (slug) => {
+  const tag = allTags.value.find(t => t.slug === slug);
+  return tag ? tag.name : slug;
+};
 
 const fetchRegions = async () => {
   try {
@@ -465,40 +598,91 @@ const resetFilters = () => {
   activeFilter.value = null;
 };
 
-const toggleDescription = (courseId) => {
-  const next = new Set(expandedCourseIds.value);
-  if (next.has(courseId)) {
-    next.delete(courseId);
+// Мобильные функции
+const openMobileFilters = () => {
+  // Если есть активные фильтры, кнопка работает как сброс
+  if (hasActiveFilters.value) {
+    resetMobileFilters();
   } else {
-    next.add(courseId);
+    // Иначе открываем модалку
+    isMobileFiltersOpen.value = true;
+    document.body.style.overflow = "hidden";
   }
-  expandedCourseIds.value = next;
+};
+
+const closeMobileFilters = () => {
+  isMobileFiltersOpen.value = false;
+  document.body.style.overflow = "";
+};
+
+const removeFilter = (filterType) => {
+  if (filterType === 'level') {
+    selectedFilters.value.level = null;
+  } else if (filterType === 'style') {
+    selectedFilters.value.style = null;
+  }
+  loadCourses();
+};
+
+const removeRegionFilter = (regionName) => {
+  selectedFilters.value.region = selectedFilters.value.region.filter(r => r !== regionName);
+  loadCourses();
+};
+
+const resetMobileFilters = () => {
+  selectedFilters.value = {
+    level: null,
+    region: [],
+    style: null,
+  };
+  closeMobileFilters();
+  loadCourses();
+};
+
+const applyMobileFilters = async () => {
+  closeMobileFilters();
+  await loadCourses();
+};
+
+const toggleDescription = (courseId) => {
+  if (expandedCourseIds.value.has(courseId)) {
+    expandedCourseIds.value.delete(courseId);
+  } else {
+    expandedCourseIds.value.add(courseId);
+  }
 };
 
 const toggleFavorite = async (courseId) => {
   if (!isAuthenticated.value) {
-    await navigateTo("/auth");
+    navigateTo("/login");
     return;
   }
 
+  const course = coursesData.value.find((c) => c.id === courseId);
+  if (!course) return;
+
   const isFavorite = favoriteCourseIds.value.has(courseId);
+  const previousState = new Set(favoriteCourseIds.value);
+
+  if (isFavorite) {
+    favoriteCourseIds.value.delete(courseId);
+  } else {
+    favoriteCourseIds.value.add(courseId);
+  }
 
   try {
     if (isFavorite) {
-      await apiFetch(`/users/me/favorites/${courseId}`, { method: "DELETE" });
+      await apiFetch(`/users/me/favorites/${course.slug}`, {
+        method: "DELETE",
+      });
     } else {
-      await apiFetch(`/users/me/favorites/${courseId}`, { method: "POST" });
+      await apiFetch(`/users/me/favorites/${course.slug}`, {
+        method: "POST",
+      });
     }
-
-    const next = new Set(favoriteCourseIds.value);
-    if (isFavorite) {
-      next.delete(courseId);
-    } else {
-      next.add(courseId);
-    }
-    favoriteCourseIds.value = next;
   } catch (error) {
-    console.error("Failed to toggle favorite", error);
+    console.error("Error toggling favorite:", error);
+    favoriteCourseIds.value = previousState;
   }
 };
 
@@ -515,6 +699,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener("click", handleClickOutside);
+  document.body.style.overflow = "";
 });
 </script>
 
@@ -545,7 +730,6 @@ onBeforeUnmount(() => {
   &__filters {
     &--container {
       width: 100%;
-      background-color: #11243f;
       position: relative;
     }
 
@@ -698,7 +882,7 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.2);
+  background: #11243f;
   padding: 15px 30px;
   border-radius: 30px;
   transition: all 0.3s ease;
@@ -983,6 +1167,342 @@ onBeforeUnmount(() => {
 
   &:hover {
     box-shadow: 0 0 15px 5px rgba(198, 93, 59, 0.5);
+  }
+}
+
+// Мобильная версия
+.catalog__filters--mobile {
+  display: none;
+  flex-direction: column;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+.mobile-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.mobile-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #1f3a5f;
+  border-radius: 10px;
+  color: #fffcf6;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  .chip-remove {
+    font-size: 18px;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+  
+  &:hover {
+    background-color: #c65d3b;
+    
+    .chip-remove {
+      opacity: 1;
+    }
+  }
+}
+
+.catalog__filters--mobile-btn {
+  padding: 12px 0;
+  text-align: center;
+  color: #fff;
+  width: 100%;
+  background-color: #11243f;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(17, 36, 63, 0.85);
+  }
+  
+  &.has-filters {
+    background-color: #A1A1AA;
+    
+    &:hover {
+      background-color: #8a8a93;
+    }
+  }
+}
+
+// Выезжающая модалка
+.mobile-filters-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 998;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.mobile-filters-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 320px;
+  height: 100vh;
+  background-color: #1F3A5F;
+  z-index: 999;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
+
+  &.active {
+    right: 0;
+  }
+}
+
+.mobile-filters-content {
+  margin-top: 60px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  background-color: #1F3A5F;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+}
+
+.mobile-filter-section {
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.mobile-filter-section-header {
+  padding: 17px 0px 0px 27px;
+  background-color: #1F3A5F;
+
+  span {
+    font-size: 12px;
+    font-weight: 400;
+    color: #A1A1AA;
+    font-family: "Inter", sans-serif;
+  }
+}
+
+.mobile-filter-options {
+  padding: 8px 0 0px 27px;
+}
+
+.mobile-filter-option {
+  padding: 10px 0px;
+  font-size: 14px;
+  color: rgba(255, 252, 246, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin: 4px 0;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    padding-left: 20px;
+  }
+
+  &--active {
+    background-color: #c65d3b;
+    color: white;
+    
+    &:hover {
+      background-color: #c65d3b;
+    }
+  }
+}
+
+.mobile-filter-checkbox {
+  padding: 8px 0;
+}
+
+.mobile-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  user-select: none;
+  font-size: 14px;
+  color: rgba(255, 252, 246, 0.8);
+  
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .mobile-checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 252, 246, 0.5);
+    border-radius: 5px;
+    display: inline-block;
+    position: relative;
+    transition: all 0.2s ease;
+    background-color: transparent;
+    flex-shrink: 0;
+  }
+
+  input:checked + .mobile-checkbox-custom {
+    background-color: #c65d3b;
+    border-color: #c65d3b;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 6px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  input:focus + .mobile-checkbox-custom {
+    box-shadow: 0 0 0 2px rgba(198, 93, 59, 0.3);
+  }
+
+  &:hover .mobile-checkbox-custom {
+    border-color: #c65d3b;
+  }
+}
+
+.mobile-filters-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: #1F3A5F;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.mobile-filters-apply {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  background-color: #fff;
+  border: none;
+  color: #1F3A5F;
+
+  &:hover {
+    background-color: #fff;
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog__filters--view {
+    display: none;
+  }
+  
+  .catalog__filters--mobile {
+    display: flex;
+  }
+  
+  .catalog {
+    margin-top: 18px;
+    
+    h1 {
+      display: none;
+    }
+  }
+  
+  .catalog__grid {
+    margin-top: 18px;
+  }
+  
+  .catalog__tab {
+    border-radius: 20px;
+    min-height: 141px;
+    
+    &--content {
+      padding: 22.1px;
+      
+      h2 {
+        font-size: 24px;
+      }
+      
+      h3 {
+        font-size: 17px;
+      }
+    }
+    
+    &--actions {
+      margin-top: 0;
+      
+      .description-toggle {
+        padding: 5px 21px;
+        
+        p {
+          font-size: 14px;
+        }
+      }
+      
+      .description-arrow {
+        width: 12px;
+        height: 8px;
+      }
+      
+      .heart-icon {
+        svg {
+          width: 31px;
+          height: 28px;
+        }
+      }
+    }
+    
+    &--description {
+      p {
+        font-size: 14px;
+      }
+      
+      .button {
+        font-size: 14px;
+        padding: 5px 21px;
+      }
+    }
   }
 }
 </style>
