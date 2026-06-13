@@ -23,14 +23,37 @@
       @click="closeMenu"
     ></div>
     <div class="mobile-menu" :class="{ active: isMenuOpen }">
-      <div class="mobile-menu__profile">
+      <div v-if="isAuthenticated && currentUser" class="mobile-menu__profile">
         <div class="mobile-menu__avatar">
-          <img src="" alt="Avatar" />
+          <img 
+            v-if="avatarUrl" 
+            :src="avatarUrl" 
+            alt="Avatar" 
+          />
+          <div v-else class="mobile-menu__avatar-initials">
+            {{ userInitials }}
+          </div>
         </div>
         <div class="mobile-menu__user-info">
-          <h3 class="mobile-menu__name">Солдатикова Ольга</h3>
+          <h3 class="mobile-menu__name">{{ fullName }}</h3>
+          <p class="mobile-menu__rank">{{ rankLabel }}</p>
         </div>
       </div>
+      
+      <div v-else class="mobile-menu__profile mobile-menu__profile--guest">
+        <div class="mobile-menu__avatar-guest">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="mobile-menu__user-info">
+          <h3 class="mobile-menu__name">Гость</h3>
+          <NuxtLink to="/auth" class="mobile-menu__login-link" @click="closeMenu">
+            Войти в аккаунт
+          </NuxtLink>
+        </div>
+      </div>
+      
       <nav class="mobile-menu__nav">
         <NuxtLink to="/profile" class="mobile-menu__item" @click="closeMenu">
           <div class="item-icon">
@@ -65,17 +88,71 @@
         <NuxtLink to="/" class="mobile-menu__item" @click="closeMenu">
           <span>Карта</span>
         </NuxtLink>
+        
+        <button 
+          v-if="isAuthenticated" 
+          class="mobile-menu__item mobile-menu__logout" 
+          @click="handleLogout"
+        >
+          <div class="item-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12L17 7ZM4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z" fill="currentColor"/>
+            </svg>
+          </div>
+          <span>Выйти</span>
+        </button>
       </nav>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from "vue";
+<script setup>
+import { ref, computed, onMounted } from "vue";
 
-const { currentUser } = useAuth();
-const accountLink = computed(() => (currentUser.value ? "/profile" : "/auth"));
-const accountLabel = computed(() => (currentUser.value ? "Профиль" : "Войти"));
+const { currentUser, isAuthenticated, fetchMe, logout } = useAuth();
+const { mediaUrl } = useMedia();
+
+onMounted(async () => {
+  if (isAuthenticated.value && !currentUser.value) {
+    await fetchMe();
+  }
+});
+
+const accountLink = computed(() => (isAuthenticated.value ? "/profile" : "/auth"));
+const accountLabel = computed(() => (isAuthenticated.value ? "Профиль" : "Войти"));
+
+const avatarUrl = computed(() => {
+  const key = currentUser.value?.avatar_key;
+  return key ? mediaUrl(key) : null;
+});
+
+const fullName = computed(() => {
+  if (!currentUser.value) return "Гость";
+  const parts = [currentUser.value?.surname, currentUser.value?.name].filter(Boolean);
+  return parts.join(" ") || currentUser.value?.email || "Пользователь";
+});
+
+const userInitials = computed(() => {
+  if (!currentUser.value) return "?";
+  const surname = currentUser.value?.surname || '';
+  const name = currentUser.value?.name || '';
+  const firstChar = name ? name.charAt(0).toUpperCase() : '';
+  const secondChar = surname ? surname.charAt(0).toUpperCase() : '';
+  if (firstChar && secondChar) return `${firstChar}${secondChar}`;
+  if (firstChar) return firstChar;
+  if (secondChar) return secondChar;
+  return '?';
+});
+
+const rankLabel = computed(() => {
+  if (!currentUser.value) return "";
+  const rankMap = {
+    novice: "Новичок",
+    amateur: "Любитель",
+    pro: "Профи",
+  };
+  return rankMap[currentUser.value?.cached_rank || "novice"] || "Новичок";
+});
 
 const isMenuOpen = ref(false);
 
@@ -92,6 +169,12 @@ const closeMenu = () => {
   isMenuOpen.value = false;
   document.body.style.overflow = "";
 };
+
+const handleLogout = async () => {
+  await logout();
+  closeMenu();
+  await navigateTo("/auth");
+};
 </script>
 
 <style lang="scss" scoped>
@@ -106,10 +189,10 @@ const closeMenu = () => {
   width: 100%;
   background-color: #11243f;
   padding: 10px 0;
-  color: #fffcf6;
+  color: #fff;
   height: 134px;
   position: relative;
-  z-index: 100;
+  z-index: 100000;
 }
 
 .header {
@@ -153,7 +236,7 @@ const closeMenu = () => {
       height: 2px;
       bottom: 0;
       left: 0;
-      background-color: #fffcf6;
+      background-color: #fff;
       transition: width 0.3s ease;
     }
 
@@ -194,12 +277,12 @@ const closeMenu = () => {
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 200;
+  z-index: 100000;
 
   span {
     width: 100%;
     height: 3px;
-    background-color: #fffcf6;
+    background-color: #fff;
     border-radius: 2px;
     transition: all 0.3s ease;
 
@@ -228,7 +311,7 @@ const closeMenu = () => {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 998;
+  z-index: 100000;
 
   &.active {
     opacity: 1;
@@ -244,7 +327,7 @@ const closeMenu = () => {
   height: 100vh;
   background: linear-gradient(135deg, #0a1a2e 0%, #11243f 100%);
   backdrop-filter: blur(10px);
-  z-index: 999;
+  z-index: 100000;
   transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
@@ -258,17 +341,22 @@ const closeMenu = () => {
   &__profile {
     padding: 70px 25px 25px;
     display: flex;
-    align-items: left;
+    align-items: flex-start;
     gap: 15px;
     flex-direction: column;
-    background: #1f3a5f;
+    background: rgba(31, 58, 95, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    &--guest {
+      background: rgba(31, 58, 95, 0.5);
+    }
   }
 
   &__avatar {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ffd89b, #c7e9fb);
+    background: linear-gradient(135deg, #c65d3b, #a84a2d);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -280,24 +368,69 @@ const closeMenu = () => {
       object-fit: cover;
     }
   }
+  
+  &__avatar-initials {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c65d3b, #a84a2d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fffcf6;
+    font-family: "Inter", sans-serif;
+    text-transform: uppercase;
+  }
+  
+  &__avatar-guest {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 252, 246, 0.6);
+    
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
 
   &__user-info {
     flex: 1;
+    width: 100%;
   }
 
   &__name {
     font-family: "Inter", sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: #fffcf6;
     margin: 0 0 4px 0;
   }
-
-  &__email {
+  
+  &__rank {
     font-family: "Inter", sans-serif;
     font-size: 12px;
-    color: rgba(255, 252, 246, 0.6);
+    color: rgba(255, 252, 246, 0.7);
     margin: 0;
+  }
+  
+  &__login-link {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    color: #c65d3b;
+    text-decoration: none;
+    margin-top: 4px;
+    display: inline-block;
+    
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   /* Навигация */
@@ -319,6 +452,11 @@ const closeMenu = () => {
     font-weight: 500;
     transition: all 0.2s ease;
     border-left: 3px solid transparent;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
 
     .item-icon {
       width: 24px;
@@ -336,10 +474,26 @@ const closeMenu = () => {
 
     &:hover {
       background: rgba(255, 255, 255, 0.08);
-      border-left-color: #ffd89b;
+      border-left-color: #c65d3b;
 
       .item-icon {
-        color: #ffd89b;
+        color: #c65d3b;
+      }
+    }
+  }
+  
+  &__logout {
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: none;
+    color: rgba(255, 252, 246, 0.8);
+    
+    &:hover {
+      background: rgba(198, 93, 59, 0.2);
+      color: #c65d3b;
+      
+      .item-icon {
+        color: #c65d3b;
       }
     }
   }
@@ -382,7 +536,7 @@ const closeMenu = () => {
     padding: 0;
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100000;
   }
 
   .header {
@@ -436,13 +590,24 @@ const closeMenu = () => {
       padding: 70px 25px 20px;
     }
 
-    &__avatar {
+    &__avatar,
+    &__avatar-initials,
+    &__avatar-guest {
       width: 48px;
       height: 48px;
     }
+    
+    &__avatar-initials {
+      font-size: 18px;
+    }
+    
+    &__avatar-guest svg {
+      width: 24px;
+      height: 24px;
+    }
 
     &__name {
-      font-size: 14px;
+      font-size: 16px;
     }
 
     &__item {

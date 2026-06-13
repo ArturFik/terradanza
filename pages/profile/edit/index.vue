@@ -177,7 +177,7 @@ const handleSubmit = () => {};
 
 <style lang="scss" scoped>
 .profile-edit-container {
-  background-color: #fffcf6;
+  background-color: #fff;
   min-height: 100vh;
 }
 
@@ -332,4 +332,67 @@ const handleSubmit = () => {};
   font-family: "Inter", sans-serif;
   color: #c65d3b;
 }
+
+@media (max-width: 1979px) {
+  .profile-edit {
+    margin-top: 69px;
+    padding: 0 20px;
+    
+    h1 {
+      font-size: 25px;
+      margin-bottom: 32px;
+    }
+    
+    &__bg {
+      padding: 0px;
+      border-radius: 75px;
+      
+      &--white {
+        width: calc(100% - 44px);
+        padding: 39px 22px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.2);
+        border-radius: 40px;
+        
+        input {
+          font-size: 16px;
+          padding: 5px;
+        }
+      }
+    }
+    
+    &__close-btn {
+      font-size: 20px;
+      top: 20px;
+      right: 20px;
+      width: 20px;
+      height: 20px;
+    }
+    
+    &__submit-btn {
+      font-size: 19px;
+      padding: 10px 37px;
+      margin: 32px auto 0;
+    }
+    
+    .input-group {
+      margin-bottom: 0;
+      input {
+        font-size: 16px;
+        padding: 5px;
+        margin-bottom: 20px;
+      }
+    }
+    
+    .save-message {
+      font-size: 10px;
+    }
+  }
+  
+  .profile-message,
+  .profile-error {
+    font-size: 10px;
+    margin: 0;
+  }
+}
+
 </style>

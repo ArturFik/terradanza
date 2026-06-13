@@ -553,6 +553,7 @@ const handleAvatarUpload = async (event) => {
     box-sizing: border-box;
 
     @media (max-width: 768px) {
+      margin-top: 25px;
       padding: 0 20px;
     }
   }
@@ -602,8 +603,8 @@ const handleAvatarUpload = async (event) => {
     overflow: hidden;
     
     @media (max-width: 768px) {
-      width: 200px;
-      height: 200px;
+      width: 118px;
+      height: 118px;
     }
   }
   
@@ -631,8 +632,8 @@ const handleAvatarUpload = async (event) => {
     }
     
     @media (max-width: 768px) {
-      width: 200px;
-      height: 200px;
+      width: 118px;
+      height: 118px;
       
       span {
         font-size: 68px;
@@ -810,7 +811,7 @@ const handleAvatarUpload = async (event) => {
 
     &-title {
       font-size: 51px;
-      font-weight: 700;
+      font-weight: 800;
       margin: 0;
       font-family: "Inter", sans-serif;
       color: #fffcf6;
@@ -901,14 +902,11 @@ const handleAvatarUpload = async (event) => {
     width: 100%;
     margin-top: 50px;
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1979px) {
       grid-template-columns: repeat(2, 1fr);
       gap: 20px;
     }
 
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
   }
 
   &__achievement-item {
@@ -984,8 +982,8 @@ const handleAvatarUpload = async (event) => {
     font-family: "Inter", sans-serif;
     margin: 8px 0 0 0;
 
-    @media (max-width: 768px) {
-      font-size: 18px;
+    @media (max-width: 1979px) {
+      font-size: 16px;
     }
   }
 
@@ -1096,4 +1094,151 @@ const handleAvatarUpload = async (event) => {
     margin-top: 40px;
   }
 }
+
+@media (max-width: 1979px) {
+  .profile-page-container {
+    & > &__account {
+      padding: 0 20px;
+    }
+
+    &__title {
+      font-size: 50px;
+    }
+    
+    &__logo-view {
+      &--name {
+        font-size: 20px;
+      }
+      &--rank {
+        font-size: 18px;
+      }
+      &--edit {
+        font-size: 14px;
+        margin-top: -5px;
+      }
+      &--logout {
+        font-size: 14px;
+      }
+    }
+    
+    &__tabs {
+      padding: 0 20px;
+      > img {
+        width: 28%;
+      }
+    }
+    
+    &__grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 20px;
+      margin: 30px 0;
+      width: 100%;
+    }
+    
+    &__card-wrapper {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      min-height: 140px;
+      overflow: hidden;
+    }
+    
+    &__card {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      
+      &-bg {
+        min-height: 140px;
+        border-radius: 18px;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      &-overlay {
+        border-radius: 18px;
+      }
+      
+      &-content {
+        padding: 20px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        gap: 0;
+        min-height: 140px;
+      }
+      
+      &-title {
+        font-size: 20px;
+        word-break: break-word;
+      }
+      
+      &-region {
+        font-size: 16px;
+        word-break: break-word;
+      }
+      
+      &-actions {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      
+      &-description-inner {
+        p {
+          font-size: 14px;
+          word-break: break-word;
+        }
+      }
+    }
+    &__progress-bar-bg {
+      height: 15px;
+    }
+    
+    &__progress-percentage {
+      font-size: 13px;
+    }
+    
+    &__description-toggle {
+      padding: 5px 20px;
+      p {
+        font-size: 14px;
+      }
+      svg{
+        width: 14px;
+      }
+    }
+    
+    &__button {
+      padding: 8px 25px;
+      font-size: 14px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    
+    &__heart-icon {
+      flex-shrink: 0;
+      
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    &__achievements-row {
+      gap: 20px;
+      margin-top: 30px;
+      grid-template-columns: repeat(1, 1fr);
+    }
+    
+    &__achievement-name {
+      font-size: 16px;
+    }
+    
+    &__achievement-description {
+      font-size: 14px;
+    }
+  }
+}
+
 </style>

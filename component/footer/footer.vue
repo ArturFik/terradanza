@@ -3,8 +3,10 @@
     <div class="footer">
       <div class="footer-1">
         <h1 class="footer-logo">TerraDanza</h1>
-        <p class="footer-number">+1 (7635) 547-12-97</p>
-        <p class="footer-mail">support@TerraDanza</p>
+        <div class="footer-data-view">
+          <p class="footer-number">+1 (7635) 547-12-97</p>
+          <p class="footer-mail">support@TerraDanza</p>
+        </div>
       </div>
       <div class="footer-2">
         <div class="">
@@ -50,7 +52,7 @@
   width: 100%;
   background-color: #11243f;
   padding: 20px 0;
-  color: #fffcf6;
+  color: #fff;
   margin-top: 100px;
 }
 
@@ -70,7 +72,7 @@
 .footer-3 {
   font-family: "Inter", sans-serif;
   text-decoration: none;
-  color: #fffcf6;
+  color: #fff;
   width: 30%;
 }
 
@@ -166,4 +168,69 @@
   font-size: 16.27px;
   width: 90%;
 }
+
+@media (max-width: 1979px) {
+  .footer-container{
+    margin: 100px 0 0 0;
+    padding: 0;
+  }
+  .footer{
+    padding: 30px 20px;
+    flex-direction: column;
+    margin: 0;
+    .footer-2{
+      display: none;
+    }
+    .footer-1, .footer-3{
+      width: 100%;
+    }
+    .footer-1{
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      .footer-logo{
+        font-size: 20px;
+        margin: 0;
+      }
+      .footer-data-view{
+        display: flex;
+        flex-direction: column;
+        text-align: right;
+        .footer-number{
+          font-size: 14px;
+          margin-bottom: 5px;
+        }
+        .footer-mail{
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+    }
+    .footer-3{
+      margin: 0;
+      gap: 0;
+      .footer-3-sub{
+        font-size: 14px;
+        
+      }
+      .footer-3-view{
+        width: 100%;
+        margin: 10px 0;
+        >input{
+          width: 80%;
+          font-size: 16px;
+        }
+        .footer-3-button{
+          padding: 18.5px 10px;
+        }
+      }
+      .footer-3-dis{
+        font-size: 13px;
+      }
+    }
+  }
+}
+
 </style>

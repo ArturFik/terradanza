@@ -349,7 +349,7 @@ const goToPreviousStep = () => {
 
 <style lang="scss" scoped>
 .reset-container {
-  background-color: #fffcf6;
+  background-color: #fff;
   min-height: 100vh;
 }
 
@@ -516,4 +516,79 @@ const goToPreviousStep = () => {
     border-radius: 8px;
   }
 }
+
+@media (max-width: 1979px) {
+  .reset {
+    margin-top: 69px;
+    padding: 0 20px;
+    
+    h1 {
+      font-size: 25px;
+      margin-bottom: 32px;
+    }
+    
+    &__bg {
+      padding: 0px;
+      border-radius: 75px;
+      
+      &--white {
+        width: calc(100% - 44px);
+        padding: 39px 22px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.2);
+        border-radius: 40px;
+        
+        input:not(.code-digit) {
+          font-size: 16px;
+          padding: 5px;
+          margin-bottom: 20px;
+        }
+      }
+    }
+    
+    &__back-btn-top {
+      font-size: 16px;
+      top: 15px;
+      left: 15px;
+      padding: 5px 10px;
+      
+      &:hover {
+        transform: translateX(-1px);
+      }
+    }
+    
+    &__submit-btn {
+      font-size: 19px;
+      padding: 10px 37px;
+      margin-top: 32px;
+    }
+    
+    .code-inputs {
+      gap: 10px;
+      margin-bottom: 32px;
+      
+      .code-digit {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+        border-radius: 8px;
+      }
+    }
+    
+    .error-message {
+      font-size: 10px;
+      margin-left: 5px;
+      margin-top: -5px;
+      
+      &.global-error {
+        margin-top: 15px;
+      }
+    }
+    
+    .success-message {
+      font-size: 10px;
+      margin-top: 15px;
+    }
+  }
+}
+
 </style>

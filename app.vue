@@ -5,10 +5,7 @@
     </NuxtLayout>
     <AchievementNotification />
     <ClientOnly>
-      <div v-if="wsStatus === 'connected'" class="ws-status-indicator">
-        <span class="ws-status-dot"></span>
-        <span>Уведомления активны</span>
-      </div>
+      
     </ClientOnly>
   </div>
 </template>
@@ -45,7 +42,7 @@ await useAsyncData("bootstrap-auth", async () => {
 body {
   margin: 0;
   padding: 0;
-  background-color: #fffcf6;
+  background-color: #fff;
 }
 
 .ws-status-indicator {

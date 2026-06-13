@@ -6,7 +6,7 @@
         <div class="auth__bg--white">
           <button
             v-if="activeTab === 'forgot-password'"
-            class="auth__close-btn"
+            class="auth__close--btn"
             @click="goBackToAuth"
             aria-label="Вернуться к входу/регистрации"
           >
@@ -36,24 +36,27 @@
             </button>
           </div>
 
-          <h1 v-if="activeTab === 'forgot-password'">Сброс пароля</h1>
+          <h1 class="auth__reload" v-if="activeTab === 'forgot-password'">Сброс пароля</h1>
 
           <form
             v-if="activeTab === 'register'"
             @submit.prevent="submitRegister"
           >
-            <input v-model="registerForm.name" type="text" placeholder="Имя" />
+            <input class="auth__submit--input" v-model="registerForm.name" type="text" placeholder="Имя" />
             <input
+              class="auth__submit--input"
               v-model="registerForm.surname"
               type="text"
               placeholder="Фамилия"
             />
             <input
+              class="auth__submit--input"
               v-model="registerForm.email"
               type="email"
               placeholder="Почта"
             />
             <input
+              class="auth__submit--input"
               v-model="registerForm.password"
               type="password"
               placeholder="Пароль"
@@ -64,16 +67,16 @@
           </form>
 
           <form v-if="activeTab === 'login'" @submit.prevent="submitLogin">
-            <input v-model="loginForm.email" type="email" placeholder="Почта" />
-            <input
+            <input class="auth__submit--input" v-model="loginForm.email" type="email" placeholder="Почта" />
+            <input class="auth__submit--input"
               v-model="loginForm.password"
               type="password"
               placeholder="Пароль"
             />
-            <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
             <p class="change-password" @click="activeTab = 'forgot-password'">
               Забыли пароль?
             </p>
+            <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
             <button class="auth__submit-btn" :disabled="loading">Войти</button>
           </form>
 
@@ -82,6 +85,7 @@
             @submit.prevent="submitForgotPassword"
           >
             <input
+              class="auth__submit--input"
               v-model="forgotPasswordEmail"
               type="email"
               placeholder="Почта"
@@ -132,12 +136,14 @@
             @submit.prevent="submitResetPassword"
           >
             <input
+              class="auth__submit--input"
               v-model="resetPasswordForm.password"
               type="password"
               placeholder="Новый пароль"
               :disabled="loading"
             />
             <input
+              class="auth__submit--input"
               v-model="resetPasswordForm.confirmPassword"
               type="password"
               placeholder="Повторите пароль"
@@ -467,7 +473,7 @@ const submitResetPassword = async () => {
 
 <style lang="scss" scoped>
 .auth-container {
-  background-color: #fffcf6;
+  background-color: #fff;
 }
 
 .auth {
@@ -507,7 +513,7 @@ const submitResetPassword = async () => {
     }
   }
 
-  &__close-btn {
+  &__close--btn {
     position: absolute;
     top: 50px;
     right: 50px;
@@ -589,18 +595,20 @@ const submitResetPassword = async () => {
     }
   }
 
-  input:not(.code-digit) {
-    width: 100%;
-    padding: 20px;
-    border: 0px;
-    border-bottom: 1px solid #ddd;
-    font-size: 32px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
+  &__submit {
+    &--input {
+      width: 100%;
+      padding: 20px;
+      border: 0px;
+      border-bottom: 1px solid #ddd;
+      font-size: 32px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
 
-    &:focus {
-      outline: none;
-      border-color: #11243f;
+      &:focus {
+        outline: none;
+        border-color: #11243f;
+      }
     }
   }
 
@@ -683,4 +691,69 @@ const submitResetPassword = async () => {
 .auth-error {
   color: #c65d3b;
 }
+
+@media (max-width: 1979px) {
+  .auth{
+    margin-top: 69px;
+    padding: 0 20px;
+    h1{
+      font-size: 25px;
+      margin-bottom: 32px;
+    }
+    &__bg{
+      padding: 0px;
+      border-radius: 75px;
+      &--white{
+        width: calc(100% - 44px);
+        padding: 39px 22px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.2);
+        border-radius: 40px;
+        input{
+          font-size: 16px;
+        }
+        .change-password{
+          margin: 0 0 0 5px;
+          font-size: 10px;
+        }
+        .auth-error{
+          font-size: 10px;
+          margin: 0;
+        }
+      }
+    }
+    &__buttondiv{
+      margin: 0 auto 32px;
+      .auth__tab-btn{
+        font-size: 18px;
+      }
+      .register{
+
+      }
+      
+    }
+    &__submit{
+      &-btn{
+        font-size: 19px;
+        padding: 10px 37px;
+        margin: 32px auto 0;
+      }
+      &--input{
+        font-size: 16px;
+        padding: 5px;
+      }
+    }
+    &__tab{
+      &-btn{
+        padding: 8px 0px;
+      }
+    }
+    &__close--btn{
+      font-size: 20px;
+      top: 15px;
+      right: 15px;
+    }
+    
+  }
+}
+
 </style>
