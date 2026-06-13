@@ -494,7 +494,7 @@ onUnmounted(() => {
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 1979px) {
   .encyclopedia{
     padding: 0 22px;
     h1 {

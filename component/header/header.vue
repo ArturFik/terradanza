@@ -562,7 +562,7 @@ const handleLogout = async () => {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 1979px) {
   .header {
     padding: 0 15px;
     height: 60px;

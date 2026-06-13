@@ -495,7 +495,7 @@ const lessonColumns = computed(() => {
   margin: 40px 0 60px;
   max-width: 400px;
   
-  @media (max-width: 480px) {
+  @media (max-width: 1979px) {
     max-width: 100%;
     gap: 15px;
   }
@@ -521,7 +521,7 @@ const lessonColumns = computed(() => {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
   
-  @media (max-width: 480px) {
+  @media (max-width: 1979px) {
     width: 100%;
     height: auto;
     min-height: 170px;
@@ -616,7 +616,7 @@ const lessonColumns = computed(() => {
   background: #fff;
   border-radius: 16px;
 
-  @media (max-width: 480px) {
+  @media (max-width: 1979px) {
     flex-direction: column;
     text-align: center;
   }
@@ -702,7 +702,7 @@ const lessonColumns = computed(() => {
   text-align: center;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 1979px) {
   .stats-row {
     gap: 15px;
     justify-content: center;
@@ -786,7 +786,7 @@ const lessonColumns = computed(() => {
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 1979px) {
   .about__course{
     margin-top: 24px;
     padding: 0 20px;

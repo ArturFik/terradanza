@@ -486,7 +486,7 @@ const relatedDances = computed(() =>
     }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 1979px) {
     .media-grid {
       display: flex;
       overflow-x: auto;
@@ -516,7 +516,7 @@ const relatedDances = computed(() =>
     }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 1979px) {
     .media-grid {
       display: flex;
       overflow-x: auto;
@@ -579,7 +579,7 @@ const relatedDances = computed(() =>
   border-bottom-left-radius: 20px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 1979px) {
   .about_dance{
     padding: 0 20px;
     &__view{

@@ -367,7 +367,7 @@ const currentBackgroundImage = computed(() => {
       }
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 1979px) {
       grid-template-columns: repeat(3, 123px);
       gap: 11px;
       padding: 0 20px;
@@ -388,7 +388,7 @@ const currentBackgroundImage = computed(() => {
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 1979px) {
   .about_country{
     margin: 0;
     h1{
