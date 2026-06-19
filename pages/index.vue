@@ -917,6 +917,7 @@ const goToPage = (page) => {
       text-align: center;
       width: 50%;
       font-family: "Inter", sans-serif;
+      text-transform: none !important;
     }
 
     h2 {
@@ -1148,9 +1149,10 @@ const goToPage = (page) => {
   }
 
   .home-map {
-    right: 25%;
     width: 143%;
     aspect-ratio: 18 / 9;
+    left: 47%;
+    transform: translateX(-50%);
     .america {
       width: 30%;
       left: 12%;
@@ -1247,27 +1249,42 @@ const goToPage = (page) => {
         border-width: 8px;
         border-radius: 24px;
         box-sizing: border-box;
+
         .tab-number {
           font-size: 34px;
-          margin-top: 40%;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          margin: 0;
         }
 
         .tab-title {
           font-size: 20px;
-          margin-bottom: 15%;
+          position: absolute;
+          top: 78%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          margin: 0;
         }
 
         .tab-title-hover {
           font-size: 20px;
           width: 90%;
-          top: 28%;
+          position: absolute;
+          top: 35%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          margin: 0;
         }
 
         .tab-description {
           font-size: 12px;
-          top: 40%;
-          left: 16px;
-          right: 16px;
+          position: absolute;
+          top: 65%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 85%;
         }
       }
     }
@@ -1280,15 +1297,16 @@ const goToPage = (page) => {
       flex-direction: row;
       width: auto;
       display: flex;
+      
       h1 {
-        font-size: 14px;
+        font-size: clamp(14px, 1.5vw, 24px);
         width: 50%;
         margin: 0;
         font-weight: 600;
       }
 
       h2 {
-        font-size: 14px;
+        font-size: clamp(14px, 1.5vw, 24px);
         width: 50%;
         padding: 12px 20px;
         font-weight: 600;
