@@ -320,7 +320,7 @@ const lessonColumns = computed(() => {
     align-items: center;
     gap: 40px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 1720px) {
       flex-direction: column;
     }
   }
@@ -495,7 +495,7 @@ const lessonColumns = computed(() => {
   margin: 40px 0 60px;
   max-width: 400px;
   
-  @media (max-width: 1979px) {
+  @media (max-width: 1720px) {
     max-width: 100%;
     gap: 15px;
   }
@@ -508,8 +508,8 @@ const lessonColumns = computed(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 185px;
-  height: 190px;
+  width: 475px;
+  height: 480px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -521,7 +521,7 @@ const lessonColumns = computed(() => {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
   
-  @media (max-width: 1979px) {
+  @media (max-width: 1720px) {
     width: 100%;
     height: auto;
     min-height: 170px;
@@ -529,8 +529,8 @@ const lessonColumns = computed(() => {
 }
 
 .teacher-avatar {
-  width: 80px;
-  height: 80px;
+  width: 210px;
+  height: 210px;
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto 10px;
@@ -538,7 +538,7 @@ const lessonColumns = computed(() => {
 }
 
 .teacher-name {
-  font-size: 13px;
+  font-size: 30px;
   font-weight: 400;
   color: #11243f;
   font-family: "Inter", sans-serif;
@@ -551,7 +551,7 @@ const lessonColumns = computed(() => {
 }
 
 .teacher-description {
-  font-size: 16px;
+  font-size: 33px;
   font-weight: 700;
   color: #11243f;
   font-family: "Inter", sans-serif;
@@ -569,15 +569,15 @@ const lessonColumns = computed(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 53px;
+  height: 53px;
   border-radius: 50%;
   background: #fff;
   transition: all 0.3s ease;
 
   img {
-    width: 20px;
-    height: 20px;
+    width: 53px;
+    height: 53px;
     object-fit: contain;
   }
 
@@ -616,7 +616,7 @@ const lessonColumns = computed(() => {
   background: #fff;
   border-radius: 16px;
 
-  @media (max-width: 1979px) {
+  @media (max-width: 1720px) {
     flex-direction: column;
     text-align: center;
   }
@@ -702,7 +702,7 @@ const lessonColumns = computed(() => {
   text-align: center;
 }
 
-@media (max-width: 1979px) {
+@media (max-width: 1720px) {
   .stats-row {
     gap: 15px;
     justify-content: center;
@@ -786,7 +786,7 @@ const lessonColumns = computed(() => {
 }
 
 
-@media (max-width: 1979px) {
+@media (max-width: 1720px) {
   .about__course{
     margin-top: 24px;
     padding: 0 20px;

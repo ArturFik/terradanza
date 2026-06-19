@@ -333,7 +333,7 @@ const handleSubmit = () => {};
   color: #c65d3b;
 }
 
-@media (max-width: 1979px) {
+@media (max-width: 1400px) {
   .profile-edit {
     margin-top: 69px;
     padding: 0 20px;

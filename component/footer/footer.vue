@@ -169,7 +169,7 @@
   width: 90%;
 }
 
-@media (max-width: 1979px) {
+@media (max-width: 1400px) {
   .footer-container{
     margin: 100px 0 0 0;
     padding: 0;
@@ -220,10 +220,15 @@
         margin: 10px 0;
         >input{
           width: 80%;
+          padding: 9px 10px;
           font-size: 16px;
+          border-top-left-radius: 3px;
+          border-bottom-left-radius: 3px;
         }
         .footer-3-button{
-          padding: 18.5px 10px;
+          padding: 11px 10px;
+          border-top-right-radius: 3px;
+          border-bottom-right-radius: 3px;
         }
       }
       .footer-3-dis{

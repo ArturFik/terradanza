@@ -270,6 +270,9 @@ onUnmounted(() => {
   h1 {
     display: none;
   }
+  .russia-text{
+    display: block !important;
+  }
   &__input {
     display: flex;
     flex-direction: row;
@@ -400,6 +403,9 @@ onUnmounted(() => {
     font-weight: 400;
     font-family: "Inter", sans-serif;
     order: 2;
+    h1{
+      display: block !important;
+    }
   }
 
   &__block {
@@ -494,7 +500,7 @@ onUnmounted(() => {
 }
 
 
-@media (max-width: 1979px) {
+@media (max-width: 1400px) {
   .encyclopedia{
     padding: 0 22px;
     h1 {

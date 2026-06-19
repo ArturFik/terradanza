@@ -381,6 +381,13 @@
       <div class="home-block5">
         <h1>Популярные стили</h1>
         <h2>2026</h2>
+        <div class="blockstyle">
+          <h3 class="blockstyle__popular">Популярные</h3>
+          <div class="blockstyle__style">
+            <h3 class="blockstyle__style--style">стили</h3>
+            <h3 class="blockstyle__style--years">2026</h3>
+          </div>
+        </div>
         <div class="home-tab">
           <div class="tab-item tab-item-1">
             <img class="tab-img-dance" src="@/assets/img/img1.png" alt="img" />
@@ -507,6 +514,51 @@ const goToPage = (page) => {
   max-width: 1920px;
 }
 
+.blockstyle{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 48px;
+  font-family: "BergamascoThin", sans-serif;
+  font-weight: 800;
+  color: #11243f;
+  text-transform: uppercase;
+  &__popular{
+    font-size: 48px;
+    margin: 0;
+  }
+  &__style{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    &--style{
+      font-size: 48px;
+      margin: 0;
+    }
+    &--years{
+      font-size: 48px;
+      margin: 0;
+    }
+  }
+  @media (min-width: 1400px) {
+    display: none;
+  }
+}
+@media (max-width: 1400px) {
+  .home-block5 {
+    h1 {
+      display: none;
+    }
+
+    h2 {
+      display: none;
+    }
+  }
+}
 // ============================================
 // 2. BLOCK 1 (TERRA + Danza)
 // ============================================
@@ -906,7 +958,7 @@ const goToPage = (page) => {
     margin-left: auto;
     margin-right: auto;
     width: 40%;
-    border: 3px solid #11243f;
+    border: 2px solid #11243f;
     padding: 15px 25px;
     border-radius: 35px;
     margin-top: 50px;
@@ -1022,7 +1074,7 @@ const goToPage = (page) => {
       min-width: 0;
       position: relative;
       border-radius: 15px;
-      border: 3px solid #11243f;
+      border: 2px solid #11243f;
       padding: 24px 27px;
       color: #11243f;
       height: auto;
@@ -1107,7 +1159,7 @@ const goToPage = (page) => {
   }
 }
 
-@media (max-width: 1979px) {
+@media (max-width: 1400px) {
   .home {
     padding: 0;
   }
@@ -1362,11 +1414,14 @@ const goToPage = (page) => {
       margin-top: 30px;
       padding: 0 16px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       gap: 30px;
-      width: 100%;
-
+      width: 80%;
+      @media (max-width: 700px) {
+        flex-direction: column;
+        width: 100%;
+      }
       .tab-item {
         width: 300px;
         padding: 20px;

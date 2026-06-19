@@ -731,6 +731,7 @@ onBeforeUnmount(() => {
     &--container {
       width: 100%;
       position: relative;
+      background-color: #11243f;
     }
 
     &--view {
@@ -784,7 +785,7 @@ onBeforeUnmount(() => {
     margin: 40px auto;
     padding: 0 75px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 1800px) {
       grid-template-columns: 1fr;
       padding: 0 20px;
       gap: 20px;
@@ -1176,6 +1177,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   padding: 0 20px;
   margin-bottom: 20px;
+  background-color: white;
 }
 
 .mobile-active-filters {
@@ -1222,7 +1224,7 @@ onBeforeUnmount(() => {
   background-color: #11243f;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 500;
   transition: all 0.3s ease;
   
@@ -1432,7 +1434,7 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .catalog__filters--view {
     display: none;
   }

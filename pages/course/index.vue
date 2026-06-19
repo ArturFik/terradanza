@@ -401,7 +401,7 @@ const isMobile = ref(false);
 
 onMounted(() => {
   const checkMobile = () => {
-    isMobile.value = window.innerWidth <= 1979;
+    isMobile.value = window.innerWidth <= 1800;
   };
   
   checkMobile();
@@ -904,13 +904,7 @@ const submitTest = async () => {
     flex-shrink: 0;
 
     &::after {
-      content: "";
-      width: 12px;
-      height: 12px;
-      background-color: #11243f;
-      border-radius: 3px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      display: none !important;
     }
   }
 
@@ -1028,7 +1022,7 @@ const submitTest = async () => {
 }
 
 
-@media (max-width: 1979px) {
+@media (max-width: 1800px) {
   .course{
     margin-top: 26px;
     h1{
@@ -1124,6 +1118,14 @@ const submitTest = async () => {
               width: 15px;
               height: 15px;
               border-radius: 4px;
+              &::after {
+                content: "";
+                width: 0px;
+                height: 0px;
+                border-radius: 3px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+              }
             }
             .checkbox-text{
               font-size: 16px;

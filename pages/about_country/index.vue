@@ -28,7 +28,7 @@
 
       <div class="about_country__tab" v-if="galleryImages.length">
         <div
-          v-for="(image, index) in displayedGalleryImages"
+          v-for="(image, index) in galleryImages"
           :key="`${image}-${index}`"
           class="tab-item"
         >
@@ -136,25 +136,8 @@ const galleryImages = computed<string[]>(() => {
   return urls.length ? urls : fallbackGallery;
 });
 
-const windowWidth = ref(0);
-
-onMounted(() => {
-  windowWidth.value = window.innerWidth;
-  window.addEventListener('resize', () => {
-    windowWidth.value = window.innerWidth;
-  });
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', () => {});
-});
-
-const displayedGalleryImages = computed(() => {
-  if (windowWidth.value <= 600) {
-    return galleryImages.value.slice(0, 3);
-  }
-  return galleryImages.value;
-});
+// УДАЛЯЮ ВСЁ, ЧТО СВЯЗАНО С windowWidth и displayedGalleryImages
+// Теперь всегда показываем все изображения
 
 const getBackgroundImage = (slug: string | null): string => {
   if (!slug) return defaultBackground;
@@ -349,14 +332,17 @@ const currentBackgroundImage = computed(() => {
     }
 
     @media (max-width: 600px) {
-      grid-template-columns: repeat(3, 123px);
+      display: flex;
       gap: 11px;
       padding: 0 20px;
-      justify-content: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
 
       .tab-item {
         width: 123px;
         height: 148px;
+        flex: 0 0 123px;
         aspect-ratio: auto;
 
         img {
@@ -367,11 +353,10 @@ const currentBackgroundImage = computed(() => {
       }
     }
 
-    @media (max-width: 1979px) {
-      grid-template-columns: repeat(3, 123px);
+    @media (max-width: 1400px) {
+      grid-template-columns: repeat(4, 123px);
       gap: 11px;
       padding: 0 20px;
-      justify-content: center;
 
       .tab-item {
         width: 123px;
@@ -388,7 +373,7 @@ const currentBackgroundImage = computed(() => {
 }
 
 
-@media (max-width: 1979px) {
+@media (max-width: 1400px) {
   .about_country{
     margin: 0;
     h1{

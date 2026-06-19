@@ -500,13 +500,13 @@ const handleLogout = async () => {
 }
 
 /* Десктопные стили остаются без изменений */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
   .header {
     padding: 0 80px;
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1400px) {
   .header {
     padding: 0 40px;
   }
@@ -562,7 +562,7 @@ const handleLogout = async () => {
   }
 }
 
-@media (max-width: 1979px) {
+@media (max-width: 1400px) {
   .header {
     padding: 0 15px;
     height: 60px;

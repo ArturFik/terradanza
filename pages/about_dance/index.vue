@@ -11,7 +11,6 @@
           }}
         </p>
         <NuxtLink
-          v-if="linkedCourseSlug"
           class="button"
           :to="{ path: '/about_course', query: { slug: linkedCourseSlug } }"
         >
@@ -296,9 +295,11 @@ const relatedDances = computed(() =>
       font-weight: 800;
       color: #11243f;
       text-align: left;
+      font-style: italic
     }
 
     .intro-text {
+      text-transform: none !important;
       font-size: 30px;
       font-weight: 300;
       color: #11243f;
@@ -323,7 +324,11 @@ const relatedDances = computed(() =>
       align-items: center;
       text-decoration: none;
       gap: 10px;
-
+      @media (max-width: 1400px) {
+        padding: 10px 20px;
+        margin: 18px auto 10px;
+        font-size: 18px;
+      }
       h4 {
         margin: 0;
         font-weight: 200;
@@ -486,7 +491,7 @@ const relatedDances = computed(() =>
     }
   }
 
-  @media (max-width: 1979px) {
+  @media (max-width: 1400px) {
     .media-grid {
       display: flex;
       overflow-x: auto;
@@ -516,7 +521,7 @@ const relatedDances = computed(() =>
     }
   }
 
-  @media (max-width: 1979px) {
+  @media (max-width: 1400px) {
     .media-grid {
       display: flex;
       overflow-x: auto;
@@ -579,7 +584,7 @@ const relatedDances = computed(() =>
   border-bottom-left-radius: 20px;
 }
 
-@media (max-width: 1979px) {
+@media (max-width: 1400px) {
   .about_dance{
     padding: 0 20px;
     &__view{
@@ -588,6 +593,7 @@ const relatedDances = computed(() =>
         font-size: 50px;
         margin-left: auto;
         margin-right: auto;
+        text-align: center;
       }
       .about{
         text-align: center;
@@ -632,6 +638,7 @@ const relatedDances = computed(() =>
     }
   }
   .about_dancetwo{
+    margin-top: 12px;
       .abouttwo{
         font-size: 50px;
         padding: 0 20px;
@@ -681,6 +688,7 @@ const relatedDances = computed(() =>
   }
   .about_dance-block4{
     padding: 0 20px;
+    margin-top: 18px;Популярные стили
     h1{
       font-size: 47px;
     }

@@ -759,13 +759,14 @@ const handleAvatarUpload = async (event) => {
   &__card-wrapper {
     width: 100%;
     display: flex;
+    height: 100%; 
   }
 
   &__card {
     width: 100%;
     display: flex;
     transition: all 0.3s ease;
-    
+    height: 100%;
     &-bg {
       font-family: "Inter", sans-serif;
       position: relative;
@@ -902,7 +903,7 @@ const handleAvatarUpload = async (event) => {
     width: 100%;
     margin-top: 50px;
 
-    @media (max-width: 1979px) {
+    @media (max-width: 1400px) {
       grid-template-columns: repeat(2, 1fr);
       gap: 20px;
     }
@@ -982,7 +983,7 @@ const handleAvatarUpload = async (event) => {
     font-family: "Inter", sans-serif;
     margin: 8px 0 0 0;
 
-    @media (max-width: 1979px) {
+    @media (max-width: 1400px) {
       font-size: 16px;
     }
   }
@@ -1095,7 +1096,7 @@ const handleAvatarUpload = async (event) => {
   }
 }
 
-@media (max-width: 1979px) {
+@media (max-width: 1400px) {
   .profile-page-container {
     & > &__account {
       padding: 0 20px;
@@ -1142,18 +1143,21 @@ const handleAvatarUpload = async (event) => {
       max-width: 100%;
       min-height: 140px;
       overflow: hidden;
+      height: 100%;
     }
     
     &__card {
       width: 100%;
       min-width: 0;
       max-width: 100%;
+      height: 100%;
       
       &-bg {
         min-height: 140px;
         border-radius: 18px;
         width: 100%;
         max-width: 100%;
+        height: 100%;
       }
       
       &-overlay {
