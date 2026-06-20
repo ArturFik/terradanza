@@ -554,7 +554,7 @@ const submitResetPassword = async () => {
   }
 
   &__tab-btn {
-    padding: 12px 82px;
+    padding: 12px 0;
     border: none;
     border-radius: 9999px;
     font-size: 35px;
@@ -692,7 +692,7 @@ const submitResetPassword = async () => {
   color: #c65d3b;
 }
 
-@media (max-width: 1979px) {
+@media (max-width: 1250px) {
   .auth{
     margin-top: 69px;
     padding: 0 20px;

@@ -356,7 +356,7 @@ const relatedDances = computed(() =>
   margin-left: auto;
   margin-right: auto;
   max-width: 1920px;
-  gap: 30px;
+  gap: 0px;
 
   .abouttwo {
     font-size: 96px;
@@ -668,7 +668,7 @@ const relatedDances = computed(() =>
         .intro-text-right {
           font-size: 14px;
           margin: 0;
-          padding: 0 10px;
+          padding: 0;
           order: 1;
         }
         
@@ -688,7 +688,7 @@ const relatedDances = computed(() =>
   }
   .about_dance-block4{
     padding: 0 20px;
-    margin-top: 18px;Популярные стили
+    margin-top: 18px;
     h1{
       font-size: 47px;
     }

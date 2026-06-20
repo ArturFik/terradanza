@@ -196,10 +196,15 @@
                             @dragstart="dragStart($event, index)"
                             @dragover.prevent
                             @drop="drop(index)"
+                            @touchstart="touchStart($event, index)"
+                            @touchmove="touchMove($event, index)"
+                            @touchend="touchEnd($event)"
                             :class="{
                               'piece-placed': piece !== null,
                               'piece-correct': isPuzzleComplete,
+                              'piece-dragging': touchDragIndex === index,
                             }"
+                            :data-index="index"
                           >
                             <div
                               v-if="piece !== null"
@@ -452,6 +457,12 @@ const puzzlePieces = ref([]);
 const draggedPieceIndex = ref(null);
 const isPuzzleComplete = ref(false);
 
+const touchDragIndex = ref(null);
+const touchStartX = ref(0);
+const touchStartY = ref(0);
+const touchStartElement = ref(null);
+const touchGhostElement = ref(null);
+
 const shufflePuzzle = () => {
   const pieces = Array.from(
     { length: PUZZLE_SIZE * PUZZLE_SIZE },
@@ -465,6 +476,111 @@ const shufflePuzzle = () => {
   }
   puzzlePieces.value = pieces;
   isPuzzleComplete.value = false;
+};
+
+const touchStart = (event, index) => {
+  if (isPuzzleComplete.value) return;
+  const touch = event.touches[0];
+  touchDragIndex.value = index;
+  touchStartX.value = touch.clientX;
+  touchStartY.value = touch.clientY;
+  touchStartElement.value = event.currentTarget;
+  
+  const rect = event.currentTarget.getBoundingClientRect();
+  const ghost = event.currentTarget.cloneNode(true);
+  ghost.style.position = 'fixed';
+  ghost.style.width = rect.width + 'px';
+  ghost.style.height = rect.height + 'px';
+  ghost.style.pointerEvents = 'none';
+  ghost.style.zIndex = '1000';
+  ghost.style.opacity = '0.8';
+  ghost.style.transform = 'scale(1.05)';
+  ghost.style.transition = 'transform 0.2s ease';
+  ghost.style.left = (touch.clientX - rect.width / 2) + 'px';
+  ghost.style.top = (touch.clientY - rect.height / 2) + 'px';
+  document.body.appendChild(ghost);
+  touchGhostElement.value = ghost;
+  
+  event.currentTarget.style.opacity = '0.5';
+};
+
+const touchMove = (event, index) => {
+  if (touchDragIndex.value === null || isPuzzleComplete.value) return;
+  event.preventDefault();
+  
+  const touch = event.touches[0];
+  
+  if (touchGhostElement.value) {
+    const rect = touchStartElement.value?.getBoundingClientRect();
+    if (rect) {
+      touchGhostElement.value.style.left = (touch.clientX - rect.width / 2) + 'px';
+      touchGhostElement.value.style.top = (touch.clientY - rect.height / 2) + 'px';
+    }
+  }
+  
+  const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+  const puzzlePieces = elements.filter(el => 
+    el.classList.contains('puzzle-piece') && 
+    el.dataset.index !== undefined &&
+    parseInt(el.dataset.index) !== touchDragIndex.value
+  );
+  
+  document.querySelectorAll('.puzzle-piece').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+  if (puzzlePieces.length > 0) {
+    puzzlePieces[0].classList.add('drag-over');
+  }
+};
+
+const touchEnd = (event) => {
+  if (touchDragIndex.value === null || isPuzzleComplete.value) {
+    cleanupTouch();
+    return;
+  }
+
+  const touch = event.changedTouches[0];
+  const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+  const targetPiece = elements.find(el => 
+    el.classList.contains('puzzle-piece') && 
+    el.dataset.index !== undefined &&
+    parseInt(el.dataset.index) !== touchDragIndex.value
+  );
+  
+  if (targetPiece) {
+    const targetIndex = parseInt(targetPiece.dataset.index);
+    const sourceIndex = touchDragIndex.value;
+    
+    const next = [...puzzlePieces.value];
+    const temp = next[sourceIndex];
+    next[sourceIndex] = next[targetIndex];
+    next[targetIndex] = temp;
+    puzzlePieces.value = next;
+    isPuzzleComplete.value = next.every((piece, index) => piece === index);
+  }
+  
+  if (touchStartElement.value) {
+    touchStartElement.value.style.opacity = '1';
+  }
+  document.querySelectorAll('.puzzle-piece').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+  
+  cleanupTouch();
+};
+
+const cleanupTouch = () => {
+  if (touchGhostElement.value) {
+    document.body.removeChild(touchGhostElement.value);
+    touchGhostElement.value = null;
+  }
+  if (touchStartElement.value) {
+    touchStartElement.value.style.opacity = '1';
+  }
+  touchDragIndex.value = null;
+  touchStartX.value = 0;
+  touchStartY.value = 0;
+  touchStartElement.value = null;
 };
 
 const drop = (targetIndex) => {
@@ -972,6 +1088,17 @@ const submitTest = async () => {
   transition: all 0.2s ease;
   border-radius: 8px;
   overflow: hidden;
+  touch-action: none;
+  
+  &.drag-over {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(198, 93, 59, 0.5);
+    border: 2px solid #c65d3b;
+  }
+  
+  &.piece-dragging {
+    opacity: 0.5;
+  }
 }
 
 .piece-content {
